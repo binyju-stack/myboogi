@@ -8,8 +8,8 @@ import { VerifiedBadge } from './common';
 
 export function ListingCard({ item, wide = false }: { item: Listing; wide?: boolean }) {
   return (
-    <Pressable onPress={() => router.push(`/listing/${item.id}`)} className={`${wide ? 'mr-3 w-48' : 'mb-5 w-[48%]'}`}>
-      <View className={`${wide ? 'h-36' : 'aspect-square'} overflow-hidden rounded-xl bg-shell`}>
+    <Pressable onPress={() => router.push(`/listing/${item.id}`)} className={`${wide ? 'mr-3 w-44 rounded-2xl border border-line bg-white p-2.5' : 'mb-5 w-[48%]'}`}>
+      <View className={`${wide ? 'h-32' : 'aspect-square'} overflow-hidden rounded-xl bg-shell`}>
         <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
         <Pressable className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full bg-white/90">
           <Ionicons name="heart-outline" size={17} color={colors.berry} />

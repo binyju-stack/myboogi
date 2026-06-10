@@ -5,7 +5,7 @@ import { Avatar, Stat } from './common';
 
 export function PostCard({ item, compact = false }: { item: Post; compact?: boolean }) {
   return (
-    <View className="border-b border-line bg-white px-4 py-4">
+    <View className="border-b border-line bg-white px-4 py-4 last:border-b-0">
       <View className="flex-row items-center">
         <Avatar uri={item.avatar} size={30} />
         <View className="ml-2 flex-1">

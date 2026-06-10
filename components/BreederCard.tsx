@@ -6,7 +6,7 @@ import { VerifiedBadge } from './common';
 
 export function BreederCard({ item }: { item: Breeder }) {
   return (
-    <Pressable onPress={() => router.push(`/breeder/${item.id}`)} className="mr-3 w-56 rounded-2xl border border-line bg-white p-3">
+    <Pressable onPress={() => router.push(`/breeder/${item.id}`)} className="mr-3 w-60 rounded-2xl border border-line bg-white p-4">
       <View className="flex-row items-center">
         <Image source={{ uri: item.avatar }} className="h-14 w-14 rounded-full bg-shell" />
         <View className="ml-3 flex-1">
@@ -16,6 +16,7 @@ export function BreederCard({ item }: { item: Breeder }) {
         </View>
       </View>
       <Text className="mt-3 text-xs leading-5 text-muted" numberOfLines={2}>{item.intro}</Text>
+      <View className="mt-3 self-start rounded-full bg-blush px-3 py-1.5"><Text className="text-[10px] font-black text-berry">미니샵 보기</Text></View>
     </Pressable>
   );
 }

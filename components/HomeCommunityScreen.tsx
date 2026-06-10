@@ -2,78 +2,52 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
-import { commentRankings, homeCommunityMenus, homeFeedPosts, viewRankings } from '@/data/homeMockData';
+import { breeders, listings, posts, turtles } from '@/data/mockData';
 
-import { CommunityMenuIcon, HomeFeedCard, PinkTurtle, RankingList } from './HomeCommunity';
+import { BreederCard } from './BreederCard';
+import { HorizontalRow, SectionHeader } from './common';
+import { ListingCard } from './ListingCard';
+import { PostCard } from './PostCard';
 import { Page } from './screen';
 
 export function HomeCommunityScreen() {
   return (
     <Page>
-      <View className="overflow-hidden bg-berry px-4 pb-6 pt-3">
-        <View className="absolute -right-12 top-8 h-36 w-36 rounded-full bg-white/10" />
+      <View className="px-4 pb-3 pt-3">
         <View className="flex-row items-center justify-between">
-          <Text className="text-[20px] font-black tracking-tight text-white">마이부기</Text>
-          <Ionicons name="notifications-outline" size={20} color="white" />
+          <View><Text className="text-[22px] font-black tracking-tight text-ink">마이부기</Text><Text className="mt-1 text-xs text-muted">오늘도 부기와 행복한 하루 보내세요</Text></View>
+          <Pressable className="h-11 w-11 items-center justify-center rounded-full bg-blush"><Ionicons name="notifications-outline" size={21} color="#F0447D" /></Pressable>
         </View>
-        <View className="mt-5 flex-row items-center">
-          <View className="flex-1 pr-2">
-            <Text className="text-[18px] font-black leading-6 text-white">마이부기 핫한 게시글</Text>
-            <Text className="mt-2 text-[10px] font-semibold leading-4 text-white/85">
-              거북이 집사들의 따뜻한 이야기와{'\n'}유용한 사육 정보를 만나보세요!
-            </Text>
-          </View>
-          <PinkTurtle size={118} dark />
+        <Pressable className="mt-5 flex-row items-center rounded-2xl bg-[#F7F5F7] px-4 py-3.5"><Ionicons name="search" size={18} color="#8F8A91" /><Text className="ml-2 text-sm text-muted">분양, 브리더, 커뮤니티 검색</Text></Pressable>
+      </View>
+
+      <SectionHeader title="오늘의 추천 분양" onPress={() => router.push('/marketplace')} />
+      <HorizontalRow>{listings.slice(0, 4).map((item) => <ListingCard key={item.id} item={item} wide />)}</HorizontalRow>
+
+      <View className="mt-7 bg-[#FAF9FA] pb-6 pt-1">
+        <SectionHeader title="믿을 수 있는 인증 브리더" />
+        <HorizontalRow>{breeders.map((item) => <BreederCard key={item.id} item={item} />)}</HorizontalRow>
+      </View>
+
+      <View className="pb-2">
+        <SectionHeader title="인기 커뮤니티 글" onPress={() => router.push('/community')} />
+        <View className="mx-4 overflow-hidden rounded-2xl border border-line">
+          {posts.slice(0, 3).map((post) => <PostCard key={post.id} item={post} compact />)}
         </View>
       </View>
 
-      <View className="border-b-8 border-[#F7F5F7] bg-white px-4 pb-5 pt-4">
-        <Text className="mb-3 text-[14px] font-black text-ink">오늘 핫한 마이부기 소식을 알아볼까요?</Text>
-        <View className="flex-row gap-2">
-          <Pressable onPress={() => router.push('/community')} className="flex-1 overflow-hidden rounded-xl border border-line bg-white p-3">
-            <View className="flex-row items-center"><View className="rounded bg-blue px-1.5 py-1"><Text className="text-[8px] font-black text-muted">자유</Text></View><Text className="ml-2 text-[9px] text-muted">조회수 HOT</Text></View>
-            <Text className="mt-2 text-[11px] font-black leading-4 text-ink">우리집 거북이의 귀여운 순간을 공유해요</Text>
-            <View className="mt-3 h-12 items-end justify-center"><PinkTurtle size={68} /></View>
-          </Pressable>
-          <Pressable onPress={() => router.push('/disease')} className="flex-1 overflow-hidden rounded-xl border border-line bg-white p-3">
-            <View className="flex-row items-center"><View className="rounded bg-mint px-1.5 py-1"><Text className="text-[8px] font-black text-moss">사육정보</Text></View><Text className="ml-2 text-[9px] text-muted">댓글 HOT</Text></View>
-            <Text className="mt-2 text-[11px] font-black leading-4 text-ink">초보 집사를 위한 건강 관리 체크리스트</Text>
-            <View className="mt-3 h-12 items-end justify-center"><PinkTurtle size={68} /></View>
-          </Pressable>
-        </View>
-      </View>
-
-      <View className="border-b-8 border-[#F7F5F7] bg-white px-4 pb-3 pt-5">
-        <Text className="text-[15px] font-black text-ink">마이부기 커뮤니티 <Text className="text-berry">›</Text></Text>
-        <View className="mt-3 flex-row gap-2">
-          <View className="rounded-full bg-berry px-3 py-1.5"><Text className="text-[10px] font-black text-white">전체</Text></View>
-          <View className="rounded-full bg-blue px-3 py-1.5"><Text className="text-[10px] font-bold text-muted">인기글</Text></View>
-          <View className="rounded-full bg-mint px-3 py-1.5"><Text className="text-[10px] font-bold text-moss">최신글</Text></View>
-          <View className="rounded-full bg-cream px-3 py-1.5"><Text className="text-[10px] font-bold text-muted">공지</Text></View>
-        </View>
-        <Pressable className="mt-4 flex-row items-center rounded-xl bg-[#F7F5F7] px-3 py-2.5">
-          <Ionicons name="search" size={16} color={colors.muted} />
-          <Text className="ml-2 text-[11px] text-muted">궁금한 내용을 검색해보세요</Text>
+      <View className="px-4 pb-6 pt-5">
+        <Pressable onPress={() => router.push('/growth')} className="mb-3 flex-row items-center rounded-2xl bg-mint p-4">
+          <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white"><Ionicons name="analytics-outline" size={22} color="#65A986" /></View>
+          <View className="ml-3 flex-1"><Text className="text-sm font-black text-ink">{turtles[0].name}의 성장 기록</Text><Text className="mt-1 text-xs text-muted">몸무게와 등갑 길이를 기록해보세요</Text></View>
+          <Ionicons name="chevron-forward" size={18} color="#65A986" />
         </Pressable>
-        <View className="mt-5 flex-row flex-wrap">
-          {homeCommunityMenus.map((menu) => <CommunityMenuIcon key={menu.label} label={menu.label} icon={menu.icon} />)}
-        </View>
+        <Pressable onPress={() => router.push('/ai')} className="flex-row items-center rounded-2xl bg-shell p-4">
+          <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white"><Ionicons name="sparkles-outline" size={22} color="#F0447D" /></View>
+          <View className="ml-3 flex-1"><Text className="text-sm font-black text-ink">부기 AI 상담</Text><Text className="mt-1 text-xs text-muted">사육 고민을 편하게 물어보세요</Text></View>
+          <Ionicons name="chevron-forward" size={18} color="#F0447D" />
+        </Pressable>
       </View>
-
-      <View className="border-b-8 border-[#F7F5F7] bg-white p-4">
-        <View className="overflow-hidden rounded-xl bg-[#8E284A] px-4 py-4">
-          <View className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/10" />
-          <View className="flex-row items-center">
-            <View className="flex-1"><Text className="text-[10px] font-bold text-white/75">마이부기 회원 특별 혜택</Text><Text className="mt-1 text-[15px] font-black text-white">거북이 먹이 80% 할인</Text><Text className="mt-1 text-[9px] text-white/75">건강한 먹이를 특별한 가격으로 만나보세요</Text></View>
-            <PinkTurtle size={82} dark />
-          </View>
-        </View>
-      </View>
-
-      {homeFeedPosts.map((post) => <HomeFeedCard key={post.id} post={post} />)}
-      <RankingList title="조회수순 인기글" items={viewRankings} />
-      <RankingList title="댓글순 인기글" items={commentRankings} />
     </Page>
   );
 }

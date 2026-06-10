@@ -22,19 +22,19 @@ export function TurtleMark({ size = 50 }: { size?: number }) {
 
 export function BrandHeader({ compact = false }: { compact?: boolean }) {
   return (
-    <View className={`bg-berry px-5 ${compact ? 'pb-4 pt-3' : 'pb-6 pt-3'}`}>
+    <View className={`bg-white px-4 ${compact ? 'pb-3 pt-3' : 'pb-5 pt-3'}`}>
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[21px] font-black tracking-tight text-white">마이부기</Text>
-          {!compact ? <Text className="mt-1 text-[11px] font-semibold text-white/85">거북이 전용 커뮤니티 & 분양 플랫폼</Text> : null}
+          <Text className="text-[21px] font-black tracking-tight text-ink">마이부기</Text>
+          {!compact ? <Text className="mt-1 text-[11px] font-semibold text-muted">거북이 전용 커뮤니티 & 분양 플랫폼</Text> : null}
         </View>
         <View className="flex-row gap-3">
-          <Ionicons name="notifications-outline" color="white" size={21} />
-          <Ionicons name="person-circle-outline" color="white" size={22} />
+          <Ionicons name="notifications-outline" color={colors.ink} size={21} />
+          <Ionicons name="person-circle-outline" color={colors.ink} size={22} />
         </View>
       </View>
       {!compact ? (
-        <Pressable className="mt-5 flex-row items-center rounded-xl bg-white px-4 py-3">
+        <Pressable className="mt-5 flex-row items-center rounded-2xl bg-[#F7F5F7] px-4 py-3">
           <Ionicons name="search" color={colors.muted} size={18} />
           <Text className="ml-2 text-sm text-muted">품종, 브리더, 게시글을 검색해보세요</Text>
         </Pressable>
@@ -58,8 +58,8 @@ export function TopBar({ title, right }: { title: string; right?: IconName }) {
 export function SectionHeader({ title, action = '전체보기', onPress }: { title: string; action?: string; onPress?: () => void }) {
   return (
     <View className="mb-3 mt-6 flex-row items-center justify-between px-4">
-      <Text className="text-[17px] font-black text-ink">{title} <Text className="text-berry">›</Text></Text>
-      <Pressable onPress={onPress}><Text className="text-xs font-semibold text-muted">{action}</Text></Pressable>
+      <Text className="text-[17px] font-black text-ink">{title}</Text>
+      <Pressable onPress={onPress}><Text className="text-xs font-bold text-berry">{action} ›</Text></Pressable>
     </View>
   );
 }
