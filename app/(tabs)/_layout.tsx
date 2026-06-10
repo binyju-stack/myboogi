@@ -21,8 +21,6 @@ export default function TabLayout() {
       tabBarStyle: { height: 66, paddingTop: 7, paddingBottom: 7, borderTopColor: colors.line, backgroundColor: 'white' },
     }}>
       {tabs.map((tab) => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title, tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? tab.activeIcon : tab.icon} color={color} size={21} /> }} />)}
-      <Tabs.Screen name="growth" options={{ href: null }} />
-      <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>
   );
 }
