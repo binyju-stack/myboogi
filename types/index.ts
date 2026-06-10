@@ -31,7 +31,7 @@ export interface Listing {
   images: string[];
   description: string;
   verified: boolean;
-  status: '판매중' | '분양완료';
+  status: '분양중' | '분양완료';
 }
 
 export interface Post {

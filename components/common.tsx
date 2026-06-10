@@ -22,21 +22,21 @@ export function TurtleMark({ size = 50 }: { size?: number }) {
 
 export function BrandHeader({ compact = false }: { compact?: boolean }) {
   return (
-    <View className={`bg-white px-4 ${compact ? 'pb-3 pt-3' : 'pb-5 pt-3'}`}>
+    <View className={`bg-white px-5 ${compact ? 'pb-4 pt-4' : 'pb-5 pt-4'}`}>
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[21px] font-black tracking-tight text-ink">마이부기</Text>
-          {!compact ? <Text className="mt-1 text-[11px] font-semibold text-muted">거북이 전용 커뮤니티 & 분양 플랫폼</Text> : null}
+          <Text className="text-[22px] font-black tracking-[-1px] text-ink">마이부기</Text>
+          {!compact ? <Text className="mt-1 text-[11px] font-semibold text-muted">거북이와 집사를 위한 믿을 수 있는 플랫폼</Text> : null}
         </View>
-        <View className="flex-row gap-3">
-          <Ionicons name="notifications-outline" color={colors.ink} size={21} />
-          <Ionicons name="person-circle-outline" color={colors.ink} size={22} />
-        </View>
+        <Pressable className="h-10 w-10 items-center justify-center rounded-full bg-soft">
+          <Ionicons name="notifications-outline" color={colors.ink} size={20} />
+          <View className="absolute right-2 top-2 h-2 w-2 rounded-full bg-berry" />
+        </Pressable>
       </View>
       {!compact ? (
-        <Pressable className="mt-5 flex-row items-center rounded-2xl bg-[#F7F5F7] px-4 py-3">
+        <Pressable className="mt-5 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
           <Ionicons name="search" color={colors.muted} size={18} />
-          <Text className="ml-2 text-sm text-muted">품종, 브리더, 게시글을 검색해보세요</Text>
+          <Text className="ml-2 text-[13px] text-muted">거북이, 브리더, 게시글 검색</Text>
         </Pressable>
       ) : null}
     </View>
@@ -45,11 +45,11 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
 
 export function TopBar({ title, right }: { title: string; right?: IconName }) {
   return (
-    <View className="flex-row items-center bg-white px-4 py-3">
+    <View className="flex-row items-center bg-white px-4 py-3.5">
       <Pressable onPress={() => router.back()} className="h-10 w-10 items-center justify-center">
         <Ionicons name="chevron-back" size={24} color={colors.ink} />
       </Pressable>
-      <Text className="flex-1 text-center text-base font-black text-ink">{title}</Text>
+      <Text className="flex-1 text-center text-[16px] font-black text-ink">{title}</Text>
       <View className="h-10 w-10 items-center justify-center">{right ? <Ionicons name={right} size={22} color={colors.ink} /> : null}</View>
     </View>
   );
@@ -57,16 +57,16 @@ export function TopBar({ title, right }: { title: string; right?: IconName }) {
 
 export function SectionHeader({ title, action = '전체보기', onPress }: { title: string; action?: string; onPress?: () => void }) {
   return (
-    <View className="mb-4 mt-9 flex-row items-center justify-between px-5">
-      <Text className="text-[19px] font-black tracking-tight text-ink">{title}</Text>
-      <Pressable onPress={onPress}><Text className="text-xs font-bold text-berry">{action} ›</Text></Pressable>
+    <View className="mb-4 mt-8 flex-row items-center justify-between px-5">
+      <Text className="text-[19px] font-black tracking-[-0.5px] text-ink">{title}</Text>
+      <Pressable onPress={onPress} className="rounded-full bg-soft px-3 py-2"><Text className="text-[10px] font-bold text-muted">{action}</Text></Pressable>
     </View>
   );
 }
 
 export function Chip({ label, selected = false, icon }: { label: string; selected?: boolean; icon?: IconName }) {
   return (
-    <View className={`mr-2 flex-row items-center rounded-full px-3 py-2 ${selected ? 'bg-berry' : 'bg-[#F7F5F7]'}`}>
+    <View className={`mr-2 flex-row items-center rounded-full px-3.5 py-2.5 ${selected ? 'bg-ink' : 'border border-line bg-white'}`}>
       {icon ? <Ionicons name={icon} size={13} color={selected ? 'white' : colors.berry} /> : null}
       <Text className={`text-xs font-bold ${icon ? 'ml-1' : ''} ${selected ? 'text-white' : 'text-muted'}`}>{label}</Text>
     </View>
@@ -78,7 +78,7 @@ export function HorizontalRow({ children }: { children: ReactNode }) {
 }
 
 export function VerifiedBadge({ label = '인증 브리더' }: { label?: string }) {
-  return <View className="self-start rounded-full bg-mint px-2.5 py-1"><Text className="text-[9px] font-black text-moss">✓ {label}</Text></View>;
+  return <View className="self-start rounded-full bg-blush px-2.5 py-1"><Text className="text-[9px] font-black text-berry">✓ {label}</Text></View>;
 }
 
 export function EmptyImage({ icon = 'image-outline' }: { icon?: IconName }) {

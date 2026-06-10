@@ -15,7 +15,7 @@ const tabs: { name: string; title: string; icon: IconName; activeIcon: IconName 
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: colors.berry, tabBarInactiveTintColor: '#AAA4AA', tabBarLabelStyle: { fontSize: 10, fontWeight: '700', marginTop: 2 }, tabBarStyle: { height: 68, paddingTop: 8, paddingBottom: 8, borderTopColor: colors.line, backgroundColor: 'white' } }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: colors.berry, tabBarInactiveTintColor: colors.subtle, tabBarLabelStyle: { fontSize: 10, fontWeight: '800', marginTop: 2 }, tabBarStyle: { height: 70, paddingTop: 8, paddingBottom: 8, borderTopColor: colors.line, backgroundColor: 'white' } }}>
       {tabs.map((tab) => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title, tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? tab.activeIcon : tab.icon} color={color} size={21} /> }} />)}
     </Tabs>
   );
