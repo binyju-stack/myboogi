@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { Avatar, TopBar, VerifiedBadge } from '@/components/common';
+import { ChatReadyModal } from '@/components/ChatReadyModal';
 import { ListingCard } from '@/components/ListingCard';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
@@ -44,6 +45,7 @@ function EmptyState({ completed = false }: { completed?: boolean }) {
 export default function BreederShopScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<ShopTab>('selling');
+  const [chatModalVisible, setChatModalVisible] = useState(false);
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
   const selling = listings.filter((item) => item.breederId === breeder.id && item.status === '분양중');
   const completed = listings.filter((item) => item.breederId === breeder.id && item.status === '분양완료');
@@ -76,6 +78,7 @@ export default function BreederShopScreen() {
             <Pressable className="flex-1 flex-row items-center justify-center rounded-[17px] border border-line py-3.5"><Ionicons name="call-outline" size={16} color={colors.ink} /><Text className="ml-2 text-[11px] font-black text-ink">전화 문의</Text></Pressable>
             <Pressable className="flex-1 flex-row items-center justify-center rounded-[17px] bg-[#FEE500] py-3.5"><Ionicons name="chatbubble" size={15} color={colors.ink} /><Text className="ml-2 text-[11px] font-black text-ink">카카오톡 문의</Text></Pressable>
           </View>
+          <Pressable onPress={() => setChatModalVisible(true)} className="mt-2 flex-row items-center justify-center rounded-[17px] bg-berry py-3.5"><Ionicons name="chatbubbles-outline" size={16} color="white" /><Text className="ml-2 text-[11px] font-black text-white">채팅하기</Text></Pressable>
         </View>
       </View>
 
@@ -101,6 +104,7 @@ export default function BreederShopScreen() {
             ? activeListings.map((item) => <ListingCard key={item.id} item={item} list />)
             : <EmptyState completed={activeTab === 'completed'} />}
       </View>
+      <ChatReadyModal visible={chatModalVisible} onClose={() => setChatModalVisible(false)} />
     </Page>
   );
 }

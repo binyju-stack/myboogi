@@ -5,6 +5,7 @@ import { Alert, Image, Pressable, ScrollView, Text, useWindowDimensions, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
+import { ChatReadyModal } from '@/components/ChatReadyModal';
 import { colors } from '@/constants/theme';
 import { breeders, listingDetails, listings } from '@/data/mockData';
 
@@ -21,10 +22,10 @@ export default function ListingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
   const [imageIndex, setImageIndex] = useState(0);
+  const [chatModalVisible, setChatModalVisible] = useState(false);
   const item = listings.find((listing) => listing.id === id) ?? listings[0];
   const breeder = breeders.find((entry) => entry.id === item.breederId) ?? breeders[0];
   const detail = listingDetails[item.id] ?? listingDetails.l1;
-  const ready = () => Alert.alert('마이부기', '채팅 기능 준비중입니다.');
   const mockContact = (label: string) => Alert.alert(label, '브리더 연락처 연결은 다음 단계에서 제공됩니다.');
 
   return (
@@ -82,8 +83,9 @@ export default function ListingDetailScreen() {
         <ActionButton icon="heart-outline" label="관심등록" />
         <ActionButton icon="call-outline" label="전화문의" onPress={() => mockContact('전화문의')} />
         <ActionButton icon="chatbubble-outline" label="카카오톡" onPress={() => mockContact('카카오톡 문의')} />
-        <ActionButton icon="chatbubbles" label="채팅하기" accent onPress={ready} />
+        <ActionButton icon="chatbubbles" label="채팅하기" accent onPress={() => setChatModalVisible(true)} />
       </View>
+      <ChatReadyModal visible={chatModalVisible} onClose={() => setChatModalVisible(false)} />
     </SafeAreaView>
   );
 }
