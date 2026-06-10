@@ -1,5 +1,5 @@
-import { HomeCommunityScreen } from '@/components/HomeCommunityScreen';
+import { HomeScreen } from '@/components/HomeScreen';
 
 export default function HomeTab() {
-  return <HomeCommunityScreen />;
+  return <HomeScreen />;
 }
