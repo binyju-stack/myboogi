@@ -14,6 +14,17 @@ export interface Breeder {
   location: string;
 }
 
+export interface BreederReview {
+  id: string;
+  breederId: string;
+  author: string;
+  avatar: string;
+  rating: number;
+  content: string;
+  species: string;
+  createdAt: string;
+}
+
 export interface Listing {
   id: string;
   breederId: string;

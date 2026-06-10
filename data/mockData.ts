@@ -1,4 +1,4 @@
-import type { Breeder, GrowthRecord, Listing, Post, Turtle } from '@/types';
+import type { Breeder, BreederReview, GrowthRecord, Listing, Post, Turtle } from '@/types';
 
 const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
@@ -19,6 +19,13 @@ export const listings: Listing[] = [
   { id: 'l3', breederId: 'b3', title: '선명한 무늬의 다이아몬드백', species: '다이아몬드백 테라핀', price: 450000, location: '인천 연수구', sex: '암컷', stage: '유체', size: '등갑 7.5cm', hatchDate: '2026.01.14', views: 511, likes: 81, image: turtleImages[3], images: [turtleImages[3], turtleImages[1]], description: '등갑 무늬가 선명한 개체입니다. 수질과 먹이 관리 방법을 상세히 안내해 드립니다.', verified: true, status: '분양중' },
   { id: 'l4', breederId: 'b1', title: '체리헤드 레드풋 성체', species: '체리헤드 레드풋', price: 720000, location: '경기 성남시', sex: '암컷', stage: '성체', size: '등갑 21cm', hatchDate: '2022.08.11', views: 221, likes: 37, image: turtleImages[1], images: [turtleImages[1], turtleImages[0]], description: '건강하게 성장한 성체입니다. 넓은 사육 환경이 준비된 분께 분양합니다.', verified: true, status: '분양완료' },
   { id: 'l5', breederId: 'b2', title: '귀여운 동헤르만 육지거북', species: '동헤르만 육지거북', price: 330000, location: '서울 송파구', sex: '미구분', stage: '유체', size: '등갑 5.8cm', hatchDate: '2026.04.03', views: 94, likes: 19, image: turtleImages[2], images: [turtleImages[2], turtleImages[3]], description: '초보 집사도 충분히 상담받고 데려갈 수 있습니다.', verified: false, status: '분양중' },
+];
+
+export const breederReviews: BreederReview[] = [
+  { id: 'br1', breederId: 'b1', author: '부기맘', avatar: turtleImages[2], rating: 5, content: '첫 분양이라 걱정했는데 사육 환경부터 먹이까지 정말 친절하게 알려주셨어요.', species: '레오파드 육지거북', createdAt: '3일 전' },
+  { id: 'br2', breederId: 'b1', author: '느림보아빠', avatar: turtleImages[3], rating: 5, content: '사진으로 본 것보다 건강하고 활발한 아이를 만났어요. 이후 상담도 꼼꼼합니다.', species: '체리헤드 레드풋', createdAt: '2주 전' },
+  { id: 'br3', breederId: 'b2', author: '초록정원', avatar: turtleImages[0], rating: 4.8, content: '초보 집사 눈높이에 맞춰 설명해주셔서 안심하고 새 가족을 맞이했습니다.', species: '설가타 육지거북', createdAt: '5일 전' },
+  { id: 'br4', breederId: 'b3', author: '꼬북집사', avatar: turtleImages[1], rating: 5, content: '수생 환경 세팅 방법까지 자세히 안내해주시는 믿음직한 브리더예요.', species: '다이아몬드백 테라핀', createdAt: '1주 전' },
 ];
 
 export const posts: Post[] = [
