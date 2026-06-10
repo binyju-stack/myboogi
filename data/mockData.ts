@@ -21,6 +21,14 @@ export const listings: Listing[] = [
   { id: 'l5', breederId: 'b2', title: '귀여운 동헤르만 육지거북', species: '동헤르만 육지거북', price: 330000, location: '서울 송파구', sex: '미구분', stage: '유체', size: '등갑 5.8cm', hatchDate: '2026.04.03', views: 94, likes: 19, image: turtleImages[2], images: [turtleImages[2], turtleImages[3]], description: '초보 집사도 충분히 상담받고 데려갈 수 있습니다.', verified: false, status: '분양중' },
 ];
 
+export const listingDetails: Record<string, { parentInfo: string; foodResponse: string; healthStatus: string; notes: string }> = {
+  l1: { parentInfo: '부모 개체 모두 건강검진 완료', foodResponse: '채소와 전용 사료 반응이 좋아요', healthStatus: '활동량과 배변 상태 모두 양호', notes: '새 환경 적응을 위해 첫 주는 조용한 공간을 권장해요' },
+  l2: { parentInfo: '국내 브리딩 부모 개체', foodResponse: '건초와 치커리를 잘 먹어요', healthStatus: '등갑과 눈 상태 양호', notes: '넓은 사육 공간이 필요해요' },
+  l3: { parentInfo: '선명한 무늬의 부모 개체', foodResponse: '전용 사료와 생먹이 반응이 좋아요', healthStatus: '수질 적응 및 활동 상태 양호', notes: '수질 관리 방법을 안내해 드려요' },
+  l4: { parentInfo: '건강한 성체 부모 개체', foodResponse: '채소와 과일을 균형 있게 먹어요', healthStatus: '정기 검진 완료', notes: '성체 사육 경험이 있는 집사를 권장해요' },
+  l5: { parentInfo: '국내 브리딩 부모 개체', foodResponse: '민들레와 전용 사료를 잘 먹어요', healthStatus: '활동량과 배변 상태 양호', notes: '초보 집사에게도 사육 상담을 제공해요' },
+};
+
 export const breederReviews: BreederReview[] = [
   { id: 'br1', breederId: 'b1', author: '부기맘', avatar: turtleImages[2], rating: 5, content: '첫 분양이라 걱정했는데 사육 환경부터 먹이까지 정말 친절하게 알려주셨어요.', species: '레오파드 육지거북', createdAt: '3일 전' },
   { id: 'br2', breederId: 'b1', author: '느림보아빠', avatar: turtleImages[3], rating: 5, content: '사진으로 본 것보다 건강하고 활발한 아이를 만났어요. 이후 상담도 꼼꼼합니다.', species: '체리헤드 레드풋', createdAt: '2주 전' },
