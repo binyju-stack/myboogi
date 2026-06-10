@@ -45,7 +45,7 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
 
 export function TopBar({ title, right }: { title: string; right?: IconName }) {
   return (
-    <View className="flex-row items-center border-b border-line bg-white px-4 py-3">
+    <View className="flex-row items-center bg-white px-4 py-3">
       <Pressable onPress={() => router.back()} className="h-10 w-10 items-center justify-center">
         <Ionicons name="chevron-back" size={24} color={colors.ink} />
       </Pressable>
@@ -57,8 +57,8 @@ export function TopBar({ title, right }: { title: string; right?: IconName }) {
 
 export function SectionHeader({ title, action = '전체보기', onPress }: { title: string; action?: string; onPress?: () => void }) {
   return (
-    <View className="mb-3 mt-6 flex-row items-center justify-between px-4">
-      <Text className="text-[17px] font-black text-ink">{title}</Text>
+    <View className="mb-4 mt-9 flex-row items-center justify-between px-5">
+      <Text className="text-[19px] font-black tracking-tight text-ink">{title}</Text>
       <Pressable onPress={onPress}><Text className="text-xs font-bold text-berry">{action} ›</Text></Pressable>
     </View>
   );
@@ -66,7 +66,7 @@ export function SectionHeader({ title, action = '전체보기', onPress }: { tit
 
 export function Chip({ label, selected = false, icon }: { label: string; selected?: boolean; icon?: IconName }) {
   return (
-    <View className={`mr-2 flex-row items-center rounded-full px-3 py-2 ${selected ? 'bg-berry' : 'border border-line bg-white'}`}>
+    <View className={`mr-2 flex-row items-center rounded-full px-3 py-2 ${selected ? 'bg-berry' : 'bg-[#F7F5F7]'}`}>
       {icon ? <Ionicons name={icon} size={13} color={selected ? 'white' : colors.berry} /> : null}
       <Text className={`text-xs font-bold ${icon ? 'ml-1' : ''} ${selected ? 'text-white' : 'text-muted'}`}>{label}</Text>
     </View>
@@ -74,11 +74,11 @@ export function Chip({ label, selected = false, icon }: { label: string; selecte
 }
 
 export function HorizontalRow({ children }: { children: ReactNode }) {
-  return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-4">{children}</ScrollView>;
+  return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">{children}</ScrollView>;
 }
 
 export function VerifiedBadge({ label = '인증 브리더' }: { label?: string }) {
-  return <View className="self-start rounded bg-mint px-1.5 py-1"><Text className="text-[10px] font-black text-moss">✓ {label}</Text></View>;
+  return <View className="self-start rounded-full bg-mint px-2.5 py-1"><Text className="text-[9px] font-black text-moss">✓ {label}</Text></View>;
 }
 
 export function EmptyImage({ icon = 'image-outline' }: { icon?: IconName }) {
