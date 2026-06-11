@@ -1,51 +1,74 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps } from 'react';
-import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { TopBar } from '@/components/common';
-import { ReadyModal } from '@/components/ReadyModal';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
+import { adminStats } from '@/data/adminData';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-const menus: { label: string; description: string; icon: IconName; href?: string }[] = [
-  { label: '회원관리', description: '회원 상태와 활동을 확인해요', icon: 'people-outline' },
-  { label: '브리더 승인 관리', description: '브리더 인증 신청을 검토해요', icon: 'shield-checkmark-outline', href: '/admin/breeder-verifications' },
-  { label: '신고 관리', description: '접수된 신고를 검토하고 처리해요', icon: 'flag-outline', href: '/admin/reports' },
-  { label: '게시글 관리', description: '커뮤니티 게시글을 관리해요', icon: 'document-text-outline' },
-  { label: '분양글 관리', description: '등록된 분양글을 관리해요', icon: 'storefront-outline' },
-  { label: '배너 관리', description: '홈 배너 노출을 관리해요', icon: 'images-outline' },
-  { label: '공지사항 관리', description: '공지사항을 작성하고 관리해요', icon: 'megaphone-outline' },
-  { label: 'AI FAQ 관리', description: 'AI 상담 답변 기준을 관리해요', icon: 'sparkles-outline' },
+const stats: { label: string; value: number; icon: IconName }[] = [
+  { label: '전체 회원', value: adminStats.users, icon: 'people-outline' },
+  { label: '브리더', value: adminStats.breeders, icon: 'storefront-outline' },
+  { label: '인증 대기', value: adminStats.pendingBreeders, icon: 'shield-checkmark-outline' },
+  { label: '전체 분양글', value: adminStats.listings, icon: 'pricetag-outline' },
+  { label: '전체 게시글', value: adminStats.posts, icon: 'document-text-outline' },
+  { label: '미처리 신고', value: adminStats.pendingReports, icon: 'flag-outline' },
 ];
 
-export default function AdminScreen() {
-  const [readyTitle, setReadyTitle] = useState('');
+const menus: { label: string; description: string; icon: IconName; href: string }[] = [
+  { label: '회원 관리', description: '회원 유형과 이용 상태를 관리해요', icon: 'people-outline', href: '/admin/users' },
+  { label: '브리더 승인 관리', description: '인증 신청을 검토하고 승인해요', icon: 'shield-checkmark-outline', href: '/admin/breeders' },
+  { label: '분양글 관리', description: '등록된 분양글 상태를 확인해요', icon: 'storefront-outline', href: '/admin/listings' },
+  { label: '게시글 관리', description: '커뮤니티 콘텐츠를 관리해요', icon: 'document-text-outline', href: '/admin/posts' },
+  { label: '신고 관리', description: '접수된 신고를 검토하고 처리해요', icon: 'flag-outline', href: '/admin/reports' },
+  { label: '공지사항 관리', description: '서비스 공지를 작성하고 관리해요', icon: 'megaphone-outline', href: '/admin/notices' },
+];
 
+export default function AdminDashboardScreen() {
   return (
     <Page>
-      <TopBar title="관리자 페이지" />
+      <TopBar title="관리자" />
       <View className="bg-white px-5 pb-6 pt-4">
         <Text className="text-[10px] font-black text-berry">MYBOOGI ADMIN</Text>
-        <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">서비스 운영을 관리해요</Text>
-        <Text className="mt-2 text-[11px] leading-5 text-muted">중요한 신청과 콘텐츠 상태를 모바일에서도 확인할 수 있어요.</Text>
+        <Text className="mt-1 text-[25px] font-black tracking-[-0.8px] text-ink">마이부기 운영 현황</Text>
+        <Text className="mt-2 text-[11px] leading-5 text-muted">오늘 확인해야 할 서비스 지표와 관리 업무예요.</Text>
       </View>
 
-      <View className="px-5 pb-5 pt-6">
-        {menus.map((item, index) => (
-          <FadeInView key={item.label} delay={index * 45}>
-            <AnimatedPressable onPress={() => item.href ? router.push(item.href as never) : setReadyTitle(`${item.label} 기능은 준비중입니다.`)} className="mb-3 flex-row items-center rounded-[22px] bg-white p-4 shadow-sm">
-              <View className="h-12 w-12 items-center justify-center rounded-[17px] bg-blush"><Ionicons name={item.icon} size={21} color={colors.berry} /></View>
+      <View className="px-5 pt-6">
+        <Text className="text-[10px] font-black text-berry">OVERVIEW</Text>
+        <Text className="mt-1 text-[20px] font-black text-ink">운영 통계</Text>
+        <View className="mt-4 flex-row flex-wrap justify-between">
+          {stats.map((item, index) => (
+            <View key={item.label} className="mb-3 w-[48%]">
+              <FadeInView delay={index * 35}>
+                <View className="rounded-[22px] bg-white p-4 shadow-sm">
+                  <View className="h-10 w-10 items-center justify-center rounded-[14px] bg-blush"><Ionicons name={item.icon} size={18} color={colors.berry} /></View>
+                  <Text className="mt-4 text-[21px] font-black text-ink">{item.value.toLocaleString()}</Text>
+                  <Text className="mt-1 text-[10px] font-bold text-muted">{item.label}</Text>
+                </View>
+              </FadeInView>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View className="px-5 pb-5 pt-5">
+        <Text className="text-[10px] font-black text-berry">MANAGEMENT</Text>
+        <Text className="mt-1 text-[20px] font-black text-ink">관리 메뉴</Text>
+        <View className="mt-4 rounded-[26px] bg-white px-5 py-2 shadow-sm">
+          {menus.map((item, index) => (
+            <AnimatedPressable key={item.label} onPress={() => router.push(item.href as never)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
+              <View className="h-11 w-11 items-center justify-center rounded-[15px] bg-soft"><Ionicons name={item.icon} size={19} color={colors.berry} /></View>
               <View className="ml-3 flex-1"><Text className="text-[13px] font-black text-ink">{item.label}</Text><Text className="mt-1 text-[9px] text-muted">{item.description}</Text></View>
               <Ionicons name="chevron-forward" size={17} color={colors.subtle} />
             </AnimatedPressable>
-          </FadeInView>
-        ))}
+          ))}
+        </View>
       </View>
-      <ReadyModal visible={Boolean(readyTitle)} title={readyTitle} onClose={() => setReadyTitle('')} />
     </Page>
   );
 }
