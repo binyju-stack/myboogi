@@ -7,6 +7,7 @@ import { colors } from '@/constants/theme';
 import { homeBreederStories, homeListings, homePosts, homeReviews } from '@/data/homeScreenData';
 
 import { BrandHeader } from './common';
+import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Page } from './screen';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -109,25 +110,25 @@ export function HomeScreen() {
       <Section eyebrow="COMMUNITY" title="오늘 많이 본 이야기" action={() => router.push('/community')}>
         <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
           {homePosts.map((post, index) => (
-            <Pressable key={post.id} onPress={() => router.push('/community')} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
+            <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}`)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
               <Text className="mr-3 text-[16px] font-black text-berry">{index + 1}</Text>
               <View className="flex-1"><Text className="text-[10px] font-bold text-muted">{post.category} · {post.author}</Text><Text className="mt-1.5 text-[13px] font-black text-ink" numberOfLines={1}>{post.title}</Text></View>
               <Metric icon="heart-outline" value={post.likes} /><Metric icon="chatbubble-outline" value={post.comments} />
-            </Pressable>
+            </AnimatedPressable>
           ))}
         </View>
       </Section>
 
       <View className="px-5 pt-8">
-        <Pressable onPress={() => router.push('/ai')} className="rounded-[24px] bg-ink p-5 shadow-sm">
+        <FadeInView><AnimatedPressable onPress={() => router.push('/ai')} className="rounded-[24px] bg-ink p-5 shadow-sm">
           <View className="flex-row items-center"><View className="h-11 w-11 items-center justify-center rounded-[15px] bg-berry"><Ionicons name="sparkles" size={19} color="white" /></View><View className="ml-3 flex-1"><Text className="text-[10px] font-black text-petal">BOOGI AI</Text><Text className="mt-1 text-[16px] font-black text-white">사육 고민, 바로 물어보세요</Text></View><Ionicons name="chevron-forward" size={18} color="white" /></View>
           <View className="mt-4 flex-row"><Text className="mr-2 rounded-full bg-white/10 px-3 py-2 text-[9px] font-bold text-white">눈이 부었어요</Text><Text className="rounded-full bg-white/10 px-3 py-2 text-[9px] font-bold text-white">합사 가능할까요?</Text></View>
-        </Pressable>
+        </AnimatedPressable></FadeInView>
 
-        <Pressable onPress={() => router.push('/growth')} className="mt-3 rounded-[24px] border border-line bg-white p-5 shadow-sm">
+        <FadeInView delay={70}><AnimatedPressable onPress={() => router.push('/growth')} className="mt-3 rounded-[24px] border border-line bg-white p-5 shadow-sm">
           <View className="flex-row items-center justify-between"><View><Text className="text-[10px] font-black text-berry">GROWTH NOTE</Text><Text className="mt-1 text-[17px] font-black text-ink">부기가 이번 달 17g 자랐어요</Text><Text className="mt-2 text-[11px] text-muted">현재 238g · 등갑 길이 10.8cm</Text></View><View className="h-11 w-11 items-center justify-center rounded-[15px] bg-blush"><Ionicons name="analytics-outline" size={21} color={colors.berry} /></View></View>
           <View className="mt-5 h-12 flex-row items-end justify-between">{[18, 24, 29, 35, 41, 47].map((height) => <View key={height} style={{ height }} className="w-8 rounded-t-lg bg-petal" />)}</View>
-        </Pressable>
+        </AnimatedPressable></FadeInView>
       </View>
     </Page>
   );

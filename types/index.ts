@@ -60,6 +60,16 @@ export interface Post {
   comments: number;
 }
 
+export interface PostComment {
+  id: string;
+  postId: string;
+  author: string;
+  avatar: string;
+  content: string;
+  createdAt: string;
+  likes: number;
+}
+
 export interface Turtle {
   id: string;
   name: string;

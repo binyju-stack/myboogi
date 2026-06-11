@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { TopBar } from '@/components/common';
+import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { growthRecords, turtles } from '@/data/mockData';
@@ -46,7 +47,7 @@ export default function GrowthScreen() {
           <View className="flex-row items-center"><Image source={{ uri: turtle.image }} className="h-20 w-20 rounded-[22px] bg-shell" /><View className="ml-4 flex-1"><Text className="text-[9px] font-black text-petal">MY TURTLE</Text><Text className="mt-1 text-[23px] font-black text-white">{turtle.name}</Text><Text className="mt-1 text-[10px] text-white/50">{turtle.species} · 부화일 {turtle.birthDate}</Text></View></View>
           <View className="mt-5 flex-row gap-2"><MiniStat icon="scale-outline" label="현재 몸무게" value={`${latest?.weight ?? '-'}g`} /><MiniStat icon="resize-outline" label="현재 등갑 길이" value={`${latest?.shellLength ?? '-'}cm`} /></View>
           <View className="mt-4 rounded-[18px] bg-white/10 px-4 py-3"><Text className="text-[11px] font-bold text-white">{weightChange > 0 ? `지난 기록보다 ${weightChange}g 자랐어요` : '첫 성장 기록을 남겨보세요'} · 최근 기록 {latest?.date ?? '-'}</Text></View>
-          <Pressable onPress={() => router.push(`/growth/record?turtleId=${turtle.id}`)} className="mt-3 items-center rounded-[18px] bg-berry py-4"><Text className="text-[13px] font-black text-white">오늘 기록하기</Text></Pressable>
+          <AnimatedPressable onPress={() => router.push(`/growth/record?turtleId=${turtle.id}`)} className="mt-3 items-center rounded-[18px] bg-berry py-4"><Text className="text-[13px] font-black text-white">오늘 기록하기</Text></AnimatedPressable>
         </View>
 
         <View className="mb-4 mt-8 flex-row items-end justify-between"><View><Text className="text-[9px] font-black text-berry">MY TURTLES</Text><Text className="mt-1 text-[19px] font-black text-ink">내 거북이</Text></View><Text className="text-[10px] font-bold text-muted">{turtles.length}마리</Text></View>
@@ -55,7 +56,7 @@ export default function GrowthScreen() {
         {turtles.map((item) => {
           const itemLatest = growthRecords.find((record) => record.turtleId === item.id);
           const selected = item.id === turtle.id;
-          return <Pressable key={item.id} onPress={() => setSelectedId(item.id)} className={`mr-3 w-56 rounded-[22px] border p-4 shadow-sm ${selected ? 'border-berry bg-blush' : 'border-line bg-white'}`}><View className="flex-row items-center"><Image source={{ uri: item.image }} className="h-14 w-14 rounded-full bg-shell" /><View className="ml-3 flex-1"><Text className="text-[14px] font-black text-ink">{item.name}</Text><Text className="mt-1 text-[9px] text-muted" numberOfLines={1}>{item.species}</Text><Text className="mt-1 text-[9px] font-bold text-berry">{itemLatest?.weight ?? '-'}g · {item.birthDate}</Text></View></View></Pressable>;
+          return <FadeInView key={item.id}><AnimatedPressable onPress={() => setSelectedId(item.id)} className={`mr-3 w-56 rounded-[22px] border p-4 shadow-sm ${selected ? 'border-berry bg-blush' : 'border-line bg-white'}`}><View className="flex-row items-center"><Image source={{ uri: item.image }} className="h-14 w-14 rounded-full bg-shell" /><View className="ml-3 flex-1"><Text className="text-[14px] font-black text-ink">{item.name}</Text><Text className="mt-1 text-[9px] text-muted" numberOfLines={1}>{item.species}</Text><Text className="mt-1 text-[9px] font-bold text-berry">{itemLatest?.weight ?? '-'}g · {item.birthDate}</Text></View></View></AnimatedPressable></FadeInView>;
         })}
       </ScrollView>
 

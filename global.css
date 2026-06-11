@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[role='button'] {
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+[role='button']:active {
+  opacity: 0.78;
+  transform: scale(0.98);
+}

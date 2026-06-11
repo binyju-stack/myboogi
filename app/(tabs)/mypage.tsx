@@ -4,6 +4,7 @@ import type { ComponentProps } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Avatar, VerifiedBadge } from '@/components/common';
+import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { breeders, turtles } from '@/data/mockData';
@@ -12,7 +13,7 @@ type IconName = ComponentProps<typeof Ionicons>['name'];
 const menus: { label: string; description: string; icon: IconName; href: string }[] = [
   { label: '내 분양글', description: '등록한 분양글을 관리해요', icon: 'storefront-outline', href: '/marketplace' },
   { label: '찜 목록', description: '관심 있는 거북이를 모아봤어요', icon: 'heart-outline', href: '/marketplace' },
-  { label: '내 게시글', description: '커뮤니티 활동을 확인해요', icon: 'document-text-outline', href: '/community' },
+  { label: '내 게시글', description: '커뮤니티 활동을 확인해요', icon: 'document-text-outline', href: '/community/p1' },
   { label: '팔로우 브리더', description: '새 소식을 빠르게 만나보세요', icon: 'people-outline', href: `/breeder/${breeders[0].id}` },
   { label: '성장 기록', description: '부기의 변화를 기록해요', icon: 'analytics-outline', href: '/growth' },
   { label: '설정', description: '알림과 서비스 설정을 관리해요', icon: 'settings-outline', href: '/admin' },
@@ -32,7 +33,7 @@ export default function MyPageScreen() {
       </View>
 
       <View className="px-5 pt-5">
-        {menus.map((item) => <Pressable key={item.label} onPress={() => router.push(item.href as never)} className="mb-3 flex-row items-center rounded-[20px] border border-line bg-white p-4 shadow-sm"><View className="h-11 w-11 items-center justify-center rounded-[15px] bg-blush"><Ionicons name={item.icon} size={19} color={colors.berry} /></View><View className="ml-3 flex-1"><Text className="text-[13px] font-black text-ink">{item.label}</Text><Text className="mt-1 text-[10px] text-muted">{item.description}</Text></View><Ionicons name="chevron-forward" size={17} color={colors.subtle} /></Pressable>)}
+        {menus.map((item, index) => <FadeInView key={item.label} delay={index * 45}><AnimatedPressable onPress={() => router.push(item.href as never)} className="mb-3 flex-row items-center rounded-[20px] border border-line bg-white p-4 shadow-sm"><View className="h-11 w-11 items-center justify-center rounded-[15px] bg-blush"><Ionicons name={item.icon} size={19} color={colors.berry} /></View><View className="ml-3 flex-1"><Text className="text-[13px] font-black text-ink">{item.label}</Text><Text className="mt-1 text-[10px] text-muted">{item.description}</Text></View><Ionicons name="chevron-forward" size={17} color={colors.subtle} /></AnimatedPressable></FadeInView>)}
       </View>
     </Page>
   );

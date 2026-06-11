@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
+import { useEffect, useRef } from 'react';
+import { Animated, type ColorValue } from 'react-native';
 
 import { colors } from '@/constants/theme';
 
@@ -13,10 +15,18 @@ const tabs: { name: string; title: string; icon: IconName; activeIcon: IconName 
   { name: 'mypage', title: '마이', icon: 'person-outline', activeIcon: 'person' },
 ];
 
+function TabIcon({ focused, color, icon, activeIcon }: { focused: boolean; color: ColorValue; icon: IconName; activeIcon: IconName }) {
+  const scale = useRef(new Animated.Value(focused ? 1.08 : 1)).current;
+  useEffect(() => {
+    Animated.spring(scale, { toValue: focused ? 1.12 : 1, useNativeDriver: true, speed: 28, bounciness: 4 }).start();
+  }, [focused, scale]);
+  return <Animated.View style={{ transform: [{ scale }] }}><Ionicons name={focused ? activeIcon : icon} color={color} size={21} /></Animated.View>;
+}
+
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: colors.berry, tabBarInactiveTintColor: colors.subtle, tabBarLabelStyle: { fontSize: 10, fontWeight: '800', marginTop: 2 }, tabBarStyle: { height: 70, paddingTop: 8, paddingBottom: 8, borderTopColor: colors.line, backgroundColor: 'white' } }}>
-      {tabs.map((tab) => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title, tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? tab.activeIcon : tab.icon} color={color} size={21} /> }} />)}
+    <Tabs screenOptions={{ headerShown: false, animation: 'fade', transitionSpec: { animation: 'timing', config: { duration: 160 } }, tabBarActiveTintColor: colors.berry, tabBarInactiveTintColor: colors.subtle, tabBarLabelStyle: { fontSize: 10, fontWeight: '800', marginTop: 2 }, tabBarStyle: { height: 70, paddingTop: 8, paddingBottom: 8, borderTopColor: colors.line, backgroundColor: 'white' } }}>
+      {tabs.map((tab) => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title, tabBarIcon: ({ color, focused }) => <TabIcon focused={focused} color={color} icon={tab.icon} activeIcon={tab.activeIcon} /> }} />)}
     </Tabs>
   );
 }

@@ -18,7 +18,7 @@ export default function MarketplaceScreen() {
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 py-4"><Chip label="전체" selected /><Chip label="품종" icon="chevron-down" /><Chip label="가격" icon="chevron-down" /><Chip label="지역" icon="chevron-down" /><Chip label="유체/성체" icon="chevron-down" /></ScrollView>
       <View className="flex-row items-center justify-between px-5 pb-4 pt-1"><View><Text className="text-[10px] font-black text-berry">MARKETPLACE</Text><Text className="mt-1 text-[19px] font-black text-ink">분양 중인 거북이</Text></View><Pressable onPress={() => router.push('/listing/create')} className="flex-row items-center rounded-full bg-berry px-3.5 py-2.5"><Ionicons name="add" size={14} color="white" /><Text className="ml-1 text-[10px] font-black text-white">분양글 등록</Text></Pressable></View>
-      <View className="px-5">{listings.map((item) => <ListingCard key={item.id} item={item} list />)}</View>
+      <View className="px-5">{listings.map((item, index) => <ListingCard key={item.id} item={item} list index={index} />)}</View>
     </Page>
   );
 }

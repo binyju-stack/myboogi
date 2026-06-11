@@ -1,4 +1,4 @@
-import type { Breeder, BreederReview, GrowthRecord, Listing, Post, Turtle } from '@/types';
+import type { Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle } from '@/types';
 
 const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
@@ -41,6 +41,13 @@ export const posts: Post[] = [
   { id: 'p2', category: '사육정보', author: '느림보아빠', avatar: turtleImages[2], title: '육지거북 여름철 온습도 관리 팁', content: '장마철에는 습도가 너무 높아지지 않도록 환기를 자주 해주세요.', image: turtleImages[2], createdAt: '12분 전', views: 608, likes: 156, comments: 33 },
   { id: 'p3', category: '질병상담', author: '부기맘', avatar: turtleImages[3], title: '눈이 조금 부어 보여요. 병원에 가야 할까요?', content: '오늘 아침부터 한쪽 눈을 잘 뜨지 못합니다.', image: turtleImages[3], createdAt: '34분 전', views: 420, likes: 31, comments: 28 },
   { id: 'p4', category: '먹이정보', author: '초록정원', avatar: turtleImages[1], title: '민들레 급여 전 꼭 확인하세요', content: '길가의 민들레보다 농약 걱정 없는 곳에서 채집하세요.', createdAt: '1시간 전', views: 330, likes: 89, comments: 17 },
+];
+
+export const postComments: PostComment[] = [
+  { id: 'c1', postId: 'p1', author: '부기맘', avatar: turtleImages[2], content: '산책하는 모습이 정말 귀여워요. 바닥 온도만 잘 확인하면 좋을 것 같아요!', createdAt: '5분 전', likes: 12 },
+  { id: 'c2', postId: 'p1', author: '초록정원', avatar: turtleImages[1], content: '우리 아이도 날씨 좋은 날 짧게 산책해요.', createdAt: '12분 전', likes: 5 },
+  { id: 'c3', postId: 'p2', author: '꼬북집사', avatar: turtleImages[0], content: '습도 관리가 늘 어려웠는데 좋은 정보 감사합니다.', createdAt: '8분 전', likes: 18 },
+  { id: 'c4', postId: 'p3', author: '느림보아빠', avatar: turtleImages[3], content: '증상이 계속되면 꼭 전문 병원에 방문해보세요.', createdAt: '20분 전', likes: 9 },
 ];
 
 export const turtles: Turtle[] = [
