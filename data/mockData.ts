@@ -36,19 +36,36 @@ export const breederReviews: BreederReview[] = [
   { id: 'br4', breederId: 'b3', author: '꼬북집사', avatar: turtleImages[1], rating: 5, content: '수생 환경 세팅 방법까지 자세히 안내해주시는 믿음직한 브리더예요.', species: '다이아몬드백 테라핀', createdAt: '1주 전' },
 ];
 
-export const posts: Post[] = [
+const legacyPosts: Post[] = [
   { id: 'p1', category: '자유게시판', author: '꼬북집사', avatar: turtleImages[0], title: '우리집 레오파드 첫 산책 다녀왔어요', content: '날씨가 좋아서 짧게 산책했는데 정말 신나 있어요.', image: turtleImages[1], createdAt: '방금 전', views: 219, likes: 68, comments: 12 },
   { id: 'p2', category: '사육정보', author: '느림보아빠', avatar: turtleImages[2], title: '육지거북 여름철 온습도 관리 팁', content: '장마철에는 습도가 너무 높아지지 않도록 환기를 자주 해주세요.', image: turtleImages[2], createdAt: '12분 전', views: 608, likes: 156, comments: 33 },
   { id: 'p3', category: '질병상담', author: '부기맘', avatar: turtleImages[3], title: '눈이 조금 부어 보여요. 병원에 가야 할까요?', content: '오늘 아침부터 한쪽 눈을 잘 뜨지 못합니다.', image: turtleImages[3], createdAt: '34분 전', views: 420, likes: 31, comments: 28 },
   { id: 'p4', category: '먹이정보', author: '초록정원', avatar: turtleImages[1], title: '민들레 급여 전 꼭 확인하세요', content: '길가의 민들레보다 농약 걱정 없는 곳에서 채집하세요.', createdAt: '1시간 전', views: 330, likes: 89, comments: 17 },
 ];
 
-export const postComments: PostComment[] = [
+const legacyPostComments: PostComment[] = [
   { id: 'c1', postId: 'p1', author: '부기맘', avatar: turtleImages[2], content: '산책하는 모습이 정말 귀여워요. 바닥 온도만 잘 확인하면 좋을 것 같아요!', createdAt: '5분 전', likes: 12 },
   { id: 'c2', postId: 'p1', author: '초록정원', avatar: turtleImages[1], content: '우리 아이도 날씨 좋은 날 짧게 산책해요.', createdAt: '12분 전', likes: 5 },
   { id: 'c3', postId: 'p2', author: '꼬북집사', avatar: turtleImages[0], content: '습도 관리가 늘 어려웠는데 좋은 정보 감사합니다.', createdAt: '8분 전', likes: 18 },
   { id: 'c4', postId: 'p3', author: '느림보아빠', avatar: turtleImages[3], content: '증상이 계속되면 꼭 전문 병원에 방문해보세요.', createdAt: '20분 전', likes: 9 },
 ];
+
+export const posts: Post[] = [
+  { id: 'p1', category: '자유게시판', author: '꼬북집사', avatar: turtleImages[0], title: '우리집 레오파드 첫 일광욕 성공했어요', content: '날씨가 좋아서 짧게 일광욕을 했는데 정말 신나 보였어요.', image: turtleImages[1], createdAt: '방금 전', views: 219, likes: 68, comments: 12 },
+  { id: 'p2', category: '사육정보', author: '어린보아비', avatar: turtleImages[2], title: '육지거북 여름철 습도 관리 팁', content: '장마철에는 습도가 너무 높아지지 않도록 환기를 자주 해주세요.', image: turtleImages[2], createdAt: '12분 전', views: 608, likes: 156, comments: 33 },
+  { id: 'p3', category: '질병상담', author: '부기맘', avatar: turtleImages[3], title: '눈이 조금 부어 보여요, 병원에 가야 할까요?', content: '오늘 아침부터 한쪽 눈을 잘 뜨지 못합니다. 비슷한 경험이 있으신가요?', image: turtleImages[3], createdAt: '34분 전', views: 420, likes: 31, comments: 28 },
+  { id: 'p4', category: '먹이정보', author: '초록정원', avatar: turtleImages[1], title: '민들레 급여 전 꼭 확인하세요', content: '길가의 민들레보다 농약 걱정 없는 곳에서 채집해 주세요.', createdAt: '1시간 전', views: 330, likes: 89, comments: 17 },
+];
+
+export const postComments: PostComment[] = [
+  { id: 'c1', postId: 'p1', author: '부기맘', avatar: turtleImages[2], content: '일광욕하는 모습이 정말 귀여워요. 바닥 온도만 잘 확인하면 좋을 것 같아요.', createdAt: '5분 전', likes: 12 },
+  { id: 'c2', postId: 'p1', author: '초록정원', avatar: turtleImages[1], content: '우리 아이도 날씨 좋은 날에는 짧게 일광욕해요.', createdAt: '12분 전', likes: 5 },
+  { id: 'c3', postId: 'p2', author: '꼬북집사', avatar: turtleImages[0], content: '습도 관리가 늘 어려웠는데 좋은 정보 감사합니다.', createdAt: '8분 전', likes: 18 },
+  { id: 'c4', postId: 'p3', author: '어린보아비', avatar: turtleImages[3], content: '증상이 계속되면 꼭 전문 병원에 방문해보세요.', createdAt: '20분 전', likes: 9 },
+];
+
+void legacyPosts;
+void legacyPostComments;
 
 export const turtles: Turtle[] = [
   { id: 't1', name: '부기', species: '레오파드 육지거북', sex: '미구분', image: turtleImages[0], birthDate: '2025.09.21' },
