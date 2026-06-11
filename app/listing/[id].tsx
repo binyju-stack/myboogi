@@ -8,6 +8,7 @@ import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
 import { useMockUserState } from '@/components/MockUserState';
 import { ReadyModal } from '@/components/ReadyModal';
+import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { colors } from '@/constants/theme';
 import { breederReviews, breeders, listingDetails, listings } from '@/data/mockData';
 
@@ -22,6 +23,7 @@ export default function ListingDetailScreen() {
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
+  const [actionVisible, setActionVisible] = useState(false);
   const { isFavorite, isFollowing, toggleFavorite } = useMockUserState();
   const item = listings.find((listing) => listing.id === id) ?? listings[0];
   const breeder = breeders.find((entry) => entry.id === item.breederId) ?? breeders[0];
@@ -38,7 +40,7 @@ export default function ListingDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <TopBar title="분양 상세" right="share-social-outline" />
+      <TopBar title="분양 상세" right="ellipsis-horizontal" onRightPress={() => setActionVisible(true)} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 92 + insets.bottom }} className="bg-page">
         <View className="bg-white">
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={(event) => setImageIndex(Math.round(event.nativeEvent.contentOffset.x / width))}>
@@ -90,6 +92,18 @@ export default function ListingDetailScreen() {
         </View>
       </View>
       <ReadyModal visible={modalVisible} title={modalTitle} onClose={() => setModalVisible(false)} />
+      <ReportActionMenu
+        visible={actionVisible}
+        onClose={() => setActionVisible(false)}
+        onReport={() => {
+          setActionVisible(false);
+          router.push({ pathname: '/report', params: { targetType: '분양글', targetName: item.species } });
+        }}
+        onBlock={() => {
+          setActionVisible(false);
+          showModal('해당 사용자를 차단했습니다.');
+        }}
+      />
     </SafeAreaView>
   );
 }

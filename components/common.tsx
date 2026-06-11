@@ -43,14 +43,14 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function TopBar({ title, right }: { title: string; right?: IconName }) {
+export function TopBar({ title, right, onRightPress }: { title: string; right?: IconName; onRightPress?: () => void }) {
   return (
     <View className="flex-row items-center bg-white px-4 py-3.5">
       <Pressable onPress={() => router.back()} className="h-10 w-10 items-center justify-center">
         <Ionicons name="chevron-back" size={24} color={colors.ink} />
       </Pressable>
       <Text className="flex-1 text-center text-[16px] font-black text-ink">{title}</Text>
-      <View className="h-10 w-10 items-center justify-center">{right ? <Ionicons name={right} size={22} color={colors.ink} /> : null}</View>
+      <Pressable onPress={onRightPress} disabled={!onRightPress} className="h-10 w-10 items-center justify-center">{right ? <Ionicons name={right} size={22} color={colors.ink} /> : null}</Pressable>
     </View>
   );
 }

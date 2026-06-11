@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Avatar, Stat, TopBar } from '@/components/common';
 import { ReadyModal } from '@/components/ReadyModal';
+import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { colors } from '@/constants/theme';
 import { postComments, posts } from '@/data/mockData';
 
@@ -15,12 +16,15 @@ export default function CommunityDetailScreen() {
   const insets = useSafeAreaInsets();
   const [liked, setLiked] = useState(false);
   const [readyVisible, setReadyVisible] = useState(false);
+  const [actionVisible, setActionVisible] = useState(false);
+  const [actionTarget, setActionTarget] = useState({ type: '커뮤니티 게시글', name: '' });
+  const [blockVisible, setBlockVisible] = useState(false);
   const post = posts.find((item) => item.id === id) ?? posts[0];
   const comments = postComments.filter((comment) => comment.postId === post.id);
 
   return (
     <SafeAreaView className="flex-1 bg-page" edges={['top']}>
-      <TopBar title="커뮤니티" right="ellipsis-horizontal" />
+      <TopBar title="커뮤니티" right="ellipsis-horizontal" onRightPress={() => { setActionTarget({ type: '커뮤니티 게시글', name: post.title }); setActionVisible(true); }} />
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -81,6 +85,7 @@ export default function CommunityDetailScreen() {
                     </View>
                     <Ionicons name="heart-outline" size={14} color={colors.muted} />
                     <Text className="ml-1 text-[9px] text-muted">{comment.likes}</Text>
+                    <AnimatedPressable onPress={() => { setActionTarget({ type: '댓글', name: comment.content }); setActionVisible(true); }} className="ml-2 h-8 w-8 items-center justify-center rounded-full bg-soft"><Ionicons name="ellipsis-horizontal" size={15} color={colors.muted} /></AnimatedPressable>
                   </View>
                   <Text className="mt-3 text-[12px] leading-6 text-ink">{comment.content}</Text>
                 </View>
@@ -102,6 +107,19 @@ export default function CommunityDetailScreen() {
         </View>
       </KeyboardAvoidingView>
       <ReadyModal visible={readyVisible} title="댓글 등록 기능은 준비중입니다." onClose={() => setReadyVisible(false)} />
+      <ReadyModal visible={blockVisible} title="해당 사용자를 차단했습니다." onClose={() => setBlockVisible(false)} />
+      <ReportActionMenu
+        visible={actionVisible}
+        onClose={() => setActionVisible(false)}
+        onReport={() => {
+          setActionVisible(false);
+          router.push({ pathname: '/report', params: { targetType: actionTarget.type, targetName: actionTarget.name } });
+        }}
+        onBlock={() => {
+          setActionVisible(false);
+          setBlockVisible(true);
+        }}
+      />
     </SafeAreaView>
   );
 }

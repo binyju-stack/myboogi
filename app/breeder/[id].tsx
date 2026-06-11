@@ -1,11 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { Avatar, TopBar, VerifiedBadge } from '@/components/common';
 import { AnimatedPressable } from '@/components/AnimatedPressable';
 import { ChatReadyModal } from '@/components/ChatReadyModal';
+import { ReadyModal } from '@/components/ReadyModal';
+import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { ListingCard } from '@/components/ListingCard';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
@@ -48,6 +50,8 @@ export default function BreederShopScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<ShopTab>('selling');
   const [chatModalVisible, setChatModalVisible] = useState(false);
+  const [actionVisible, setActionVisible] = useState(false);
+  const [blockVisible, setBlockVisible] = useState(false);
   const { isFollowing, toggleFollow } = useMockUserState();
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
   const selling = listings.filter((item) => item.breederId === breeder.id && item.status === '분양중');
@@ -59,7 +63,7 @@ export default function BreederShopScreen() {
 
   return (
     <Page>
-      <TopBar title="브리더 미니샵" right="share-social-outline" />
+      <TopBar title="브리더 미니샵" right="ellipsis-horizontal" onRightPress={() => setActionVisible(true)} />
 
       <View className="bg-white pb-6">
         <Image source={{ uri: breeder.banner }} className="h-44 w-full bg-shell" resizeMode="cover" />
@@ -110,6 +114,19 @@ export default function BreederShopScreen() {
             : <EmptyState completed={activeTab === 'completed'} />}
       </View>
       <ChatReadyModal visible={chatModalVisible} onClose={() => setChatModalVisible(false)} />
+      <ReadyModal visible={blockVisible} title="해당 사용자를 차단했습니다." onClose={() => setBlockVisible(false)} />
+      <ReportActionMenu
+        visible={actionVisible}
+        onClose={() => setActionVisible(false)}
+        onReport={() => {
+          setActionVisible(false);
+          router.push({ pathname: '/report', params: { targetType: '브리더', targetName: breeder.name } });
+        }}
+        onBlock={() => {
+          setActionVisible(false);
+          setBlockVisible(true);
+        }}
+      />
     </Page>
   );
 }
