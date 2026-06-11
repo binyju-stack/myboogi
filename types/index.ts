@@ -42,7 +42,7 @@ export interface Listing {
   images: string[];
   description: string;
   verified: boolean;
-  status: '분양중' | '분양완료';
+  status: '분양중' | '예약중' | '분양완료';
 }
 
 export interface Post {

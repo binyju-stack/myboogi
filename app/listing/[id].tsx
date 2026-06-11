@@ -5,16 +5,19 @@ import { Alert, Image, Pressable, ScrollView, Text, useWindowDimensions, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
+import { AnimatedPressable } from '@/components/AnimatedPressable';
 import { ChatReadyModal } from '@/components/ChatReadyModal';
+import { useMockUserState } from '@/components/MockUserState';
+import { ReadyModal } from '@/components/ReadyModal';
 import { colors } from '@/constants/theme';
 import { breeders, listingDetails, listings } from '@/data/mockData';
 
 function ActionButton({ icon, label, accent = false, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; accent?: boolean; onPress?: () => void }) {
   return (
-    <Pressable onPress={onPress} className={`flex-1 items-center justify-center rounded-[15px] py-2.5 ${accent ? 'bg-berry' : 'bg-soft'}`}>
+    <AnimatedPressable onPress={onPress} className={`flex-1 items-center justify-center rounded-[15px] py-2.5 ${accent ? 'bg-berry' : 'bg-soft'}`}>
       <Ionicons name={icon} size={17} color={accent ? 'white' : colors.ink} />
       <Text className={`mt-1 text-[8px] font-black ${accent ? 'text-white' : 'text-ink'}`}>{label}</Text>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
@@ -23,9 +26,14 @@ export default function ListingDetailScreen() {
   const { width } = useWindowDimensions();
   const [imageIndex, setImageIndex] = useState(0);
   const [chatModalVisible, setChatModalVisible] = useState(false);
+  const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);
+  const [favoriteMessage, setFavoriteMessage] = useState('');
+  const { isFavorite, toggleFavorite } = useMockUserState();
   const item = listings.find((listing) => listing.id === id) ?? listings[0];
   const breeder = breeders.find((entry) => entry.id === item.breederId) ?? breeders[0];
   const detail = listingDetails[item.id] ?? listingDetails.l1;
+  const favorite = isFavorite(item.id);
+  const likeCount = item.likes + (favorite ? 1 : 0);
   const mockContact = (label: string) => Alert.alert(label, '브리더 연락처 연결은 다음 단계에서 제공됩니다.');
 
   return (
@@ -48,7 +56,7 @@ export default function ListingDetailScreen() {
           <View className="flex-row items-center"><VerifiedBadge /><Text className="ml-2 text-[10px] font-bold text-muted">{item.status}</Text></View>
           <Text className="mt-3 text-[22px] font-black tracking-[-0.6px] text-ink">{item.species}</Text>
           <Text className="mt-4 text-[26px] font-black text-ink">{item.price.toLocaleString()}원</Text>
-          <View className="mt-4 flex-row items-center"><Text className="text-[11px] text-muted">{item.location} · {item.sex} · {item.stage}</Text><View className="ml-auto flex-row"><Stat icon="eye-outline" value={item.views} /><Stat icon="heart-outline" value={item.likes} /></View></View>
+          <View className="mt-4 flex-row items-center"><Text className="text-[11px] text-muted">{item.location} · {item.sex} · {item.stage}</Text><View className="ml-auto flex-row"><Stat icon="eye-outline" value={item.views} /><Stat icon={favorite ? 'heart' : 'heart-outline'} value={likeCount} /></View></View>
         </View>
 
         <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
@@ -80,12 +88,13 @@ export default function ListingDetailScreen() {
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 flex-row gap-2 border-t border-line bg-white px-4 py-3">
-        <ActionButton icon="heart-outline" label="관심등록" />
+        <ActionButton icon={favorite ? 'heart' : 'heart-outline'} label={favorite ? '관심등록 완료' : '관심등록'} onPress={() => { const added = toggleFavorite(item.id); setFavoriteMessage(added ? '찜 목록에 추가되었습니다.' : '찜 목록에서 삭제되었습니다.'); setFavoriteModalVisible(true); }} />
         <ActionButton icon="call-outline" label="전화문의" onPress={() => mockContact('전화문의')} />
         <ActionButton icon="chatbubble-outline" label="카카오톡" onPress={() => mockContact('카카오톡 문의')} />
         <ActionButton icon="chatbubbles" label="채팅하기" accent onPress={() => setChatModalVisible(true)} />
       </View>
       <ChatReadyModal visible={chatModalVisible} onClose={() => setChatModalVisible(false)} />
+      <ReadyModal visible={favoriteModalVisible} title={favoriteMessage} onClose={() => setFavoriteModalVisible(false)} />
     </SafeAreaView>
   );
 }

@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { Avatar, TopBar, VerifiedBadge } from '@/components/common';
+import { AnimatedPressable } from '@/components/AnimatedPressable';
 import { ChatReadyModal } from '@/components/ChatReadyModal';
 import { ListingCard } from '@/components/ListingCard';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import type { BreederReview } from '@/types';
+import { useMockUserState } from '@/components/MockUserState';
 
 type ShopTab = 'selling' | 'completed' | 'reviews';
 
@@ -46,11 +48,14 @@ export default function BreederShopScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<ShopTab>('selling');
   const [chatModalVisible, setChatModalVisible] = useState(false);
+  const { isFollowing, toggleFollow } = useMockUserState();
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
   const selling = listings.filter((item) => item.breederId === breeder.id && item.status === '분양중');
   const completed = listings.filter((item) => item.breederId === breeder.id && item.status === '분양완료');
   const reviews = breederReviews.filter((review) => review.breederId === breeder.id);
   const activeListings = activeTab === 'selling' ? selling : completed;
+  const following = isFollowing(breeder.id);
+  const followerCount = breeder.followers + (following ? 1 : 0);
 
   return (
     <Page>
@@ -61,7 +66,7 @@ export default function BreederShopScreen() {
         <View className="-mt-10 px-5">
           <View className="flex-row items-end justify-between">
             <View className="rounded-full border-4 border-white bg-white"><Avatar uri={breeder.avatar} size={82} /></View>
-            <Pressable className="mb-1 rounded-full bg-berry px-6 py-3"><Text className="text-[11px] font-black text-white">팔로우</Text></Pressable>
+            <AnimatedPressable onPress={() => toggleFollow(breeder.id)} className={`mb-1 rounded-full px-6 py-3 ${following ? 'bg-blush' : 'bg-berry'}`}><Text className={`text-[11px] font-black ${following ? 'text-berry' : 'text-white'}`}>{following ? '팔로잉' : '팔로우'}</Text></AnimatedPressable>
           </View>
 
           <View className="mt-4 flex-row items-center"><Text className="text-[22px] font-black tracking-[-0.6px] text-ink">{breeder.name}</Text><View className="ml-2"><VerifiedBadge label={breeder.badge} /></View></View>
@@ -69,7 +74,7 @@ export default function BreederShopScreen() {
           <Text className="mt-4 text-[13px] leading-6 text-ink">{breeder.intro}</Text>
 
           <View className="mt-5 flex-row rounded-[20px] bg-soft py-4">
-            {[[breeder.followers.toLocaleString(), '팔로워'], [breeder.trades, '분양 완료'], [breeder.rating, '후기 평점']].map(([value, label], index) => (
+            {[[followerCount.toLocaleString(), '팔로워'], [breeder.trades, '분양 완료'], [breeder.rating, '후기 평점']].map(([value, label], index) => (
               <View key={label} className={`flex-1 items-center ${index ? 'border-l border-line' : ''}`}><Text className="text-[17px] font-black text-ink">{value}</Text><Text className="mt-1 text-[9px] text-muted">{label}</Text></View>
             ))}
           </View>

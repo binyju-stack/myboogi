@@ -9,6 +9,7 @@ import { homeBreederStories, homeListings, homePosts, homeReviews } from '@/data
 import { BrandHeader } from './common';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Page } from './screen';
+import { useMockUserState } from './MockUserState';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -43,9 +44,11 @@ function TurtleArt({ color, height = 154 }: { color: string; height?: number }) 
 }
 
 function ListingCard({ item }: { item: (typeof homeListings)[number] }) {
+  const { isFavorite, toggleFavorite } = useMockUserState();
+  const favorite = isFavorite(item.id);
   return (
     <Pressable onPress={() => router.push(`/listing/${item.id}`)} className="mr-3 w-[274px] rounded-[24px] border border-line bg-white p-3 shadow-sm">
-      <TurtleArt color={item.color} />
+      <View><TurtleArt color={item.color} /><Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className="absolute right-3 top-3 h-9 w-9 items-center justify-center rounded-full bg-white/90"><Ionicons name={favorite ? 'heart' : 'heart-outline'} size={18} color={colors.berry} /></Pressable></View>
       <View className="px-1 pb-1 pt-3">
         <View className="flex-row items-center"><Text className="rounded-full bg-blush px-2 py-1 text-[9px] font-black text-berry">오늘의 추천</Text><Text className="ml-2 text-[10px] text-muted">{item.breeder}</Text></View>
         <Text className="mt-2 text-[15px] font-black text-ink" numberOfLines={1}>{item.species}</Text>
@@ -56,13 +59,15 @@ function ListingCard({ item }: { item: (typeof homeListings)[number] }) {
 }
 
 function BreederCard({ item }: { item: (typeof homeBreederStories)[number] }) {
+  const { isFollowing } = useMockUserState();
+  const following = isFollowing(item.id);
   return (
     <Pressable onPress={() => router.push(`/breeder/${item.id}`)} className="mr-3 w-52 rounded-[22px] border border-line bg-white p-4 shadow-sm">
       <View className="flex-row items-center">
         <View className="h-14 w-14 overflow-hidden rounded-full"><TurtleArt color={item.color} height={56} /></View>
         <View className="ml-3 flex-1"><Text className="text-[9px] font-black text-berry">✓ {item.badge} 브리더</Text><Text className="mt-1 text-[14px] font-black text-ink">{item.name}</Text><Text className="mt-1 text-[9px] text-muted">팔로워 {item.followers}</Text></View>
       </View>
-      <View className="mt-4 rounded-[14px] bg-soft py-2.5"><Text className="text-center text-[10px] font-black text-ink">상점 방문</Text></View>
+      <View className={`mt-4 rounded-[14px] py-2.5 ${following ? 'bg-blush' : 'bg-soft'}`}><Text className={`text-center text-[10px] font-black ${following ? 'text-berry' : 'text-ink'}`}>{following ? '팔로잉 · 상점 방문' : '상점 방문'}</Text></View>
     </Pressable>
   );
 }
