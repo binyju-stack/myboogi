@@ -12,6 +12,7 @@ import { useMockUserState } from '@/components/MockUserState';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 const menus: { label: string; description: string; icon: IconName; href: string }[] = [
+  { label: '공지사항', description: '마이부기의 새로운 소식을 확인해요', icon: 'megaphone-outline', href: '/notices' },
   { label: '내 분양글', description: '등록한 분양글을 관리해요', icon: 'storefront-outline', href: '/mypage/listings' },
   { label: '찜한 분양', description: '관심 있는 거북이를 모아봤어요', icon: 'heart-outline', href: '/mypage/favorites' },
   { label: '내 게시글', description: '커뮤니티 활동을 확인해요', icon: 'document-text-outline', href: '/mypage/posts' },

@@ -28,7 +28,7 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
           <Text className="text-[22px] font-black tracking-[-1px] text-ink">마이부기</Text>
           {!compact ? <Text className="mt-1 text-[11px] font-semibold text-muted">거북이와 집사를 위한 믿을 수 있는 플랫폼</Text> : null}
         </View>
-        <Pressable className="h-10 w-10 items-center justify-center rounded-full bg-soft">
+        <Pressable onPress={() => router.push('/notifications')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
           <Ionicons name="notifications-outline" color={colors.ink} size={20} />
           <View className="absolute right-2 top-2 h-2 w-2 rounded-full bg-berry" />
         </Pressable>
