@@ -77,4 +77,7 @@ export interface GrowthRecord {
   shellLength: number;
   image: string;
   memo: string;
+  foodResponse: string;
+  bowelMovement: string;
+  condition: string;
 }

@@ -45,12 +45,17 @@ export const posts: Post[] = [
 
 export const turtles: Turtle[] = [
   { id: 't1', name: '부기', species: '레오파드 육지거북', sex: '미구분', image: turtleImages[0], birthDate: '2025.09.21' },
+  { id: 't2', name: '초록이', species: '설가타 육지거북', sex: '수컷', image: turtleImages[2], birthDate: '2024.11.08' },
+  { id: 't3', name: '보석이', species: '다이아몬드백 테라핀', sex: '암컷', image: turtleImages[3], birthDate: '2025.04.16' },
 ];
 
 export const growthRecords: GrowthRecord[] = [
-  { id: 'g1', turtleId: 't1', date: '2026.06.10', weight: 238, shellLength: 10.8, image: turtleImages[0], memo: '먹이 반응이 좋고 활동량도 많아요.' },
-  { id: 'g2', turtleId: 't1', date: '2026.05.20', weight: 221, shellLength: 10.3, image: turtleImages[2], memo: '등갑이 조금 더 단단해진 것 같아요.' },
-  { id: 'g3', turtleId: 't1', date: '2026.04.28', weight: 198, shellLength: 9.7, image: turtleImages[3], memo: '첫 야외 산책을 했어요.' },
+  { id: 'g1', turtleId: 't1', date: '2026.06.10', weight: 238, shellLength: 10.8, image: turtleImages[0], memo: '먹이 반응이 좋고 활동량도 많아요.', foodResponse: '매우 좋음', bowelMovement: '정상', condition: '활발함' },
+  { id: 'g2', turtleId: 't1', date: '2026.05.20', weight: 221, shellLength: 10.3, image: turtleImages[2], memo: '등갑이 조금 더 단단해진 것 같아요.', foodResponse: '좋음', bowelMovement: '정상', condition: '좋음' },
+  { id: 'g3', turtleId: 't1', date: '2026.04.28', weight: 198, shellLength: 9.7, image: turtleImages[3], memo: '첫 야외 산책을 했어요.', foodResponse: '좋음', bowelMovement: '정상', condition: '활발함' },
+  { id: 'g4', turtleId: 't1', date: '2026.03.25', weight: 181, shellLength: 9.2, image: turtleImages[1], memo: '새 사육장에 잘 적응했어요.', foodResponse: '보통', bowelMovement: '정상', condition: '좋음' },
+  { id: 'g5', turtleId: 't2', date: '2026.06.08', weight: 865, shellLength: 16.4, image: turtleImages[2], memo: '건초를 아주 잘 먹어요.', foodResponse: '매우 좋음', bowelMovement: '정상', condition: '활발함' },
+  { id: 'g6', turtleId: 't3', date: '2026.06.05', weight: 412, shellLength: 13.1, image: turtleImages[3], memo: '수질 교체 후 컨디션이 좋아요.', foodResponse: '좋음', bowelMovement: '정상', condition: '좋음' },
 ];
 
 export const categories = [
