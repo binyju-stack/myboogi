@@ -9,9 +9,11 @@ import { ChatReadyModal } from '@/components/ChatReadyModal';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { ListingCard } from '@/components/ListingCard';
+import { LevelPill } from '@/components/LevelProgress';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { breederReviews, breeders, listings } from '@/data/mockData';
+import { formatLevel } from '@/data/levelData';
 import type { BreederReview } from '@/types';
 import { useMockUserState } from '@/components/MockUserState';
 
@@ -73,7 +75,14 @@ export default function BreederShopScreen() {
             <AnimatedPressable onPress={() => toggleFollow(breeder.id)} className={`mb-1 rounded-full px-6 py-3 ${following ? 'bg-blush' : 'bg-berry'}`}><Text className={`text-[11px] font-black ${following ? 'text-berry' : 'text-white'}`}>{following ? '팔로잉' : '팔로우'}</Text></AnimatedPressable>
           </View>
 
-          <View className="mt-4 flex-row items-center"><Text className="text-[22px] font-black tracking-[-0.6px] text-ink">{breeder.name}</Text><View className="ml-2"><VerifiedBadge label={breeder.badge} /></View></View>
+          <View className="mt-4 flex-row items-center"><Text className="text-[22px] font-black text-ink">{breeder.name}</Text><View className="ml-2"><VerifiedBadge label={breeder.badge} /></View></View>
+          <View className="mt-3 flex-row flex-wrap gap-2">
+            <LevelPill label={formatLevel(breeder.level ?? 6, breeder.levelName ?? '브리더')} icon="ribbon-outline" />
+            <View className="flex-row items-center self-start rounded-full bg-soft px-3 py-2">
+              <Ionicons name="shield-checkmark-outline" size={13} color={colors.muted} />
+              <Text className="ml-1 text-[10px] font-black text-muted">거래 신뢰도 {breeder.trustScore ?? 90}</Text>
+            </View>
+          </View>
           <Text className="mt-1.5 text-[10px] text-muted">{breeder.location} · 응답이 빨라요</Text>
           <Text className="mt-4 text-[13px] leading-6 text-ink">{breeder.intro}</Text>
 

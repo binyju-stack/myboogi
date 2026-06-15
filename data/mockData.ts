@@ -1,4 +1,4 @@
-import type { Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle } from '@/types';
+import type { Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle, User } from '@/types';
 
 const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
@@ -8,9 +8,9 @@ const turtleImages = [
 ];
 
 export const breeders: Breeder[] = [
-  { id: 'b1', name: '핑크쉘 브리더', badge: '인증 브리더', avatar: turtleImages[0], banner: turtleImages[1], intro: '건강하고 사랑스러운 육지거북을 정성껏 브리딩합니다.', followers: 1280, reviews: 86, trades: 214, rating: 4.9, location: '경기 성남시' },
-  { id: 'b2', name: '느린숲 거북이', badge: '우수 브리더', avatar: turtleImages[2], banner: turtleImages[3], intro: '개체의 건강과 새로운 가족과의 인연을 가장 중요하게 생각합니다.', followers: 842, reviews: 53, trades: 127, rating: 4.8, location: '서울 송파구' },
-  { id: 'b3', name: '보석거북 연구소', badge: '프리미엄 브리더', avatar: turtleImages[3], banner: turtleImages[0], intro: '수생거북 전문 브리더입니다. 꼼꼼한 사육 상담을 제공합니다.', followers: 2031, reviews: 142, trades: 390, rating: 5.0, location: '인천 연수구' },
+  { id: 'b1', name: '핑크쉘 브리더', badge: '인증 브리더', level: 7, levelName: '인증 브리더', trustScore: 96, avatar: turtleImages[0], banner: turtleImages[1], intro: '건강하고 사랑스러운 육지거북을 정성껏 브리딩합니다.', followers: 1280, reviews: 86, trades: 214, rating: 4.9, location: '경기 성남시' },
+  { id: 'b2', name: '느린숲 거북이', badge: '우수 브리더', level: 6, levelName: '브리더', trustScore: 91, avatar: turtleImages[2], banner: turtleImages[3], intro: '개체의 건강과 새로운 가족과의 인연을 가장 중요하게 생각합니다.', followers: 842, reviews: 53, trades: 127, rating: 4.8, location: '서울 송파구' },
+  { id: 'b3', name: '보석거북 연구소', badge: '프리미엄 브리더', level: 7, levelName: '인증 브리더', trustScore: 98, avatar: turtleImages[3], banner: turtleImages[0], intro: '수생거북 전문 브리더입니다. 꼼꼼한 사육 상담을 제공합니다.', followers: 2031, reviews: 142, trades: 390, rating: 5.0, location: '인천 연수구' },
 ];
 
 export const listings: Listing[] = [
@@ -87,4 +87,16 @@ export const categories = [
   ['먹이정보', 'leaf-outline'], ['합사정보', 'people-outline'], ['번식정보', 'heart-outline'], ['질문답변', 'help-circle-outline'],
 ] as const;
 
-export const users = [{ id: 'u1', name: '부기집사', type: '일반회원', location: '서울 마포구' }];
+export const users: User[] = [
+  {
+    id: 'u1',
+    name: '부기집사',
+    type: '일반회원',
+    location: '서울 마포구',
+    level: 3,
+    levelName: '유체',
+    xp: 96,
+    nextLevelXp: 150,
+    trustScore: 82,
+  },
+];

@@ -7,9 +7,11 @@ import { Image, Text, View } from 'react-native';
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { ReadyModal } from '@/components/ReadyModal';
 import { Page } from '@/components/screen';
+import { UserLevelCard } from '@/components/LevelProgress';
 import { useMockUserState } from '@/components/MockUserState';
 import { colors } from '@/constants/theme';
-import { listings, turtles } from '@/data/mockData';
+import { listings, turtles, users } from '@/data/mockData';
+import { xpMessages } from '@/data/levelData';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 type MenuItem = { label: string; icon: IconName; href: string };
@@ -37,6 +39,7 @@ const breederMenus: BreederMenuItem[] = [
 export default function MyPageScreen() {
   const { favoriteIds, followedBreederIds } = useMockUserState();
   const [readyTitle, setReadyTitle] = useState('');
+  const currentUser = users[0];
   const myListingCount = listings.filter((item) => item.breederId === 'b1').length;
   const metrics = [
     { value: turtles.length, label: '내 거북이' },
@@ -61,9 +64,9 @@ export default function MyPageScreen() {
           <Image source={{ uri: turtles[0].image }} className="h-[72px] w-[72px] rounded-full bg-shell" />
           <View className="ml-4 flex-1">
             <View className="flex-row items-center">
-              <Text className="text-[20px] font-black text-ink">부기집사</Text>
+              <Text className="text-[20px] font-black text-ink">{currentUser.name}</Text>
               <View className="ml-2 rounded-full bg-blush px-2.5 py-1.5">
-                <Text className="text-[9px] font-black text-berry">인증 브리더</Text>
+                <Text className="text-[9px] font-black text-berry">{currentUser.type}</Text>
               </View>
             </View>
             <Text className="mt-2 text-[11px] leading-5 text-muted">거북이와 함께 천천히, 건강하게 성장 중이에요.</Text>
@@ -73,6 +76,14 @@ export default function MyPageScreen() {
           </AnimatedPressable>
         </View>
       </View>
+
+      <FadeInView delay={40}>
+        <View className="mx-5 mt-4">
+          <AnimatedPressable onPress={() => router.push('/levels')}>
+            <UserLevelCard user={currentUser} compact />
+          </AnimatedPressable>
+        </View>
+      </FadeInView>
 
       <FadeInView>
         <View className="mx-5 mt-4 rounded-[26px] bg-ink px-4 py-5 shadow-sm">
@@ -123,7 +134,7 @@ export default function MyPageScreen() {
             {breederMenus.map((item, index) => (
               <AnimatedPressable
                 key={item.label}
-                onPress={() => item.href ? router.push(item.href as never) : setReadyTitle(`${item.label} 기능은 준비중입니다.`)}
+                onPress={() => item.href ? router.push(item.href as never) : setReadyTitle(item.label === '후기 관리' ? `후기 등록 기능은 준비중입니다.\n${xpMessages.review}` : `${item.label} 기능은 준비중입니다.`)}
                 className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}
               >
                 <View className="h-10 w-10 items-center justify-center rounded-[14px] bg-soft">

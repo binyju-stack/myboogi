@@ -8,6 +8,7 @@ import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Avatar, Stat, TopBar } from '@/components/common';
 import { colors } from '@/constants/theme';
 import { postComments, posts } from '@/data/communityData';
+import { xpMessages } from '@/data/levelData';
 
 export default function CommunityDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,7 +20,7 @@ export default function CommunityDetailScreen() {
   const commentCount = post.commentsCount ?? post.comments;
   const images = post.images?.length ? post.images : post.image ? [post.image] : [];
 
-  const showCommentReady = () => Alert.alert('댓글 등록 기능은 준비중입니다.');
+  const showCommentReady = () => Alert.alert(`댓글 등록 기능은 준비중입니다.\n${xpMessages.comment}`);
 
   return (
     <SafeAreaView className="flex-1 bg-page" edges={['top']}>

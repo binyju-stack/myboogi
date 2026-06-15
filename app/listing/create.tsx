@@ -5,11 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { emptyListingDraft, ListingForm, type ListingDraft } from '@/components/ListingForm';
 import { ReadyModal } from '@/components/ReadyModal';
+import { xpMessages } from '@/data/levelData';
 
 export default function ListingCreateScreen() {
   const [draft, setDraft] = useState<ListingDraft>(emptyListingDraft);
   const [readyVisible, setReadyVisible] = useState(false);
-  const [readyTitle, setReadyTitle] = useState('분양글 등록 기능은 준비중입니다.');
+  const [readyTitle, setReadyTitle] = useState(`분양글 등록 기능은 준비중입니다.\n${xpMessages.listing}`);
   const updateDraft = (key: keyof ListingDraft, value: string) => setDraft((current) => ({ ...current, [key]: value }));
   const showReady = (title: string) => {
     setReadyTitle(title);
@@ -32,7 +33,7 @@ export default function ListingCreateScreen() {
       </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 border-t border-line bg-white px-5 py-3">
-        <Pressable onPress={() => showReady('분양글 등록 기능은 준비중입니다.')} className="items-center rounded-[18px] bg-berry py-4"><Text className="text-[14px] font-black text-white">분양글 등록하기</Text></Pressable>
+        <Pressable onPress={() => showReady(`분양글 등록 기능은 준비중입니다.\n${xpMessages.listing}`)} className="items-center rounded-[18px] bg-berry py-4"><Text className="text-[14px] font-black text-white">분양글 등록하기</Text></Pressable>
       </View>
       <ReadyModal visible={readyVisible} title={readyTitle} description="작성한 내용은 실제로 저장되지 않아요." onClose={() => setReadyVisible(false)} />
     </SafeAreaView>

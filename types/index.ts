@@ -4,6 +4,9 @@ export interface Breeder {
   id: string;
   name: string;
   badge: BreederBadge;
+  level?: number;
+  levelName?: string;
+  trustScore?: number;
   avatar: string;
   banner: string;
   intro: string;
@@ -93,4 +96,16 @@ export interface GrowthRecord {
   foodResponse: string;
   bowelMovement: string;
   condition: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+  level: number;
+  levelName: string;
+  xp: number;
+  nextLevelXp: number;
+  trustScore: number;
 }

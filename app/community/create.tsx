@@ -7,6 +7,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { colors } from '@/constants/theme';
 import { createPostCategories } from '@/data/communityData';
+import { xpMessages } from '@/data/levelData';
 
 export default function CommunityCreateScreen() {
   const insets = useSafeAreaInsets();
@@ -99,7 +100,7 @@ export default function CommunityCreateScreen() {
       </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 border-t border-line bg-white px-5 pt-3" style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
-        <AnimatedPressable onPress={() => Alert.alert('게시글 등록 기능은 준비중입니다.')} className="items-center rounded-[18px] bg-berry py-4">
+        <AnimatedPressable onPress={() => Alert.alert(`게시글 등록 기능은 준비중입니다.\n${xpMessages.post}`)} className="items-center rounded-[18px] bg-berry py-4">
           <Text className="text-[14px] font-black text-white">등록</Text>
         </AnimatedPressable>
       </View>

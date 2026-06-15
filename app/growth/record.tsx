@@ -9,6 +9,7 @@ import { TopBar } from '@/components/common';
 import { ReadyModal } from '@/components/ReadyModal';
 import { colors } from '@/constants/theme';
 import { turtles } from '@/data/growthData';
+import { xpMessages } from '@/data/levelData';
 
 function Choice({ label, options }: { label: string; options: string[] }) {
   const [selected, setSelected] = useState(options[0]);
@@ -40,7 +41,7 @@ export default function GrowthRecordScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
       <View className="absolute bottom-0 left-0 right-0 border-t border-line bg-white px-5 pt-3" style={{ paddingBottom: Math.max(insets.bottom, 12) }}><AnimatedPressable onPress={() => setReadyVisible(true)} className="items-center rounded-[18px] bg-berry py-4"><Text className="text-[14px] font-black text-white">저장하기</Text></AnimatedPressable></View>
-      <ReadyModal visible={readyVisible} title="성장기록 저장 기능은 준비중입니다." onClose={() => setReadyVisible(false)} />
+      <ReadyModal visible={readyVisible} title={`성장기록 저장 기능은 준비중입니다.\n${xpMessages.growth}`} onClose={() => setReadyVisible(false)} />
     </SafeAreaView>
   );
 }

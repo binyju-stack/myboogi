@@ -7,9 +7,11 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
 import { useMockUserState } from '@/components/MockUserState';
+import { LevelPill } from '@/components/LevelProgress';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { colors } from '@/constants/theme';
+import { formatLevel } from '@/data/levelData';
 import { breederReviews, breeders, listingDetails, listings } from '@/data/mockData';
 
 function InfoRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
@@ -59,6 +61,13 @@ export default function ListingDetailScreen() {
         <FadeInView>
           <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
             <View className="flex-row items-center"><Avatar uri={breeder.avatar} size={54} /><View className="ml-3 flex-1"><VerifiedBadge label={breeder.badge} /><Text className="mt-1.5 text-[14px] font-black text-ink">{breeder.name}</Text><Text className="mt-1 text-[9px] text-muted">{breeder.location} · 후기 평점 {breeder.rating}</Text></View><Ionicons name="chevron-forward" size={18} color={colors.subtle} /></View>
+            <View className="mt-3 flex-row flex-wrap gap-2">
+              <LevelPill label={formatLevel(breeder.level ?? 6, breeder.levelName ?? '브리더')} icon="ribbon-outline" />
+              <View className="flex-row items-center self-start rounded-full bg-soft px-3 py-2">
+                <Ionicons name="shield-checkmark-outline" size={13} color={colors.muted} />
+                <Text className="ml-1 text-[10px] font-black text-muted">거래 신뢰도 {breeder.trustScore ?? 90}</Text>
+              </View>
+            </View>
             <View className="mt-4 flex-row rounded-[18px] bg-soft py-3.5"><View className="flex-1 items-center"><Text className="text-[15px] font-black text-ink">{followerCount.toLocaleString()}</Text><Text className="mt-1 text-[9px] text-muted">팔로워</Text></View><View className="flex-1 items-center border-l border-line"><Text className="text-[15px] font-black text-ink">{breeder.trades}</Text><Text className="mt-1 text-[9px] text-muted">분양완료</Text></View></View>
             <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="mt-3 items-center rounded-[16px] bg-blush py-3.5"><Text className="text-[11px] font-black text-berry">브리더 미니샵 보기</Text></AnimatedPressable>
           </View>
