@@ -4,7 +4,8 @@ import type { ComponentProps, ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { homeBreederStories, homeListings, homePosts, homeReviews } from '@/data/homeScreenData';
+import { posts as communityPosts } from '@/data/communityData';
+import { homeBreederStories, homeListings, homeReviews } from '@/data/homeScreenData';
 
 import { BrandHeader } from './common';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
@@ -114,11 +115,11 @@ export function HomeScreen() {
 
       <Section eyebrow="COMMUNITY" title="오늘 많이 본 이야기" action={() => router.push('/community')}>
         <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
-          {homePosts.map((post, index) => (
+          {communityPosts.slice(0, 3).map((post, index) => (
             <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}`)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
               <Text className="mr-3 text-[16px] font-black text-berry">{index + 1}</Text>
               <View className="flex-1"><Text className="text-[10px] font-bold text-muted">{post.category} · {post.author}</Text><Text className="mt-1.5 text-[13px] font-black text-ink" numberOfLines={1}>{post.title}</Text></View>
-              <Metric icon="heart-outline" value={post.likes} /><Metric icon="chatbubble-outline" value={post.comments} />
+              <Metric icon="heart-outline" value={post.likes} /><Metric icon="chatbubble-outline" value={post.commentsCount ?? post.comments} />
             </AnimatedPressable>
           ))}
         </View>

@@ -1,6 +1,6 @@
 import { MyListLayout } from '@/components/MyListLayout';
 import { PostCard } from '@/components/PostCard';
-import { posts } from '@/data/mockData';
+import { posts } from '@/data/communityData';
 
 export default function MyPostsScreen() {
   const myPosts = posts.slice(0, 3);

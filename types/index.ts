@@ -50,6 +50,7 @@ export interface Post {
   category: string;
   author: string;
   avatar: string;
+  authorAvatar?: string;
   title: string;
   content: string;
   image?: string;
@@ -58,6 +59,8 @@ export interface Post {
   views: number;
   likes: number;
   comments: number;
+  commentsCount?: number;
+  commentsList?: PostComment[];
 }
 
 export interface PostComment {

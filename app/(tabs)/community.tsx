@@ -7,18 +7,16 @@ import { Chip } from '@/components/common';
 import { PostCard } from '@/components/PostCard';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
-import { posts } from '@/data/mockData';
-
-const communityCategories = ['전체', '자유게시판', '사육정보', '질병상담', '먹이정보', '합사정보', '번식정보', '질문답변'];
+import { communityCategories, posts } from '@/data/communityData';
 
 export default function CommunityScreen() {
   return (
     <Page>
       <View className="bg-white px-5 pb-5 pt-5">
         <View className="flex-row items-center justify-between">
-          <View>
+          <View className="flex-1 pr-4">
             <Text className="text-[10px] font-black text-berry">MYBOOGI COMMUNITY</Text>
-            <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">거북이 집사들의 이야기</Text>
+            <Text className="mt-1 text-[24px] font-black text-ink">거북이 집사들의 이야기</Text>
           </View>
           <View className="h-11 w-11">
             <AnimatedPressable onPress={() => router.push('/community/create')} className="h-11 w-11 items-center justify-center rounded-full bg-blush">
@@ -26,7 +24,7 @@ export default function CommunityScreen() {
             </AnimatedPressable>
           </View>
         </View>
-        <Text className="mt-3 text-[12px] leading-6 text-muted">사육 정보부터 오늘의 일상까지 편안하게 나눠보세요.</Text>
+        <Text className="mt-3 text-[12px] leading-6 text-muted">사육 정보부터 오늘의 일상까지 편하게 나눠보세요.</Text>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}>
