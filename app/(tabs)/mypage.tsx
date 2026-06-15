@@ -29,7 +29,7 @@ const quickMenus: MenuItem[] = [
 ];
 
 const breederMenus: BreederMenuItem[] = [
-  { label: '내 미니샵 관리', description: '브리더 소개와 판매 개체를 관리해요', icon: 'home-outline', href: '/breeder/b1' },
+  { label: '내 미니샵 관리', description: '브리더 소개와 판매 개체를 관리해요', icon: 'home-outline', href: '/breeder/edit' },
   { label: '분양글 등록', description: '새로운 개체를 분양 등록해요', icon: 'add-circle-outline', href: '/listing/create' },
   { label: '후기 관리', description: '구매자 후기를 확인하고 답변해요', icon: 'star-outline' },
   { label: '인증 브리더 신청', description: '신뢰받는 인증 브리더에 도전해요', icon: 'shield-checkmark-outline', href: '/breeder/verification/apply' },

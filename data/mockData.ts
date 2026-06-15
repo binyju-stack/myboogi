@@ -7,11 +7,78 @@ const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=68',
 ];
 
-export const breeders: Breeder[] = [
+const baseBreeders: Breeder[] = [
   { id: 'b1', name: '핑크쉘 브리더', badge: '인증 브리더', level: 7, levelName: '인증 브리더', trustScore: 96, avatar: turtleImages[0], banner: turtleImages[1], intro: '건강하고 사랑스러운 육지거북을 정성껏 브리딩합니다.', followers: 1280, reviews: 86, trades: 214, rating: 4.9, location: '경기 성남시' },
   { id: 'b2', name: '느린숲 거북이', badge: '우수 브리더', level: 6, levelName: '브리더', trustScore: 91, avatar: turtleImages[2], banner: turtleImages[3], intro: '개체의 건강과 새로운 가족과의 인연을 가장 중요하게 생각합니다.', followers: 842, reviews: 53, trades: 127, rating: 4.8, location: '서울 송파구' },
   { id: 'b3', name: '보석거북 연구소', badge: '프리미엄 브리더', level: 7, levelName: '인증 브리더', trustScore: 98, avatar: turtleImages[3], banner: turtleImages[0], intro: '수생거북 전문 브리더입니다. 꼼꼼한 사육 상담을 제공합니다.', followers: 2031, reviews: 142, trades: 390, rating: 5.0, location: '인천 연수구' },
 ];
+
+export const breeders: Breeder[] = baseBreeders.map((breeder, index) => {
+  const profiles = [
+    {
+      logo: turtleImages[0],
+      bannerImage: turtleImages[1],
+      shortBio: '건강한 육지거북을 차분하게 소개하는 전문 브리더',
+      fullBio: '핑크쉘 브리더는 개체의 컨디션과 사육 환경을 가장 먼저 확인합니다. 분양 전 먹이 반응, 활동성, 부모 개체 정보를 꼼꼼하게 안내하고 초보 집사도 안정적으로 적응할 수 있도록 사후 상담을 제공합니다.',
+      specialty: '레오파드 육지거북, 체리헤드 레드풋',
+      region: '경기 성남 · 수도권 상담 가능',
+      careerYears: 7,
+      joinedAt: '2022.04',
+      instagramUrl: 'https://instagram.com/myboogi',
+      blogUrl: 'https://blog.example.com/pinkshell',
+      youtubeUrl: 'https://youtube.com/@myboogi',
+      kakaoChannelUrl: 'https://pf.kakao.com/_myboogi',
+      websiteUrl: 'https://myboogi.example.com',
+      representativeTurtles: [
+        { id: 'rt1', name: '루나', species: '레오파드 육지거북', feature: '선명한 갑 패턴과 안정적인 먹이 반응', image: turtleImages[0] },
+        { id: 'rt2', name: '모카', species: '체리헤드 레드풋', feature: '활동성이 좋고 체형 밸런스가 우수해요', image: turtleImages[1] },
+        { id: 'rt3', name: '로티', species: '레오파드 육지거북', feature: '온순한 성격과 고른 성장 기록 보유', image: turtleImages[2] },
+      ],
+    },
+    {
+      logo: turtleImages[2],
+      bannerImage: turtleImages[3],
+      shortBio: '첫 사육자를 위한 친절한 상담형 브리더',
+      fullBio: '느린숲 거북이는 초보 집사의 사육 환경 세팅을 함께 점검합니다. 분양 전후로 온습도, 조명, 먹이 루틴을 안내하며 안정적인 적응을 돕습니다.',
+      specialty: '그리스 육지거북, 호스필드 육지거북',
+      region: '서울 송파 · 경기 동부',
+      careerYears: 5,
+      joinedAt: '2023.01',
+      instagramUrl: 'https://instagram.com/slowforest',
+      blogUrl: 'https://blog.example.com/slowforest',
+      youtubeUrl: 'https://youtube.com/@slowforest',
+      kakaoChannelUrl: 'https://pf.kakao.com/_slowforest',
+      websiteUrl: 'https://slowforest.example.com',
+      representativeTurtles: [
+        { id: 'rt4', name: '숲이', species: '그리스 육지거북', feature: '초보 집사에게 잘 맞는 차분한 개체', image: turtleImages[2] },
+        { id: 'rt5', name: '밤비', species: '호스필드 육지거북', feature: '먹이 반응이 빠르고 적응력이 좋아요', image: turtleImages[3] },
+        { id: 'rt6', name: '두리', species: '그리스 육지거북', feature: '건강 검진 완료, 꾸준한 성장 기록', image: turtleImages[0] },
+      ],
+    },
+    {
+      logo: turtleImages[3],
+      bannerImage: turtleImages[0],
+      shortBio: '수생거북과 희귀 라인을 연구하는 프리미엄 브리더',
+      fullBio: '보석거북 연구소는 혈통 관리와 장기 컨디션 기록을 기반으로 개체를 소개합니다. 대표 라인별 특징, 성장 패턴, 합사 주의점을 자세히 안내합니다.',
+      specialty: '다이아몬드백 테라핀, 머스크 터틀',
+      region: '인천 연수 · 전국 상담',
+      careerYears: 9,
+      joinedAt: '2021.09',
+      instagramUrl: 'https://instagram.com/gemturtlelab',
+      blogUrl: 'https://blog.example.com/gemturtlelab',
+      youtubeUrl: 'https://youtube.com/@gemturtlelab',
+      kakaoChannelUrl: 'https://pf.kakao.com/_gemturtlelab',
+      websiteUrl: 'https://gemturtlelab.example.com',
+      representativeTurtles: [
+        { id: 'rt7', name: '아쿠아', species: '다이아몬드백 테라핀', feature: '밝은 등갑 라인과 선명한 무늬', image: turtleImages[3] },
+        { id: 'rt8', name: '젬', species: '머스크 터틀', feature: '튼튼한 체형과 안정적인 수중 활동', image: turtleImages[0] },
+        { id: 'rt9', name: '오팔', species: '다이아몬드백 테라핀', feature: '대표 혈통 라인에서 선별된 개체', image: turtleImages[1] },
+      ],
+    },
+  ];
+
+  return { ...breeder, ...profiles[index] };
+});
 
 export const listings: Listing[] = [
   { id: 'l1', breederId: 'b1', title: '건강한 레오파드 육지거북 유체', species: '레오파드 육지거북', price: 380000, location: '경기 성남시', sex: '미구분', stage: '유체', size: '등갑 6.2cm', hatchDate: '2026.03.18', views: 128, likes: 24, image: turtleImages[0], images: [turtleImages[0], turtleImages[2], turtleImages[3]], description: '먹성이 좋고 활동량이 많은 건강한 유체입니다. 충분히 상담한 뒤 분양을 결정해 주세요.', verified: true, status: '분양중' },

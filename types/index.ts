@@ -7,6 +7,20 @@ export interface Breeder {
   level?: number;
   levelName?: string;
   trustScore?: number;
+  logo?: string;
+  bannerImage?: string;
+  shortBio?: string;
+  fullBio?: string;
+  specialty?: string;
+  region?: string;
+  careerYears?: number;
+  joinedAt?: string;
+  instagramUrl?: string;
+  blogUrl?: string;
+  youtubeUrl?: string;
+  kakaoChannelUrl?: string;
+  websiteUrl?: string;
+  representativeTurtles?: RepresentativeTurtle[];
   avatar: string;
   banner: string;
   intro: string;
@@ -15,6 +29,14 @@ export interface Breeder {
   trades: number;
   rating: number;
   location: string;
+}
+
+export interface RepresentativeTurtle {
+  id: string;
+  name: string;
+  species: string;
+  feature: string;
+  image: string;
 }
 
 export interface BreederReview {
