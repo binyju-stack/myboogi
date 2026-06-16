@@ -1,13 +1,17 @@
-export type NotificationType = 'comment' | 'listing' | 'favorite' | 'popular' | 'notice' | 'growth';
+export type NotificationType = 'comment' | 'like' | 'follow' | 'review' | 'breederApproved' | 'notice' | 'system';
+export type NotificationTargetType = 'post' | 'breeder' | 'notice' | 'listing' | 'system';
+export type NotificationFilter = 'all' | 'activity' | 'trade' | 'system';
 
 export interface NotificationItem {
   id: string;
   type: NotificationType;
   title: string;
-  content: string;
-  time: string;
-  unread: boolean;
-  relatedPath: string;
+  message: string;
+  createdAt: string;
+  isRead: boolean;
+  targetType: NotificationTargetType;
+  targetId: string;
+  group: Exclude<NotificationFilter, 'all'>;
 }
 
 export interface Notice {
@@ -20,13 +24,86 @@ export interface Notice {
 }
 
 export const notifications: NotificationItem[] = [
-  { id: 'n1', type: 'comment', title: '새 댓글이 달렸어요', content: '초록정원님이 회원님의 게시글에 댓글을 남겼어요.', time: '방금 전', unread: true, relatedPath: '/community/p1' },
-  { id: 'n2', type: 'listing', title: '인증 브리더의 새 분양', content: '팔로우 중인 꼬북하우스에서 새 개체를 등록했어요.', time: '12분 전', unread: true, relatedPath: '/listing/l1' },
-  { id: 'n3', type: 'favorite', title: '찜한 분양 상태가 변경됐어요', content: '찜한 레오파드 육지거북이 예약중으로 변경됐어요.', time: '1시간 전', unread: true, relatedPath: '/mypage/favorites' },
-  { id: 'n4', type: 'popular', title: '오늘의 인기글에 선정됐어요', content: '회원님의 게시글이 커뮤니티 인기글에 올랐어요.', time: '3시간 전', unread: false, relatedPath: '/community/p2' },
-  { id: 'n5', type: 'notice', title: '마이부기 운영 정책 안내', content: '건강한 분양 문화를 위한 운영 정책을 확인해 주세요.', time: '어제', unread: false, relatedPath: '/notices/notice-1' },
-  { id: 'n6', type: 'growth', title: '오늘의 성장기록을 남겨보세요', content: '부기의 몸무게와 등갑 길이를 기록할 시간이에요.', time: '2일 전', unread: false, relatedPath: '/growth/record' },
+  {
+    id: 'n1',
+    type: 'comment',
+    title: '댓글',
+    message: '회원님 게시글에 댓글이 달렸습니다.',
+    createdAt: '5분 전',
+    isRead: false,
+    targetType: 'post',
+    targetId: 'p1',
+    group: 'activity',
+  },
+  {
+    id: 'n2',
+    type: 'like',
+    title: '좋아요',
+    message: '회원님 게시글을 좋아합니다.',
+    createdAt: '1시간 전',
+    isRead: false,
+    targetType: 'post',
+    targetId: 'p2',
+    group: 'activity',
+  },
+  {
+    id: 'n3',
+    type: 'follow',
+    title: '팔로우',
+    message: 'TERRABOX 브리더가 회원님을 팔로우했습니다.',
+    createdAt: '2시간 전',
+    isRead: false,
+    targetType: 'breeder',
+    targetId: 'b1',
+    group: 'activity',
+  },
+  {
+    id: 'n4',
+    type: 'review',
+    title: '후기',
+    message: '분양완료 개체에 후기를 작성할 수 있어요.',
+    createdAt: '어제',
+    isRead: true,
+    targetType: 'listing',
+    targetId: 'l4',
+    group: 'trade',
+  },
+  {
+    id: 'n5',
+    type: 'breederApproved',
+    title: '브리더 승인',
+    message: '인증 브리더 신청이 승인되었습니다.',
+    createdAt: '2일 전',
+    isRead: true,
+    targetType: 'breeder',
+    targetId: 'b1',
+    group: 'trade',
+  },
+  {
+    id: 'n6',
+    type: 'notice',
+    title: '공지사항',
+    message: '건강한 거북이 분양 문화를 위한 운영 정책을 확인해 주세요.',
+    createdAt: '3일 전',
+    isRead: true,
+    targetType: 'notice',
+    targetId: 'notice-1',
+    group: 'system',
+  },
+  {
+    id: 'n7',
+    type: 'system',
+    title: '시스템',
+    message: '마이부기 알림센터 UI가 준비되었습니다.',
+    createdAt: '2026.06.16',
+    isRead: true,
+    targetType: 'system',
+    targetId: 'notifications',
+    group: 'system',
+  },
 ];
+
+export const unreadNotificationCount = notifications.filter((item) => !item.isRead).length;
 
 export const notices: Notice[] = [
   {
@@ -36,21 +113,21 @@ export const notices: Notice[] = [
     views: 1284,
     important: true,
     content: [
-      '안녕하세요, 마이부기입니다.',
-      '모든 거북이와 집사가 안전하고 신뢰할 수 있는 환경에서 만날 수 있도록 분양글 운영 정책을 안내드립니다.',
-      '분양글 작성 시 개체의 건강 상태와 부화일, 사육 환경을 정확하게 작성해 주세요. 허위 정보나 생명 존중 원칙에 어긋나는 게시글은 별도 안내 없이 제한될 수 있습니다.',
-      '마이부기는 더 건강한 거북이 문화를 만들기 위해 계속 노력하겠습니다. 감사합니다.',
+      '안녕하세요. 마이부기입니다.',
+      '모든 거북이가 안전하고 신뢰할 수 있는 환경에서 만날 수 있도록 분양글 운영 정책을 안내드립니다.',
+      '분양글 작성 시 개체의 건강 상태, 부화일, 사육 환경을 정확하게 작성해 주세요. 허위 정보나 생명 존중 원칙에 어긋나는 게시글은 별도 안내 없이 제한될 수 있습니다.',
+      '마이부기는 더 건강한 거북이 분양 문화를 만들기 위해 계속 노력하겠습니다. 감사합니다.',
     ],
   },
   {
     id: 'notice-2',
-    title: '인증 브리더 심사 기준이 새롭게 변경됩니다',
+    title: '인증 브리더 심사 기준 변경 안내',
     date: '2026.06.06',
     views: 842,
     important: true,
     content: [
       '인증 브리더 심사 기준이 일부 변경됩니다.',
-      '사육 환경, 거래 이력, 후기 평점과 함께 개체 정보의 충실도를 종합적으로 확인합니다.',
+      '사육 환경, 거래 이력, 후기 평점과 대표 개체 정보의 충실도를 종합적으로 확인합니다.',
       '자세한 심사 일정은 브리더 신청 화면에서 확인해 주세요.',
     ],
   },
@@ -62,7 +139,7 @@ export const notices: Notice[] = [
     important: false,
     content: [
       '마이부기 커뮤니티는 거북이를 사랑하는 집사들이 경험과 정보를 나누는 공간입니다.',
-      '서로를 존중하는 표현을 사용하고, 질병 관련 정보는 전문 병원의 진료를 우선해 주세요.',
+      '서로를 존중하는 표현을 사용하고, 질병 관련 정보는 전문 병원 진료를 우선해 주세요.',
     ],
   },
   {

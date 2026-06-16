@@ -12,6 +12,7 @@ import { useMockUserState } from '@/components/MockUserState';
 import { colors } from '@/constants/theme';
 import { listings, turtles, users } from '@/data/mockData';
 import { xpMessages } from '@/data/levelData';
+import { unreadNotificationCount } from '@/data/notificationData';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 type MenuItem = { label: string; icon: IconName; href: string };
@@ -53,7 +54,15 @@ export default function MyPageScreen() {
       <View className="bg-white px-5 pb-7 pt-4">
         <View className="flex-row items-center justify-between">
           <Text className="text-[24px] font-black tracking-[-0.8px] text-ink">마이페이지</Text>
-          <View className="h-10 w-10">
+          <View className="flex-row items-center">
+            <AnimatedPressable onPress={() => router.push('/notifications')} className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-soft">
+              <Ionicons name="notifications-outline" size={19} color={colors.ink} />
+              {unreadNotificationCount ? (
+                <View className="absolute -right-1 -top-1 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 py-0.5">
+                  <Text className="text-[9px] font-black text-white">{unreadNotificationCount}</Text>
+                </View>
+              ) : null}
+            </AnimatedPressable>
             <AnimatedPressable onPress={() => router.push('/mypage/settings')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
               <Ionicons name="settings-outline" size={19} color={colors.ink} />
             </AnimatedPressable>

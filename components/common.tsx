@@ -4,6 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
+import { unreadNotificationCount } from '@/data/notificationData';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -30,7 +31,11 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
         </View>
         <Pressable onPress={() => router.push('/notifications')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
           <Ionicons name="notifications-outline" color={colors.ink} size={20} />
-          <View className="absolute right-2 top-2 h-2 w-2 rounded-full bg-berry" />
+          {unreadNotificationCount ? (
+            <View className="absolute -right-1 -top-1 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 py-0.5">
+              <Text className="text-[9px] font-black text-white">{unreadNotificationCount}</Text>
+            </View>
+          ) : null}
         </Pressable>
       </View>
       {!compact ? (
