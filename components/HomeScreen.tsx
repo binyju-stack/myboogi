@@ -6,6 +6,7 @@ import { Image, Pressable, ScrollView, Text, useWindowDimensions, View, type Nat
 
 import { colors } from '@/constants/theme';
 import { posts as communityPosts } from '@/data/communityData';
+import { followActivities } from '@/data/followData';
 import { homeBanners, homeBreederStories, homeListings, homeReviews } from '@/data/homeScreenData';
 
 import { BrandHeader } from './common';
@@ -154,6 +155,27 @@ function BreederCard({ item }: { item: (typeof homeBreederStories)[number] }) {
   );
 }
 
+function FollowActivityCard({ item }: { item: (typeof followActivities)[number] }) {
+  return (
+    <AnimatedPressable
+      onPress={() => router.push(item.targetType === 'listing' ? `/listing/${item.targetId}` as never : `/breeder/${item.targetId}` as never)}
+      className="mr-3 w-[260px] rounded-[24px] border border-line bg-white p-4 shadow-sm"
+    >
+      <View className="flex-row items-center">
+        <Image source={{ uri: item.breederLogo }} className="h-12 w-12 rounded-[16px] bg-shell" />
+        <View className="ml-3 flex-1">
+          <Text className="text-[13px] font-black text-ink">{item.breederName}</Text>
+          <Text className="mt-1 text-[9px] text-muted">{item.createdAt}</Text>
+        </View>
+        <Text className="rounded-full bg-blush px-2.5 py-1.5 text-[9px] font-black text-berry">NEW</Text>
+      </View>
+      <Text className="mt-4 text-[14px] font-black text-ink">{item.title}</Text>
+      <Text className="mt-1 text-[11px] text-muted">{item.description}</Text>
+      {item.listingStatus ? <Text className="mt-3 self-start rounded-full bg-berry px-2.5 py-1.5 text-[9px] font-black text-white">{item.listingStatus}</Text> : null}
+    </AnimatedPressable>
+  );
+}
+
 function ReviewCard({ item }: { item: (typeof homeReviews)[number] }) {
   return (
     <Pressable onPress={() => router.push(`/breeder/${item.breederId}`)} className="mr-3 w-[285px] flex-row rounded-[22px] border border-line bg-white p-3 shadow-sm">
@@ -172,6 +194,9 @@ function Metric({ icon, value }: { icon: IconName; value: number }) {
 }
 
 export function HomeScreen() {
+  const { followedBreederIds } = useMockUserState();
+  const followedActivities = followActivities.filter((item) => followedBreederIds.includes(item.breederId));
+
   return (
     <Page>
       <BrandHeader />
@@ -187,6 +212,19 @@ export function HomeScreen() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
           {homeBreederStories.slice(0, 3).map((item) => <BreederCard key={item.id} item={item} />)}
         </ScrollView>
+      </Section>
+
+      <Section eyebrow="FOLLOWING" title="팔로우 브리더 소식" action={() => router.push('/following-feed')}>
+        {followedActivities.length ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
+            {followedActivities.map((item) => <FollowActivityCard key={item.id} item={item} />)}
+          </ScrollView>
+        ) : (
+          <View className="mx-5 rounded-[24px] bg-white px-5 py-10 shadow-sm">
+            <Text className="text-center text-[13px] font-black text-ink">관심있는 브리더를 팔로우해보세요</Text>
+            <Text className="mt-2 text-center text-[10px] text-muted">새 분양과 후기 소식을 홈에서 바로 볼 수 있어요.</Text>
+          </View>
+        )}
       </Section>
 
       <Section eyebrow="REAL REVIEW" title="최근 분양 후기">
