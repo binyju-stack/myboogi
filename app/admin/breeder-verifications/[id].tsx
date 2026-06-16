@@ -8,16 +8,17 @@ import { TopBar } from '@/components/common';
 import { ReadyModal } from '@/components/ReadyModal';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
-import { breederVerifications } from '@/data/breederVerificationData';
+import { breederTypeLabels, breederVerifications, verificationStatusLabels } from '@/data/breederVerificationData';
 
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return <View className="flex-row py-3"><Text className="w-24 text-[10px] font-bold text-muted">{label}</Text><Text className="flex-1 text-[11px] font-black text-ink">{value}</Text></View>;
+function InfoRow({ label, value }: { label: string; value?: string }) {
+  return <View className="flex-row py-3"><Text className="w-28 text-[10px] font-bold text-muted">{label}</Text><Text className="flex-1 text-[11px] font-black text-ink">{value ?? '-'}</Text></View>;
 }
 
 export default function BreederVerificationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [readyVisible, setReadyVisible] = useState(false);
   const application = breederVerifications.find((item) => item.id === id) ?? breederVerifications[0];
+  const isBusiness = application.breederType === 'business';
 
   return (
     <Page>
@@ -25,8 +26,11 @@ export default function BreederVerificationDetailScreen() {
       <FadeInView>
         <View className="mx-5 mt-5 rounded-[26px] bg-ink p-5 shadow-sm">
           <Text className="text-[10px] font-black text-petal">APPLICATION REVIEW</Text>
-          <Text className="mt-2 text-[22px] font-black text-white">{application.breederName}</Text>
-          <Text className="mt-2 text-[10px] text-white/50">{application.appliedAt} 신청 · 상태 {application.status}</Text>
+          <View className="mt-2 flex-row items-center">
+            <Text className="text-[22px] font-black text-white">{application.breederName}</Text>
+            <Text className={`ml-2 rounded-full px-2.5 py-1.5 text-[9px] font-black ${isBusiness ? 'bg-white text-ink' : 'bg-berry text-white'}`}>{breederTypeLabels[application.breederType]}</Text>
+          </View>
+          <Text className="mt-2 text-[10px] text-white/50">{application.appliedAt} 신청 · 상태 {verificationStatusLabels[application.status]}</Text>
         </View>
       </FadeInView>
 
@@ -41,6 +45,27 @@ export default function BreederVerificationDetailScreen() {
           <View className="mt-3"><InfoRow label="브리더명" value={application.breederName} /><InfoRow label="활동 지역" value={application.region} /><InfoRow label="전문 품종" value={application.specialties} /><InfoRow label="사육 경력" value={application.experience} /></View>
           <Text className="mt-4 text-[11px] leading-6 text-ink">{application.introduction}</Text>
         </View>
+
+        {isBusiness ? (
+          <View className="mt-4 rounded-[26px] bg-white p-5 shadow-sm">
+            <Text className="text-[10px] font-black text-berry">BUSINESS INFO</Text><Text className="mt-1 text-[18px] font-black text-ink">사업자 정보</Text>
+            <View className="mt-3">
+              <InfoRow label="업체명" value={application.businessName} />
+              <InfoRow label="사업자등록번호" value={application.businessNumber} />
+              <InfoRow label="대표자명" value={application.representativeName} />
+              <InfoRow label="사업장 주소" value={application.businessAddress} />
+            </View>
+            <View className="mt-4 rounded-[20px] border border-dashed border-petal bg-blush p-4">
+              <View className="flex-row items-center">
+                <View className="h-10 w-10 items-center justify-center rounded-[14px] bg-white"><Ionicons name="document-attach-outline" size={20} color={colors.berry} /></View>
+                <View className="ml-3 flex-1">
+                  <Text className="text-[12px] font-black text-ink">사업자등록증 첨부 파일</Text>
+                  <Text className="mt-1 text-[10px] font-bold text-muted">{application.businessLicenseFile}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        ) : null}
 
         <View className="mt-4 rounded-[26px] bg-white p-5 shadow-sm">
           <Text className="text-[10px] font-black text-berry">ENVIRONMENT PHOTO</Text><Text className="mt-1 text-[18px] font-black text-ink">사육환경 이미지</Text>

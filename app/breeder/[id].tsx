@@ -74,6 +74,15 @@ function InfoBadge({ label, value }: { label: string; value: string | number }) 
   );
 }
 
+function BreederTypeBadge({ type, label }: { type?: string; label?: string }) {
+  const business = type === 'business';
+  return (
+    <View className={`mt-2 self-start rounded-full px-3 py-2 ${business ? 'bg-ink' : 'bg-blush'}`}>
+      <Text className={`text-[10px] font-black ${business ? 'text-white' : 'text-berry'}`}>{label ?? (business ? '사업자 인증 브리더' : '개인 인증 브리더')}</Text>
+    </View>
+  );
+}
+
 export default function BreederShopScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<ShopTab>('selling');
@@ -111,6 +120,7 @@ export default function BreederShopScreen() {
             <Text className="text-[22px] font-black text-ink">{breeder.name}</Text>
             <View className="ml-2"><VerifiedBadge label={breeder.badge} /></View>
           </View>
+          <BreederTypeBadge type={breeder.breederType} label={breeder.verificationBadgeLabel} />
           <Text className="mt-2 text-[13px] font-bold leading-6 text-ink">{breeder.shortBio ?? breeder.intro}</Text>
 
           <View className="mt-3 flex-row flex-wrap gap-2">

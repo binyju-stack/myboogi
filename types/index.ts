@@ -4,6 +4,8 @@ export interface Breeder {
   id: string;
   name: string;
   badge: BreederBadge;
+  breederType?: BreederType;
+  verificationBadgeLabel?: string;
   level?: number;
   levelName?: string;
   trustScore?: number;
@@ -30,6 +32,8 @@ export interface Breeder {
   rating: number;
   location: string;
 }
+
+export type BreederType = 'individual' | 'business';
 
 export interface RepresentativeTurtle {
   id: string;

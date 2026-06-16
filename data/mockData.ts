@@ -77,7 +77,13 @@ export const breeders: Breeder[] = baseBreeders.map((breeder, index) => {
     },
   ];
 
-  return { ...breeder, ...profiles[index] };
+  const typeByIndex = index === 1 ? 'individual' : 'business';
+  return {
+    ...breeder,
+    ...profiles[index],
+    breederType: typeByIndex,
+    verificationBadgeLabel: typeByIndex === 'business' ? '사업자 인증 브리더' : '개인 인증 브리더',
+  };
 });
 
 const baseListings: Listing[] = [
