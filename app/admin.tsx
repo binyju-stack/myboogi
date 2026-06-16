@@ -24,6 +24,7 @@ const menus: { label: string; description: string; icon: IconName; href: string 
   { label: '회원 관리', description: '회원 유형과 이용 상태를 관리해요', icon: 'people-outline', href: '/admin/users' },
   { label: '브리더 승인 관리', description: '인증 신청을 검토하고 승인해요', icon: 'shield-checkmark-outline', href: '/admin/breeders' },
   { label: '분양글 관리', description: '등록된 분양글 상태를 확인해요', icon: 'storefront-outline', href: '/admin/listings' },
+  { label: '후기 관리', description: '후기 신뢰도와 신고 상태를 관리해요', icon: 'star-outline', href: '/admin/reviews' },
   { label: '배너 관리', description: '홈 프로모션 배너와 광고 노출을 관리해요', icon: 'images-outline', href: '/admin/banners' },
   { label: '게시글 관리', description: '커뮤니티 콘텐츠를 관리해요', icon: 'document-text-outline', href: '/admin/posts' },
   { label: '신고 관리', description: '접수된 신고를 검토하고 처리해요', icon: 'flag-outline', href: '/admin/reports' },

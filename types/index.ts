@@ -49,13 +49,22 @@ export interface RepresentativeTurtle {
 export interface BreederReview {
   id: string;
   breederId: string;
+  listingId: string;
+  userId: string;
   author: string;
   avatar: string;
   rating: number;
   content: string;
   species: string;
   createdAt: string;
+  reviewType: ReviewType;
+  status: ReviewStatus;
+  reportCount: number;
 }
+
+export type ReviewType = 'general' | 'contact_based' | 'verified_trade';
+
+export type ReviewStatus = 'active' | 'hidden' | 'pending';
 
 export interface Listing {
   id: string;

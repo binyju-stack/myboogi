@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { posts as communityPosts } from '@/data/communityData';
@@ -39,72 +39,94 @@ function Section({ eyebrow, title, action, children }: { eyebrow: string; title:
 }
 
 function PromotionBannerCarousel() {
-  const scrollRef = useRef<ScrollView>(null);
+  const listRef = useRef<FlatList<(typeof homeBanners)[number]>>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const { width } = useWindowDimensions();
   const bannerWidth = Math.max(280, width - 40);
+  const bannerGap = 12;
+  const snapInterval = bannerWidth + bannerGap;
+
+  const goToIndex = useCallback((index: number, animated = true) => {
+    if (!homeBanners.length) return;
+    listRef.current?.scrollToIndex({ index, animated });
+    setActiveIndex(index);
+  }, []);
 
   useEffect(() => {
+    if (homeBanners.length <= 1) return;
+
     const timer = setInterval(() => {
-      const nextIndex = (activeIndex + 1) % homeBanners.length;
-      scrollRef.current?.scrollTo({ x: nextIndex * bannerWidth, animated: true });
-      setActiveIndex(nextIndex);
+      setActiveIndex((currentIndex) => {
+        const nextIndex = (currentIndex + 1) % homeBanners.length;
+        listRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+        return nextIndex;
+      });
     }, 3600);
 
     return () => clearInterval(timer);
-  }, [activeIndex, bannerWidth]);
+  }, []);
 
   const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / bannerWidth);
+    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / snapInterval);
     setActiveIndex(Math.min(homeBanners.length - 1, Math.max(0, nextIndex)));
+  };
+
+  const renderBanner = ({ item: banner }: { item: (typeof homeBanners)[number] }) => {
+    const style = bannerStyles[banner.id] ?? bannerStyles['banner-1'];
+
+    return (
+      <AnimatedPressable
+        onPress={() => router.push(banner.linkUrl as never)}
+        style={{ width: bannerWidth, backgroundColor: style.background }}
+        className="h-[190px] overflow-hidden rounded-[24px] p-4 shadow-sm"
+      >
+        <Image source={{ uri: banner.image }} className="absolute bottom-0 right-0 h-full w-[48%]" resizeMode="cover" />
+        <View className="absolute bottom-0 right-0 h-full w-[52%] bg-white/30" />
+        <View className="absolute bottom-0 left-0 right-0 h-20 bg-white/20" />
+        {banner.isAd ? (
+          <View className="absolute right-4 top-4 rounded-full bg-black/55 px-2.5 py-1">
+            <Text className="text-[9px] font-black text-white">광고</Text>
+          </View>
+        ) : null}
+        <View className="max-w-[57%] flex-1 justify-between">
+          <View>
+            <Text style={{ color: style.accent }} className="text-[10px] font-black">MYBOOGI PICK</Text>
+            <Text className="mt-2 text-[21px] font-black leading-7 text-ink" numberOfLines={2}>{banner.title}</Text>
+            <Text className="mt-2 text-[11px] font-bold leading-5 text-muted" numberOfLines={2}>{banner.description}</Text>
+          </View>
+          <View className="self-start rounded-full bg-white px-3.5 py-2 shadow-sm">
+            <Text style={{ color: style.accent }} className="text-[10px] font-black">{banner.actionLabel}</Text>
+          </View>
+        </View>
+      </AnimatedPressable>
+    );
   };
 
   return (
     <View className="pt-5">
-      <ScrollView
-        ref={scrollRef}
+      <FlatList
+        ref={listRef}
+        data={homeBanners}
+        renderItem={renderBanner}
+        keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        snapToInterval={bannerWidth}
+        snapToInterval={snapInterval}
+        snapToAlignment="start"
         decelerationRate="fast"
-        pagingEnabled
+        pagingEnabled={false}
         onMomentumScrollEnd={onMomentumScrollEnd}
         contentContainerClassName="px-5"
-      >
-        {homeBanners.map((banner) => {
-          const style = bannerStyles[banner.id] ?? bannerStyles['banner-1'];
-          return (
-            <AnimatedPressable
-              key={banner.id}
-              onPress={() => router.push(banner.linkUrl as never)}
-              style={{ width: bannerWidth, backgroundColor: style.background }}
-              className="h-[200px] overflow-hidden rounded-[24px] p-5 shadow-sm"
-            >
-              <Image source={{ uri: banner.image }} className="absolute bottom-0 right-0 h-full w-[52%]" resizeMode="cover" />
-              <View className="absolute bottom-0 right-0 h-full w-[52%] bg-white/20" />
-              {banner.isAd ? (
-                <View className="absolute right-4 top-4 rounded-full bg-black/55 px-2.5 py-1">
-                  <Text className="text-[9px] font-black text-white">광고</Text>
-                </View>
-              ) : null}
-              <View className="max-w-[58%] flex-1 justify-between">
-                <View>
-                  <Text style={{ color: style.accent }} className="text-[10px] font-black">MYBOOGI PICK</Text>
-                  <Text className="mt-2 text-[24px] font-black leading-8 tracking-[-0.8px] text-ink">{banner.title}</Text>
-                  <Text className="mt-2 text-[12px] leading-5 text-muted">{banner.description}</Text>
-                </View>
-                <View className="self-start rounded-full bg-white px-4 py-2.5 shadow-sm">
-                  <Text style={{ color: style.accent }} className="text-[11px] font-black">{banner.actionLabel}</Text>
-                </View>
-              </View>
-            </AnimatedPressable>
-          );
-        })}
-      </ScrollView>
+        ItemSeparatorComponent={() => <View style={{ width: bannerGap }} />}
+        getItemLayout={(_, index) => ({ length: snapInterval, offset: snapInterval * index, index })}
+        onScrollToIndexFailed={({ index }) => listRef.current?.scrollToOffset({ offset: snapInterval * index, animated: true })}
+      />
 
       <View className="mt-3 flex-row justify-center">
         {homeBanners.map((banner, index) => (
-          <View key={banner.id} className={`mx-1 h-2 rounded-full ${index === activeIndex ? 'w-6 bg-berry' : 'w-2 bg-line'}`} />
+          <Pressable key={banner.id} onPress={() => goToIndex(index)} className="px-1 py-1">
+            <View className={`h-2 rounded-full ${index === activeIndex ? 'w-6 bg-berry' : 'w-2 bg-line'}`} />
+          </Pressable>
         ))}
       </View>
     </View>
@@ -155,23 +177,30 @@ function BreederCard({ item }: { item: (typeof homeBreederStories)[number] }) {
   );
 }
 
-function FollowActivityCard({ item }: { item: (typeof followActivities)[number] }) {
+function FollowActivityCard({ item, width }: { item: (typeof followActivities)[number]; width: number }) {
   return (
     <AnimatedPressable
       onPress={() => router.push(item.targetType === 'listing' ? `/listing/${item.targetId}` as never : `/breeder/${item.targetId}` as never)}
-      className="mr-3 w-[260px] rounded-[24px] border border-line bg-white p-4 shadow-sm"
+      style={{ width }}
+      className="mr-2.5 min-h-[136px] rounded-[20px] border border-line bg-white p-3 shadow-sm"
     >
-      <View className="flex-row items-center">
-        <Image source={{ uri: item.breederLogo }} className="h-12 w-12 rounded-[16px] bg-shell" />
-        <View className="ml-3 flex-1">
-          <Text className="text-[13px] font-black text-ink">{item.breederName}</Text>
+      <View className="flex-row items-start">
+        <Image source={{ uri: item.breederLogo }} className="h-10 w-10 rounded-[14px] bg-shell" />
+        <View className="ml-2.5 flex-1">
+          <Text className="text-[12px] font-black text-ink" numberOfLines={1}>{item.breederName}</Text>
           <Text className="mt-1 text-[9px] text-muted">{item.createdAt}</Text>
         </View>
-        <Text className="rounded-full bg-blush px-2.5 py-1.5 text-[9px] font-black text-berry">NEW</Text>
+        <View className="rounded-full bg-blush px-2 py-1">
+          <Text className="text-[8px] font-black text-berry">NEW</Text>
+        </View>
       </View>
-      <Text className="mt-4 text-[14px] font-black text-ink">{item.title}</Text>
-      <Text className="mt-1 text-[11px] text-muted">{item.description}</Text>
-      {item.listingStatus ? <Text className="mt-3 self-start rounded-full bg-berry px-2.5 py-1.5 text-[9px] font-black text-white">{item.listingStatus}</Text> : null}
+      <Text className="mt-3 text-[13px] font-black leading-5 text-ink" numberOfLines={2}>{item.title}</Text>
+      <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2}>{item.description}</Text>
+      {item.listingStatus ? (
+        <View className="mt-2 self-start rounded-full bg-ink px-2.5 py-1.5">
+          <Text className="text-[8px] font-black text-white">{item.listingStatus}</Text>
+        </View>
+      ) : null}
     </AnimatedPressable>
   );
 }
@@ -195,7 +224,9 @@ function Metric({ icon, value }: { icon: IconName; value: number }) {
 
 export function HomeScreen() {
   const { followedBreederIds } = useMockUserState();
+  const { width } = useWindowDimensions();
   const followedActivities = followActivities.filter((item) => followedBreederIds.includes(item.breederId));
+  const followActivityCardWidth = Math.min(168, Math.max(142, (width - 50) / 2.35));
 
   return (
     <Page>
@@ -217,7 +248,7 @@ export function HomeScreen() {
       <Section eyebrow="FOLLOWING" title="팔로우 브리더 소식" action={() => router.push('/following-feed')}>
         {followedActivities.length ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-            {followedActivities.map((item) => <FollowActivityCard key={item.id} item={item} />)}
+            {followedActivities.map((item) => <FollowActivityCard key={item.id} item={item} width={followActivityCardWidth} />)}
           </ScrollView>
         ) : (
           <View className="mx-5 rounded-[24px] bg-white px-5 py-10 shadow-sm">

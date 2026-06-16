@@ -11,10 +11,12 @@ import { ChatReadyModal } from '@/components/ChatReadyModal';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { Page } from '@/components/screen';
+import { ReviewTypeBadge, StarRating } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
 import { formatLevel } from '@/data/levelData';
 import { getListingStatus } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
+import { getReviewSummary } from '@/data/reviewData';
 import type { BreederReview } from '@/types';
 import { useMockUserState } from '@/components/MockUserState';
 
@@ -34,7 +36,7 @@ const linkButtons = [
   { key: 'websiteUrl', icon: 'globe-outline', label: '홈페이지' },
 ] as const;
 
-function ReviewCard({ review }: { review: BreederReview }) {
+function LegacyReviewCard({ review }: { review: BreederReview }) {
   return (
     <View className="mb-3 rounded-[22px] border border-line bg-white p-4 shadow-sm">
       <View className="flex-row items-center">
@@ -49,6 +51,56 @@ function ReviewCard({ review }: { review: BreederReview }) {
         </View>
       </View>
       <Text className="mt-3 text-[12px] leading-6 text-ink">{review.content}</Text>
+    </View>
+  );
+}
+
+function ReviewCard({ review }: { review: BreederReview }) {
+  return (
+    <View className="mb-3 rounded-[22px] border border-line bg-white p-4 shadow-sm">
+      <View className="flex-row items-center">
+        <Avatar uri={review.avatar} size={38} />
+        <View className="ml-3 flex-1">
+          <Text className="text-[12px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
+          <Text className="mt-1 text-[9px] text-muted">{review.species} · {review.createdAt}</Text>
+        </View>
+        <StarRating rating={review.rating} size={12} />
+      </View>
+      <View className="mt-3 flex-row items-center justify-between">
+        <ReviewTypeBadge type={review.reviewType} />
+        {review.reportCount ? <Text className="text-[9px] font-bold text-muted">신고 {review.reportCount}</Text> : null}
+      </View>
+      <Text className="mt-3 text-[12px] leading-6 text-ink">{review.content}</Text>
+    </View>
+  );
+}
+
+function ReviewSummaryCard({ breederId }: { breederId: string }) {
+  const summary = getReviewSummary(breederId);
+  const items = [
+    { label: '후기', value: `${summary.totalReviews}개` },
+    { label: '문의 기반', value: `${summary.contactBasedCount}개` },
+    { label: '실거래 인증', value: `${summary.verifiedTradeCount}개` },
+    { label: '분양완료', value: `${summary.completedTrades}건` },
+  ];
+
+  return (
+    <View className="mb-4 rounded-[24px] border border-line bg-white p-4 shadow-sm">
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className="text-[10px] font-black text-berry">REVIEW TRUST</Text>
+          <Text className="mt-1 text-[17px] font-black text-ink">후기 신뢰도 요약</Text>
+        </View>
+        <StarRating rating={summary.averageRating} size={14} />
+      </View>
+      <View className="mt-4 flex-row flex-wrap justify-between">
+        {items.map((item) => (
+          <View key={item.label} className="mb-2 w-[48%] rounded-[16px] bg-soft px-3.5 py-3">
+            <Text className="text-[9px] font-bold text-muted">{item.label}</Text>
+            <Text className="mt-1 text-[14px] font-black text-ink">{item.value}</Text>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -93,7 +145,7 @@ export default function BreederShopScreen() {
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
   const selling = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) !== 'completed');
   const completed = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) === 'completed');
-  const reviews = breederReviews.filter((review) => review.breederId === breeder.id);
+  const reviews = breederReviews.filter((review) => review.breederId === breeder.id && review.status !== 'hidden');
   const activeListings = activeTab === 'selling' ? selling : completed;
   const following = isFollowing(breeder.id);
   const followerCount = breeder.followers + (following ? 1 : 0);
@@ -215,7 +267,12 @@ export default function BreederShopScreen() {
         </View>
 
         {activeTab === 'reviews'
-          ? reviews.map((review) => <ReviewCard key={review.id} review={review} />)
+          ? (
+            <>
+              <ReviewSummaryCard breederId={breeder.id} />
+              {reviews.map((review) => <ReviewCard key={review.id} review={review} />)}
+            </>
+          )
           : activeListings.length
             ? activeListings.map((item) => <ListingCard key={item.id} item={item} list />)
             : <EmptyState completed={activeTab === 'completed'} />}

@@ -121,10 +121,13 @@ export const listingDetails: Record<string, { parentInfo: string; foodResponse: 
 };
 
 export const breederReviews: BreederReview[] = [
-  { id: 'br1', breederId: 'b1', author: '부기맘', avatar: turtleImages[2], rating: 5, content: '첫 분양이라 걱정했는데 사육 환경부터 먹이까지 정말 친절하게 알려주셨어요.', species: '레오파드 육지거북', createdAt: '3일 전' },
-  { id: 'br2', breederId: 'b1', author: '느림보아빠', avatar: turtleImages[3], rating: 5, content: '사진으로 본 것보다 건강하고 활발한 아이를 만났어요. 이후 상담도 꼼꼼합니다.', species: '체리헤드 레드풋', createdAt: '2주 전' },
-  { id: 'br3', breederId: 'b2', author: '초록정원', avatar: turtleImages[0], rating: 4.8, content: '초보 집사 눈높이에 맞춰 설명해주셔서 안심하고 새 가족을 맞이했습니다.', species: '설가타 육지거북', createdAt: '5일 전' },
-  { id: 'br4', breederId: 'b3', author: '꼬북집사', avatar: turtleImages[1], rating: 5, content: '수생 환경 세팅 방법까지 자세히 안내해주시는 믿음직한 브리더예요.', species: '다이아몬드백 테라핀', createdAt: '1주 전' },
+  { id: 'br1', breederId: 'b1', listingId: 'l1', userId: 'u1', author: '부기맘', avatar: turtleImages[2], rating: 5, content: '첫 분양이라 걱정했는데 사육 환경부터 먹이까지 정말 친절하게 알려주셨어요.', species: '레오파드 육지거북', createdAt: '3일 전', reviewType: 'contact_based', status: 'active', reportCount: 0 },
+  { id: 'br2', breederId: 'b1', listingId: 'l4', userId: 'u2', author: '느림보아빠', avatar: turtleImages[3], rating: 5, content: '사진으로 본 것보다 건강하고 활발한 아이를 만났어요. 이후 상담도 꼼꼼합니다.', species: '체리헤드 레드풋', createdAt: '2주 전', reviewType: 'verified_trade', status: 'active', reportCount: 0 },
+  { id: 'br3', breederId: 'b1', listingId: 'l1', userId: 'u3', author: '작은등갑', avatar: turtleImages[0], rating: 4.6, content: '카카오톡으로 사육장 세팅을 먼저 상담했고 답변이 빠르고 차분했어요.', species: '레오파드 육지거북', createdAt: '1개월 전', reviewType: 'contact_based', status: 'active', reportCount: 1 },
+  { id: 'br4', breederId: 'b2', listingId: 'l2', userId: 'u4', author: '초록정원', avatar: turtleImages[0], rating: 4.8, content: '초보 집사 눈높이에 맞춰 설명해주셔서 안심하고 새 가족을 맞이했습니다.', species: '설가타 육지거북', createdAt: '5일 전', reviewType: 'contact_based', status: 'active', reportCount: 0 },
+  { id: 'br5', breederId: 'b2', listingId: 'l5', userId: 'u5', author: '느린하루', avatar: turtleImages[2], rating: 4.2, content: '전화 문의로 기본 정보를 확인했어요. 실제 분양 전 상담만 진행한 후기입니다.', species: '동헤르만 육지거북', createdAt: '3주 전', reviewType: 'general', status: 'pending', reportCount: 0 },
+  { id: 'br6', breederId: 'b3', listingId: 'l3', userId: 'u6', author: '꼬북집사', avatar: turtleImages[1], rating: 5, content: '수생 환경 세팅 방법까지 자세히 안내해주시는 믿음직한 브리더예요.', species: '다이아몬드백 테라핀', createdAt: '1주 전', reviewType: 'contact_based', status: 'active', reportCount: 0 },
+  { id: 'br7', breederId: 'b3', listingId: 'l3', userId: 'u7', author: '아쿠아집사', avatar: turtleImages[3], rating: 5, content: '문의 후 사진과 먹이 반응 영상을 자세히 공유받아 신뢰가 갔습니다.', species: '다이아몬드백 테라핀', createdAt: '2개월 전', reviewType: 'contact_based', status: 'active', reportCount: 0 },
 ];
 
 const legacyPosts: Post[] = [

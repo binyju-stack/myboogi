@@ -9,14 +9,35 @@ import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
 import { LevelPill } from '@/components/LevelProgress';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
+import { ReviewTypeBadge, StarRating } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
 import { formatLevel } from '@/data/levelData';
 import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
 import { breederReviews, breeders, listingDetails, listings } from '@/data/mockData';
 import { useMockUserState } from '@/components/MockUserState';
+import type { BreederReview } from '@/types';
 
 function InfoRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
   return <View className={`flex-row py-3.5 ${last ? '' : 'border-b border-line'}`}><Text className="w-24 text-[11px] font-bold text-muted">{label}</Text><Text className="flex-1 text-[12px] font-black leading-5 text-ink">{value}</Text></View>;
+}
+
+function ListingReviewPreview({ review, divider = false }: { review: BreederReview; divider?: boolean }) {
+  return (
+    <View className={`py-3 ${divider ? 'border-t border-line' : ''}`}>
+      <View className="flex-row items-center">
+        <Avatar uri={review.avatar} size={32} />
+        <View className="ml-2 flex-1">
+          <Text className="text-[10px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
+          <Text className="mt-1 text-[8px] text-muted">{review.createdAt}</Text>
+        </View>
+        <StarRating rating={review.rating} size={11} />
+      </View>
+      <View className="mt-2">
+        <ReviewTypeBadge type={review.reviewType} />
+      </View>
+      <Text className="mt-2 text-[10px] leading-5 text-muted" numberOfLines={2}>{review.content}</Text>
+    </View>
+  );
 }
 
 export default function ListingDetailScreen() {
@@ -71,6 +92,9 @@ export default function ListingDetailScreen() {
             <View className="mt-4 rounded-[18px] bg-soft px-4 py-3">
               <Text className="text-[12px] font-black text-ink">후기 작성 가능 상태</Text>
               <Text className="mt-1 text-[10px] text-muted">reviewEligible: {item.reviewEligible ? 'true' : 'false'}</Text>
+              <AnimatedPressable onPress={() => router.push('/reviews/create' as never)} className="mt-3 items-center rounded-[14px] bg-white py-3">
+                <Text className="text-[10px] font-black text-berry">후기 작성하기</Text>
+              </AnimatedPressable>
             </View>
           ) : null}
           <View className="mt-4 flex-row items-center"><Text className="text-[11px] text-muted">{item.location} · {item.stage}</Text><View className="ml-auto flex-row"><Stat icon="eye-outline" value={item.views} /><Stat icon={favorite ? 'heart' : 'heart-outline'} value={likeCount} /></View></View>
@@ -79,6 +103,9 @@ export default function ListingDetailScreen() {
         <FadeInView>
           <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
             <View className="flex-row items-center"><Avatar uri={breeder.avatar} size={54} /><View className="ml-3 flex-1"><VerifiedBadge label={breeder.badge} /><Text className="mt-1.5 text-[14px] font-black text-ink">{breeder.name}</Text><Text className="mt-1 text-[9px] text-muted">{breeder.location} · 후기 평점 {breeder.rating}</Text></View><Ionicons name="chevron-forward" size={18} color={colors.subtle} /></View>
+            <View className="mt-3">
+              <StarRating rating={breeder.rating} size={13} />
+            </View>
             <View className="mt-3 flex-row flex-wrap gap-2">
               <LevelPill label={formatLevel(breeder.level ?? 6, breeder.levelName ?? '브리더')} icon="ribbon-outline" />
               <View className="flex-row items-center self-start rounded-full bg-soft px-3 py-2">
@@ -102,7 +129,7 @@ export default function ListingDetailScreen() {
 
         <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
           <View className="flex-row items-end justify-between"><View><Text className="text-[9px] font-black text-berry">REAL REVIEW</Text><Text className="mt-1 text-[18px] font-black text-ink">후기 미리보기</Text></View><Text className="text-[10px] font-bold text-muted">전체 {breeder.reviews}</Text></View>
-          <View className="mt-4">{reviews.map((review, index) => <View key={review.id} className={`py-3 ${index ? 'border-t border-line' : ''}`}><View className="flex-row items-center"><Avatar uri={review.avatar} size={32} /><View className="ml-2 flex-1"><Text className="text-[10px] font-black text-ink">{review.author}</Text><Text className="mt-1 text-[8px] text-muted">{review.createdAt}</Text></View><Ionicons name="star" size={11} color="#FFB443" /><Text className="ml-1 text-[9px] font-black text-ink">{review.rating}</Text></View><Text className="mt-2 text-[10px] leading-5 text-muted" numberOfLines={2}>{review.content}</Text></View>)}</View>
+          <View className="mt-4">{reviews.map((review, index) => <ListingReviewPreview key={review.id} review={review} divider={Boolean(index)} />)}</View>
           <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="mt-2 items-center rounded-[16px] bg-soft py-3.5"><Text className="text-[10px] font-black text-ink">후기 더보기</Text></AnimatedPressable>
         </View>
       </ScrollView>
