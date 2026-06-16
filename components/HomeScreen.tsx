@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { posts as communityPosts } from '@/data/communityData';
-import { homeBreederStories, homeListings, homeReviews } from '@/data/homeScreenData';
+import { homeBanners, homeBreederStories, homeListings, homeReviews } from '@/data/homeScreenData';
 
 import { BrandHeader } from './common';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
@@ -13,6 +14,13 @@ import { Page } from './screen';
 import { useMockUserState } from './MockUserState';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
+
+const bannerStyles: Record<(typeof homeBanners)[number]['id'], { background: string; accent: string; route: string }> = {
+  'weekly-pick': { background: '#FFF5F8', accent: colors.berry, route: '/listing/l3' },
+  auction: { background: '#FFF7E8', accent: '#F59E0B', route: '/marketplace' },
+  breeder: { background: '#EAF5FF', accent: '#4593D6', route: '/breeder/verification/apply' },
+  guide: { background: '#E9F7EF', accent: colors.moss, route: '/community' },
+};
 
 function Section({ eyebrow, title, action, children }: { eyebrow: string; title: string; action?: () => void; children: ReactNode }) {
   return (
@@ -25,6 +33,74 @@ function Section({ eyebrow, title, action, children }: { eyebrow: string; title:
         {action ? <Pressable onPress={action} className="rounded-full bg-soft px-3 py-2"><Text className="text-[10px] font-bold text-muted">전체보기</Text></Pressable> : null}
       </View>
       {children}
+    </View>
+  );
+}
+
+function PromotionBannerCarousel() {
+  const scrollRef = useRef<ScrollView>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { width } = useWindowDimensions();
+  const bannerWidth = Math.max(280, width - 40);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const nextIndex = (activeIndex + 1) % homeBanners.length;
+      scrollRef.current?.scrollTo({ x: nextIndex * bannerWidth, animated: true });
+      setActiveIndex(nextIndex);
+    }, 3600);
+
+    return () => clearInterval(timer);
+  }, [activeIndex, bannerWidth]);
+
+  const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / bannerWidth);
+    setActiveIndex(Math.min(homeBanners.length - 1, Math.max(0, nextIndex)));
+  };
+
+  return (
+    <View className="pt-5">
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={bannerWidth}
+        decelerationRate="fast"
+        pagingEnabled
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        contentContainerClassName="px-5"
+      >
+        {homeBanners.map((banner) => {
+          const style = bannerStyles[banner.id];
+          return (
+            <AnimatedPressable
+              key={banner.id}
+              onPress={() => router.push(style.route as never)}
+              style={{ width: bannerWidth, backgroundColor: style.background }}
+              className="h-[200px] overflow-hidden rounded-[24px] p-5 shadow-sm"
+            >
+              <Image source={{ uri: banner.image }} className="absolute bottom-0 right-0 h-full w-[52%]" resizeMode="cover" />
+              <View className="absolute bottom-0 right-0 h-full w-[52%] bg-white/20" />
+              <View className="max-w-[58%] flex-1 justify-between">
+                <View>
+                  <Text style={{ color: style.accent }} className="text-[10px] font-black">MYBOOGI PICK</Text>
+                  <Text className="mt-2 text-[24px] font-black leading-8 tracking-[-0.8px] text-ink">{banner.title}</Text>
+                  <Text className="mt-2 text-[12px] leading-5 text-muted">{banner.description}</Text>
+                </View>
+                <View className="self-start rounded-full bg-white px-4 py-2.5 shadow-sm">
+                  <Text style={{ color: style.accent }} className="text-[11px] font-black">{banner.actionLabel}</Text>
+                </View>
+              </View>
+            </AnimatedPressable>
+          );
+        })}
+      </ScrollView>
+
+      <View className="mt-3 flex-row justify-center">
+        {homeBanners.map((banner, index) => (
+          <View key={banner.id} className={`mx-1 h-2 rounded-full ${index === activeIndex ? 'w-6 bg-berry' : 'w-2 bg-line'}`} />
+        ))}
+      </View>
     </View>
   );
 }
@@ -94,6 +170,7 @@ export function HomeScreen() {
   return (
     <Page>
       <BrandHeader />
+      <PromotionBannerCarousel />
 
       <Section eyebrow="CURATED FOR YOU" title="오늘의 추천 분양" action={() => router.push('/marketplace')}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">

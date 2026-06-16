@@ -1,3 +1,34 @@
+export const homeBanners = [
+  {
+    id: 'weekly-pick',
+    title: '이번주 추천 개체',
+    description: '희귀 뉴블러드 테라핀 입고',
+    image: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=82',
+    actionLabel: '자세히 보기',
+  },
+  {
+    id: 'auction',
+    title: '100원 경매 이벤트',
+    description: '특별 개체를 만나보세요',
+    image: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=78',
+    actionLabel: '참여하기',
+  },
+  {
+    id: 'breeder',
+    title: '인증 브리더 모집',
+    description: '창립 멤버 혜택 제공',
+    image: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=74',
+    actionLabel: '신청하기',
+  },
+  {
+    id: 'guide',
+    title: '초보 집사 사육 가이드',
+    description: '처음 키우는 사람을 위한 정보',
+    image: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=70',
+    actionLabel: '보러가기',
+  },
+] as const;
+
 export const homeBreederStories = [
   { id: 'b1', name: '핑크쉘', badge: '인증', followers: '1.2천', color: '#EBD8C7' },
   { id: 'b2', name: '느린숲', badge: '우수', followers: '842', color: '#C9DBCE' },
