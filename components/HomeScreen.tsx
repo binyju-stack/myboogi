@@ -15,11 +15,11 @@ import { useMockUserState } from './MockUserState';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
-const bannerStyles: Record<(typeof homeBanners)[number]['id'], { background: string; accent: string; route: string }> = {
-  'weekly-pick': { background: '#FFF5F8', accent: colors.berry, route: '/listing/l3' },
-  auction: { background: '#FFF7E8', accent: '#F59E0B', route: '/marketplace' },
-  breeder: { background: '#EAF5FF', accent: '#4593D6', route: '/breeder/verification/apply' },
-  guide: { background: '#E9F7EF', accent: colors.moss, route: '/community' },
+const bannerStyles: Record<string, { background: string; accent: string }> = {
+  'banner-1': { background: '#FFF5F8', accent: colors.berry },
+  'banner-2': { background: '#FFF7E8', accent: '#F59E0B' },
+  'banner-3': { background: '#EAF5FF', accent: '#4593D6' },
+  'banner-4': { background: '#E9F7EF', accent: colors.moss },
 };
 
 function Section({ eyebrow, title, action, children }: { eyebrow: string; title: string; action?: () => void; children: ReactNode }) {
@@ -71,16 +71,21 @@ function PromotionBannerCarousel() {
         contentContainerClassName="px-5"
       >
         {homeBanners.map((banner) => {
-          const style = bannerStyles[banner.id];
+          const style = bannerStyles[banner.id] ?? bannerStyles['banner-1'];
           return (
             <AnimatedPressable
               key={banner.id}
-              onPress={() => router.push(style.route as never)}
+              onPress={() => router.push(banner.linkUrl as never)}
               style={{ width: bannerWidth, backgroundColor: style.background }}
               className="h-[200px] overflow-hidden rounded-[24px] p-5 shadow-sm"
             >
               <Image source={{ uri: banner.image }} className="absolute bottom-0 right-0 h-full w-[52%]" resizeMode="cover" />
               <View className="absolute bottom-0 right-0 h-full w-[52%] bg-white/20" />
+              {banner.isAd ? (
+                <View className="absolute right-4 top-4 rounded-full bg-black/55 px-2.5 py-1">
+                  <Text className="text-[9px] font-black text-white">광고</Text>
+                </View>
+              ) : null}
               <View className="max-w-[58%] flex-1 justify-between">
                 <View>
                   <Text style={{ color: style.accent }} className="text-[10px] font-black">MYBOOGI PICK</Text>
