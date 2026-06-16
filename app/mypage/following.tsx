@@ -36,6 +36,7 @@ export default function FollowingBreedersScreen() {
                   <View className="mt-2 flex-row items-center">
                     <Ionicons name="people-outline" size={12} color={colors.muted} />
                     <Text className="ml-1 text-[9px] font-bold text-muted">팔로워 {(breeder.followers + 1).toLocaleString()}</Text>
+                    {(breeder.newListingCount ?? 0) > 0 ? <Text className="ml-2 rounded-full bg-blush px-2 py-1 text-[8px] font-black text-berry">신규 {breeder.newListingCount}</Text> : null}
                   </View>
                 </View>
                 <AnimatedPressable

@@ -78,11 +78,17 @@ export const breeders: Breeder[] = baseBreeders.map((breeder, index) => {
   ];
 
   const typeByIndex = index === 1 ? 'individual' : 'business';
+  const followMeta = [
+    { isFollowing: true, recentActivity: '신규 분양 개체 등록 · 2시간 전', newListingCount: 2 },
+    { isFollowing: false, recentActivity: '사육 가이드 업데이트 · 8시간 전', newListingCount: 0 },
+    { isFollowing: true, recentActivity: '신규 후기 등록 · 1일 전', newListingCount: 1 },
+  ][index];
   return {
     ...breeder,
     ...profiles[index],
     breederType: typeByIndex,
     verificationBadgeLabel: typeByIndex === 'business' ? '사업자 인증 브리더' : '개인 인증 브리더',
+    ...followMeta,
   };
 });
 

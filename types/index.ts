@@ -6,6 +6,9 @@ export interface Breeder {
   badge: BreederBadge;
   breederType?: BreederType;
   verificationBadgeLabel?: string;
+  isFollowing?: boolean;
+  recentActivity?: string;
+  newListingCount?: number;
   level?: number;
   levelName?: string;
   trustScore?: number;

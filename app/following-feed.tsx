@@ -49,13 +49,17 @@ export default function FollowingFeedScreen() {
                     <Text className="mt-1 text-[9px] text-muted">{activity.createdAt}</Text>
                   </View>
                   <View className="rounded-full bg-blush px-2.5 py-1.5">
-                    <Text className="text-[9px] font-black text-berry">{activity.activityType === 'listing' ? '신규 분양' : activity.activityType === 'review' ? '후기' : '소식'}</Text>
+                    <Text className="text-[9px] font-black text-berry">{activity.activityType === 'listing' ? '신규 분양' : activity.activityType === 'completed' ? '분양완료' : activity.activityType === 'review' ? '후기' : '대표 개체'}</Text>
                   </View>
                 </View>
                 <View className="mt-4 rounded-[18px] bg-soft p-4">
                   <Text className="text-[15px] font-black text-ink">{activity.title}</Text>
                   <Text className="mt-1 text-[11px] text-muted">{activity.description}</Text>
                   {activity.listingStatus ? <Text className="mt-3 self-start rounded-full bg-berry px-2.5 py-1.5 text-[9px] font-black text-white">{activity.listingStatus}</Text> : null}
+                </View>
+                <View className="mt-4 flex-row items-center justify-center rounded-[16px] bg-blush py-3">
+                  <Text className="text-[11px] font-black text-berry">상세 이동</Text>
+                  <Ionicons name="chevron-forward" size={14} color={colors.berry} />
                 </View>
               </AnimatedPressable>
             </FadeInView>
