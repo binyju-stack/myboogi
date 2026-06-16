@@ -1,4 +1,4 @@
-import type { Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle, User } from '@/types';
+import type { Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle, User, UserProfile } from '@/types';
 
 const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
@@ -194,3 +194,21 @@ export const users: User[] = [
     trustScore: 82,
   },
 ];
+
+export const userProfile: UserProfile = {
+  nickname: '느린숲',
+  bio: '테라핀 전문 브리더',
+  region: '서울 송파구',
+  instagram: 'https://instagram.com/slowforest',
+  blog: 'https://blog.example.com/slowforest',
+  youtube: 'https://youtube.com/@slowforest',
+  openChat: 'https://open.kakao.com/o/slowforest',
+  interests: ['다이아몬드백 테라핀', '머스크터틀'],
+  stats: {
+    posts: 18,
+    comments: 64,
+    listings: 7,
+    followers: 842,
+    following: 12,
+  },
+};

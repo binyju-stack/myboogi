@@ -151,3 +151,21 @@ export interface User {
   nextLevelXp: number;
   trustScore: number;
 }
+
+export interface UserProfile {
+  nickname: string;
+  bio: string;
+  region: string;
+  instagram: string;
+  blog: string;
+  youtube: string;
+  openChat: string;
+  interests: string[];
+  stats: {
+    posts: number;
+    comments: number;
+    listings: number;
+    followers: number;
+    following: number;
+  };
+}

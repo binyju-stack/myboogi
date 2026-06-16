@@ -80,7 +80,7 @@ export default function MyPageScreen() {
             </View>
             <Text className="mt-2 text-[11px] leading-5 text-muted">거북이와 함께 천천히, 건강하게 성장 중이에요.</Text>
           </View>
-          <AnimatedPressable onPress={() => router.push('/mypage/profile')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
+          <AnimatedPressable onPress={() => router.push('/mypage/edit')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
             <Ionicons name="chevron-forward" size={18} color={colors.muted} />
           </AnimatedPressable>
         </View>
