@@ -53,7 +53,7 @@ export default function MyPageScreen() {
     <Page>
       <View className="bg-white px-5 pb-7 pt-4">
         <View className="flex-row items-center justify-between">
-          <Text className="text-[24px] font-black tracking-[-0.8px] text-ink">마이페이지</Text>
+          <Text className="text-[24px] font-black text-ink">마이페이지</Text>
           <View className="flex-row items-center">
             <AnimatedPressable onPress={() => router.push('/notifications')} className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-soft">
               <Ionicons name="notifications-outline" size={19} color={colors.ink} />

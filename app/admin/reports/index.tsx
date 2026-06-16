@@ -16,7 +16,7 @@ export default function ReportAdminScreen() {
     <Page>
       <TopBar title="신고 관리" />
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">REPORT ADMIN</Text><Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">접수된 신고를 확인해요</Text><Text className="mt-2 text-[11px] text-muted">처리가 필요한 신고가 {waiting}건 있어요.</Text>
+        <Text className="text-[10px] font-black text-berry">REPORT ADMIN</Text><Text className="mt-1 text-[24px] font-black text-ink">접수된 신고를 확인해요</Text><Text className="mt-2 text-[11px] text-muted">처리가 필요한 신고가 {waiting}건 있어요.</Text>
       </View>
       <View className="px-5 pb-5 pt-6">
         {reports.map((item, index) => (

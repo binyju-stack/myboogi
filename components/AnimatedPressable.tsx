@@ -10,8 +10,8 @@ export function AnimatedPressable({ children, style, ...props }: PressableProps 
 
   const animate = (pressed: boolean) => {
     Animated.parallel([
-      Animated.spring(scale, { toValue: pressed ? 0.98 : 1, useNativeDriver: true, speed: 35, bounciness: 2 }),
-      Animated.timing(opacity, { toValue: pressed ? 0.78 : 1, duration: 100, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: pressed ? 0.975 : 1, useNativeDriver: true, speed: 32, bounciness: 3 }),
+      Animated.timing(opacity, { toValue: pressed ? 0.86 : 1, duration: 110, useNativeDriver: true }),
     ]).start();
   };
 

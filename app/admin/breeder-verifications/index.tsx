@@ -22,7 +22,7 @@ export default function BreederVerificationAdminScreen() {
       <TopBar title="브리더 승인 관리" />
       <View className="bg-white px-5 pb-6 pt-4">
         <Text className="text-[10px] font-black text-berry">VERIFICATION ADMIN</Text>
-        <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">신청 내역을 검토해요</Text>
+        <Text className="mt-1 text-[24px] font-black text-ink">신청 내역을 검토해요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">현재 검토가 필요한 신청이 {waiting}건 있어요.</Text>
       </View>
 

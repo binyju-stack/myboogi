@@ -19,7 +19,7 @@ export default function NoticeDetailScreen() {
         <FadeInView>
           <View className="bg-white px-5 pb-7 pt-5">
             {notice.important ? <Text className="self-start rounded-full bg-blush px-3 py-2 text-[10px] font-black text-berry">중요 공지</Text> : null}
-            <Text className="mt-4 text-[24px] font-black leading-9 tracking-[-0.8px] text-ink">{notice.title}</Text>
+            <Text className="mt-4 text-[24px] font-black leading-9 text-ink">{notice.title}</Text>
             <View className="mt-5 flex-row items-center">
               <Text className="text-[10px] font-bold text-muted">{notice.date}</Text>
               <View className="mx-2 h-1 w-1 rounded-full bg-subtle" />

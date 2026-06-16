@@ -12,7 +12,7 @@ import { communityCategories, posts } from '@/data/communityData';
 export default function CommunityScreen() {
   return (
     <Page>
-      <View className="bg-white px-5 pb-5 pt-5">
+      <View className="border-b border-line bg-white px-5 pb-5 pt-5">
         <View className="flex-row items-center justify-between">
           <View className="flex-1 pr-4">
             <Text className="text-[10px] font-black text-berry">MYBOOGI COMMUNITY</Text>

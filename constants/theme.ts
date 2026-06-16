@@ -15,3 +15,34 @@ export const colors = {
   line: '#E9ECEF',
   blue: '#EAF5FF',
 };
+
+export const radii = {
+  sm: 14,
+  md: 18,
+  lg: 22,
+  xl: 26,
+  pill: 999,
+};
+
+export const spacing = {
+  screenX: 20,
+  sectionTop: 28,
+  cardPadding: 20,
+};
+
+export const shadows = {
+  card: {
+    shadowColor: '#191F28',
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
+  },
+  bar: {
+    shadowColor: '#191F28',
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: -4 },
+    elevation: 8,
+  },
+};

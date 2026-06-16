@@ -2,10 +2,12 @@ import type { ReactNode } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { shadows } from '@/constants/theme';
+
 export function Page({ children }: { children: ReactNode }) {
   return (
     <SafeAreaView className="flex-1 bg-page" edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-28">
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-32">
         {children}
       </ScrollView>
     </SafeAreaView>
@@ -13,5 +15,5 @@ export function Page({ children }: { children: ReactNode }) {
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <View className={`rounded-[24px] border border-line bg-white p-5 shadow-sm ${className}`}>{children}</View>;
+  return <View style={shadows.card} className={`rounded-[26px] border border-line bg-white p-5 ${className}`}>{children}</View>;
 }

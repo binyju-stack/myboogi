@@ -30,7 +30,7 @@ export default function FollowingFeedScreen() {
       <TopBar title="팔로우 피드" />
       <View className="bg-white px-5 pb-6 pt-4">
         <Text className="text-[10px] font-black text-berry">FOLLOWING FEED</Text>
-        <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">브리더 소식</Text>
+        <Text className="mt-1 text-[24px] font-black text-ink">브리더 소식</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">팔로우한 브리더의 신규 분양과 활동을 확인해요.</Text>
       </View>
 

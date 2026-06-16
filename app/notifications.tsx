@@ -74,7 +74,7 @@ export default function NotificationsScreen() {
         <View className="flex-row items-start justify-between">
           <View className="flex-1 pr-4">
             <Text className="text-[10px] font-black text-berry">NOTIFICATION CENTER</Text>
-            <Text className="mt-1 text-[26px] font-black tracking-[-0.8px] text-ink">알림</Text>
+            <Text className="mt-1 text-[26px] font-black text-ink">알림</Text>
             <Text className="mt-2 text-[11px] leading-5 text-muted">읽지 않은 알림 {unreadCount}개</Text>
           </View>
           <AnimatedPressable onPress={markAllAsRead} className="rounded-full bg-blush px-3.5 py-2.5">

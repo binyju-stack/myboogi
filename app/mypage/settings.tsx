@@ -58,7 +58,7 @@ export default function SettingsScreen() {
       <TopBar title="설정" />
       <View className="bg-white px-5 pb-6 pt-4">
         <Text className="text-[10px] font-black text-berry">MYBOOGI SETTINGS</Text>
-        <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">내게 맞게 설정해요</Text>
+        <Text className="mt-1 text-[24px] font-black text-ink">내게 맞게 설정해요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">계정 정보와 서비스 이용 설정을 관리할 수 있어요.</Text>
       </View>
 

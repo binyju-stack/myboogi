@@ -96,7 +96,7 @@ export default function OnboardingScreen() {
     <SafeAreaView className="flex-1 bg-page" edges={['top', 'bottom']}>
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-5 pt-3">
-          <Text className="text-[22px] font-black tracking-[-0.8px] text-ink">마이부기</Text>
+          <Text className="text-[22px] font-black text-ink">마이부기</Text>
           <AnimatedPressable onPress={goHome} className="rounded-full bg-white px-4 py-2.5 shadow-sm">
             <Text className="text-[11px] font-black text-muted">건너뛰기</Text>
           </AnimatedPressable>
@@ -111,7 +111,7 @@ export default function OnboardingScreen() {
               <View key={slide.title} style={{ width }} className="flex-1">
                 <Illustration slide={slide} index={slideIndex} />
                 <View className="px-7 pt-10">
-                  <Text className="text-[28px] font-black leading-9 tracking-[-0.8px] text-ink">{slide.title}</Text>
+                  <Text className="text-[28px] font-black leading-9 text-ink">{slide.title}</Text>
                   <Text className="mt-4 text-[14px] leading-7 text-muted">{slide.description}</Text>
                 </View>
               </View>

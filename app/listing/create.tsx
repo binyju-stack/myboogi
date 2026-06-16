@@ -27,7 +27,7 @@ export default function ListingCreateScreen() {
 
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerClassName="px-5 pb-32 pt-5">
-          <View className="mb-5"><Text className="text-[25px] font-black tracking-[-0.8px] text-ink">새 가족을 기다리는{'\n'}거북이를 소개해주세요</Text><Text className="mt-3 text-[12px] leading-6 text-muted">정확하고 자세한 정보는 좋은 인연을 만나는 데 도움이 돼요.</Text></View>
+          <View className="mb-5"><Text className="text-[25px] font-black text-ink">새 가족을 기다리는{'\n'}거북이를 소개해주세요</Text><Text className="mt-3 text-[12px] leading-6 text-muted">정확하고 자세한 정보는 좋은 인연을 만나는 데 도움이 돼요.</Text></View>
           <ListingForm draft={draft} onChange={updateDraft} />
         </ScrollView>
       </KeyboardAvoidingView>

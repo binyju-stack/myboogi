@@ -48,7 +48,7 @@ function FormSection({ eyebrow, title, description, children }: { eyebrow: strin
   return (
     <View className="mb-4 rounded-[26px] border border-line bg-white p-5 shadow-sm">
       <Text className="text-[9px] font-black text-berry">{eyebrow}</Text>
-      <Text className="mt-1 text-[19px] font-black tracking-[-0.5px] text-ink">{title}</Text>
+      <Text className="mt-1 text-[19px] font-black text-ink">{title}</Text>
       {description ? <Text className="mt-2 text-[11px] leading-5 text-muted">{description}</Text> : null}
       <View className="mt-5">{children}</View>
     </View>

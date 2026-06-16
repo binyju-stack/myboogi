@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { colors, shadows } from '@/constants/theme';
 import { unreadNotificationCount } from '@/data/notificationData';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -23,13 +23,13 @@ export function TurtleMark({ size = 50 }: { size?: number }) {
 
 export function BrandHeader({ compact = false }: { compact?: boolean }) {
   return (
-    <View className={`bg-white px-5 ${compact ? 'pb-4 pt-4' : 'pb-5 pt-4'}`}>
+    <View className={`border-b border-line bg-white px-5 ${compact ? 'pb-4 pt-4' : 'pb-5 pt-4'}`}>
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[22px] font-black tracking-[-1px] text-ink">마이부기</Text>
+          <Text className="text-[22px] font-black text-ink">마이부기</Text>
           {!compact ? <Text className="mt-1 text-[11px] font-semibold text-muted">거북이와 집사를 위한 믿을 수 있는 플랫폼</Text> : null}
         </View>
-        <Pressable onPress={() => router.push('/notifications')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
+        <Pressable onPress={() => router.push('/notifications')} className="h-11 w-11 items-center justify-center rounded-full bg-soft">
           <Ionicons name="notifications-outline" color={colors.ink} size={20} />
           {unreadNotificationCount ? (
             <View className="absolute -right-1 -top-1 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 py-0.5">
@@ -39,7 +39,7 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
         </Pressable>
       </View>
       {!compact ? (
-        <Pressable onPress={() => router.push('/search')} className="mt-5 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
+        <Pressable onPress={() => router.push('/search')} className="mt-5 flex-row items-center rounded-[20px] bg-soft px-4 py-3.5">
           <Ionicons name="search" color={colors.muted} size={18} />
           <Text className="ml-2 text-[13px] text-muted">거북이, 브리더, 게시글 검색</Text>
         </Pressable>
@@ -50,21 +50,25 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
 
 export function TopBar({ title, right, onRightPress }: { title: string; right?: IconName; onRightPress?: () => void }) {
   return (
-    <View className="flex-row items-center bg-white px-4 py-3.5">
-      <Pressable onPress={() => router.back()} className="h-10 w-10 items-center justify-center">
-        <Ionicons name="chevron-back" size={24} color={colors.ink} />
+    <View className="flex-row items-center border-b border-line bg-white px-4 py-3.5">
+      <Pressable onPress={() => router.back()} className="h-11 w-11 items-center justify-center rounded-full bg-soft">
+        <Ionicons name="chevron-back" size={23} color={colors.ink} />
       </Pressable>
       <Text className="flex-1 text-center text-[16px] font-black text-ink">{title}</Text>
-      <Pressable onPress={onRightPress} disabled={!onRightPress} className="h-10 w-10 items-center justify-center">{right ? <Ionicons name={right} size={22} color={colors.ink} /> : null}</Pressable>
+      <Pressable onPress={onRightPress} disabled={!onRightPress} className="h-11 w-11 items-center justify-center rounded-full bg-soft">
+        {right ? <Ionicons name={right} size={21} color={colors.ink} /> : null}
+      </Pressable>
     </View>
   );
 }
 
 export function SectionHeader({ title, action = '전체보기', onPress }: { title: string; action?: string; onPress?: () => void }) {
   return (
-    <View className="mb-4 mt-8 flex-row items-center justify-between px-5">
-      <Text className="text-[19px] font-black tracking-[-0.5px] text-ink">{title}</Text>
-      <Pressable onPress={onPress} className="rounded-full bg-soft px-3 py-2"><Text className="text-[10px] font-bold text-muted">{action}</Text></Pressable>
+    <View className="mb-4 mt-7 flex-row items-center justify-between px-5">
+      <Text className="text-[19px] font-black text-ink">{title}</Text>
+      <Pressable onPress={onPress} style={shadows.card} className="rounded-full bg-white px-3.5 py-2.5">
+        <Text className="text-[10px] font-bold text-muted">{action}</Text>
+      </Pressable>
     </View>
   );
 }

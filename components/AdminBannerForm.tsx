@@ -61,7 +61,7 @@ export function AdminBannerForm({ mode, initialBanner }: { mode: 'create' | 'edi
       <TopBar title={mode === 'create' ? '배너 등록' : '배너 수정'} />
       <View className="bg-white px-5 pb-6 pt-4">
         <Text className="text-[10px] font-black text-berry">BANNER ADMIN</Text>
-        <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">{mode === 'create' ? '새 배너를 등록해요' : '배너 정보를 수정해요'}</Text>
+        <Text className="mt-1 text-[24px] font-black text-ink">{mode === 'create' ? '새 배너를 등록해요' : '배너 정보를 수정해요'}</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">현재는 Mock UI이며 실제 저장과 이미지 업로드는 나중에 연결합니다.</Text>
       </View>
 

@@ -36,8 +36,8 @@ export function ListingCard({
   if (list) {
     return (
       <FadeInView delay={index * 45}>
-        <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className="mb-3 flex-row rounded-[22px] border border-line bg-white p-3.5 shadow-sm">
-          <View className="h-28 w-28 overflow-hidden rounded-[18px] bg-shell">
+        <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className="mb-3 flex-row rounded-[24px] border border-line bg-white p-4 shadow-sm">
+          <View className="h-28 w-28 overflow-hidden rounded-[20px] bg-shell">
             <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
             <View className="absolute right-2 top-2">{statusBadge}</View>
           </View>
@@ -50,7 +50,7 @@ export function ListingCard({
               <View className="flex-row items-center"><Text className="mr-2 text-[9px] text-subtle">조회 {item.views} · 찜 {likes}</Text>{heart(true)}</View>
             </View>
             {onStatusPress ? (
-              <Pressable onPress={(event) => { event.stopPropagation(); onStatusPress(item); }} className="mt-3 items-center rounded-[14px] bg-soft py-2.5">
+              <Pressable onPress={(event) => { event.stopPropagation(); onStatusPress(item); }} className="mt-3 items-center rounded-[16px] bg-soft py-2.5">
                 <Text className="text-[10px] font-black text-ink">상태 변경</Text>
               </Pressable>
             ) : null}
@@ -61,7 +61,7 @@ export function ListingCard({
   }
 
   return (
-    <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className={`${wide ? 'mr-4 w-52 rounded-[24px] border border-line bg-white p-2.5 shadow-sm' : 'mb-7 w-[48%]'}`}>
+    <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className={`${wide ? 'mr-4 w-[212px] rounded-[24px] border border-line bg-white p-3 shadow-sm' : 'mb-7 w-[48%]'}`}>
       <View className={`${wide ? 'h-40' : 'aspect-square'} overflow-hidden rounded-[20px] bg-shell`}>
         <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
         <View className="absolute left-2 top-2">{statusBadge}</View>

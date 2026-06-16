@@ -25,11 +25,11 @@ const bannerStyles: Record<string, { background: string; accent: string }> = {
 
 function Section({ eyebrow, title, action, children }: { eyebrow: string; title: string; action?: () => void; children: ReactNode }) {
   return (
-    <View className="mt-8">
+    <View className="mt-7">
       <View className="mb-4 flex-row items-end justify-between px-5">
         <View>
           <Text className="text-[10px] font-black text-berry">{eyebrow}</Text>
-          <Text className="mt-1 text-[20px] font-black tracking-[-0.7px] text-ink">{title}</Text>
+          <Text className="mt-1 text-[20px] font-black text-ink">{title}</Text>
         </View>
         {action ? <Pressable onPress={action} className="rounded-full bg-soft px-3 py-2"><Text className="text-[10px] font-bold text-muted">전체보기</Text></Pressable> : null}
       </View>
@@ -78,7 +78,7 @@ function PromotionBannerCarousel() {
       <AnimatedPressable
         onPress={() => router.push(banner.linkUrl as never)}
         style={{ width: bannerWidth, backgroundColor: style.background }}
-        className="h-[190px] overflow-hidden rounded-[24px] p-4 shadow-sm"
+        className="h-[184px] overflow-hidden rounded-[26px] p-4 shadow-sm"
       >
         <Image source={{ uri: banner.image }} className="absolute bottom-0 right-0 h-full w-[48%]" resizeMode="cover" />
         <View className="absolute bottom-0 right-0 h-full w-[52%] bg-white/30" />
@@ -125,7 +125,7 @@ function PromotionBannerCarousel() {
       <View className="mt-3 flex-row justify-center">
         {homeBanners.map((banner, index) => (
           <Pressable key={banner.id} onPress={() => goToIndex(index)} className="px-1 py-1">
-            <View className={`h-2 rounded-full ${index === activeIndex ? 'w-6 bg-berry' : 'w-2 bg-line'}`} />
+            <View className={`h-1.5 rounded-full ${index === activeIndex ? 'w-6 bg-berry' : 'w-1.5 bg-line'}`} />
           </Pressable>
         ))}
       </View>
@@ -152,7 +152,7 @@ function ListingCard({ item }: { item: (typeof homeListings)[number] }) {
   const { isFavorite, toggleFavorite } = useMockUserState();
   const favorite = isFavorite(item.id);
   return (
-    <Pressable onPress={() => router.push(`/listing/${item.id}`)} className="mr-3 w-[274px] rounded-[24px] border border-line bg-white p-3 shadow-sm">
+    <Pressable onPress={() => router.push(`/listing/${item.id}`)} className="mr-3 w-[260px] rounded-[24px] border border-line bg-white p-3 shadow-sm">
       <View><TurtleArt color={item.color} /><Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className="absolute right-3 top-3 h-9 w-9 items-center justify-center rounded-full bg-white/90"><Ionicons name={favorite ? 'heart' : 'heart-outline'} size={18} color={colors.berry} /></Pressable></View>
       <View className="px-1 pb-1 pt-3">
         <View className="flex-row items-center"><Text className="rounded-full bg-blush px-2 py-1 text-[9px] font-black text-berry">오늘의 추천</Text><Text className="ml-2 text-[10px] text-muted">{item.breeder}</Text></View>
@@ -167,7 +167,7 @@ function BreederCard({ item }: { item: (typeof homeBreederStories)[number] }) {
   const { isFollowing } = useMockUserState();
   const following = isFollowing(item.id);
   return (
-    <Pressable onPress={() => router.push(`/breeder/${item.id}`)} className="mr-3 w-52 rounded-[22px] border border-line bg-white p-4 shadow-sm">
+    <Pressable onPress={() => router.push(`/breeder/${item.id}`)} className="mr-3 w-[212px] rounded-[24px] border border-line bg-white p-4 shadow-sm">
       <View className="flex-row items-center">
         <View className="h-14 w-14 overflow-hidden rounded-full"><TurtleArt color={item.color} height={56} /></View>
         <View className="ml-3 flex-1"><Text className="text-[9px] font-black text-berry">✓ {item.badge} 브리더</Text><Text className="mt-1 text-[14px] font-black text-ink">{item.name}</Text><Text className="mt-1 text-[9px] text-muted">팔로워 {item.followers}</Text></View>
@@ -207,7 +207,7 @@ function FollowActivityCard({ item, width }: { item: (typeof followActivities)[n
 
 function ReviewCard({ item }: { item: (typeof homeReviews)[number] }) {
   return (
-    <Pressable onPress={() => router.push(`/breeder/${item.breederId}`)} className="mr-3 w-[285px] flex-row rounded-[22px] border border-line bg-white p-3 shadow-sm">
+    <Pressable onPress={() => router.push(`/breeder/${item.breederId}`)} className="mr-3 w-[272px] flex-row rounded-[24px] border border-line bg-white p-3 shadow-sm">
       <View className="h-[86px] w-[86px] overflow-hidden rounded-[17px]"><TurtleArt color={item.color} height={86} /></View>
       <View className="ml-3 flex-1">
         <View className="flex-row items-center"><Ionicons name="star" size={12} color="#FFB443" /><Text className="ml-1 text-[10px] font-black text-ink">{item.rating}</Text><Text className="ml-2 text-[9px] text-muted">{item.author}</Text></View>

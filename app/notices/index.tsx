@@ -14,7 +14,7 @@ export default function NoticesScreen() {
       <TopBar title="공지사항" />
       <View className="bg-white px-5 pb-6 pt-4">
         <Text className="text-[10px] font-black text-berry">MYBOOGI NOTICE</Text>
-        <Text className="mt-1 text-[24px] font-black tracking-[-0.8px] text-ink">마이부기의 소식이에요</Text>
+        <Text className="mt-1 text-[24px] font-black text-ink">마이부기의 소식이에요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">서비스 이용에 필요한 중요 소식을 알려드려요.</Text>
       </View>
 
