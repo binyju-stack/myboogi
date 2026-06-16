@@ -169,3 +169,21 @@ export interface UserProfile {
     following: number;
   };
 }
+
+export interface BlockedUser {
+  id: string;
+  nickname: string;
+  avatar: string;
+  userType: string;
+  blockedAt: string;
+}
+
+export interface AppSettings {
+  notificationEnabled: boolean;
+  commentNotification: boolean;
+  likeNotification: boolean;
+  followNotification: boolean;
+  listingNotification: boolean;
+  breederNotification: boolean;
+  noticeNotification: boolean;
+}

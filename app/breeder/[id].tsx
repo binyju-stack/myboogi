@@ -64,6 +64,9 @@ function ReviewCard({ review }: { review: BreederReview }) {
           <Text className="text-[12px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
           <Text className="mt-1 text-[9px] text-muted">{review.species} · {review.createdAt}</Text>
         </View>
+        <AnimatedPressable onPress={() => Alert.alert('해당 사용자를 차단했습니다.')} className="mr-2 rounded-full bg-soft px-2.5 py-1.5">
+          <Text className="text-[9px] font-black text-muted">차단</Text>
+        </AnimatedPressable>
         <StarRating rating={review.rating} size={12} />
       </View>
       <View className="mt-3 flex-row items-center justify-between">

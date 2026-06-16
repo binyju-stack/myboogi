@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Avatar, Stat, TopBar } from '@/components/common';
+import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { colors } from '@/constants/theme';
 import { postComments, posts } from '@/data/communityData';
 import { xpMessages } from '@/data/levelData';
@@ -14,6 +15,7 @@ export default function CommunityDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [liked, setLiked] = useState(false);
+  const [actionVisible, setActionVisible] = useState(false);
   const post = posts.find((item) => item.id === id) ?? posts[0];
   const comments = useMemo(() => postComments.filter((comment) => comment.postId === post.id), [post.id]);
   const likeCount = post.likes + (liked ? 1 : 0);
@@ -21,10 +23,11 @@ export default function CommunityDetailScreen() {
   const images = post.images?.length ? post.images : post.image ? [post.image] : [];
 
   const showCommentReady = () => Alert.alert(`댓글 등록 기능은 준비중입니다.\n${xpMessages.comment}`);
+  const showBlockDone = () => Alert.alert('해당 사용자를 차단했습니다.');
 
   return (
     <SafeAreaView className="flex-1 bg-page" edges={['top']}>
-      <TopBar title="커뮤니티" />
+      <TopBar title="커뮤니티" right="ellipsis-horizontal" onRightPress={() => setActionVisible(true)} />
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
@@ -103,6 +106,9 @@ export default function CommunityDetailScreen() {
                       <Text className="text-[11px] font-black text-ink">{comment.author}</Text>
                       <Text className="mt-1 text-[9px] text-muted">{comment.createdAt}</Text>
                     </View>
+                    <AnimatedPressable onPress={showBlockDone} className="mr-3 rounded-full bg-soft px-2.5 py-1.5">
+                      <Text className="text-[9px] font-black text-muted">차단</Text>
+                    </AnimatedPressable>
                     <Ionicons name="heart-outline" size={14} color={colors.muted} />
                     <Text className="ml-1 text-[9px] text-muted">{comment.likes}</Text>
                   </View>
@@ -122,6 +128,18 @@ export default function CommunityDetailScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
+      <ReportActionMenu
+        visible={actionVisible}
+        onClose={() => setActionVisible(false)}
+        onReport={() => {
+          setActionVisible(false);
+          router.push('/report');
+        }}
+        onBlock={() => {
+          setActionVisible(false);
+          showBlockDone();
+        }}
+      />
     </SafeAreaView>
   );
 }

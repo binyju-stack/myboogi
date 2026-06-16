@@ -1,4 +1,4 @@
-import type { Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle, User, UserProfile } from '@/types';
+import type { AppSettings, BlockedUser, Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle, User, UserProfile } from '@/types';
 
 const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
@@ -211,4 +211,20 @@ export const userProfile: UserProfile = {
     followers: 842,
     following: 12,
   },
+};
+
+export const blockedUsers: BlockedUser[] = [
+  { id: 'blocked-1', nickname: '무리한분양요청', avatar: turtleImages[1], userType: '일반회원', blockedAt: '2026.06.12' },
+  { id: 'blocked-2', nickname: '반복문의계정', avatar: turtleImages[2], userType: '브리더', blockedAt: '2026.06.03' },
+  { id: 'blocked-3', nickname: '거래분쟁주의', avatar: turtleImages[3], userType: '일반회원', blockedAt: '2026.05.28' },
+];
+
+export const settings: AppSettings = {
+  notificationEnabled: true,
+  commentNotification: true,
+  likeNotification: true,
+  followNotification: true,
+  listingNotification: true,
+  breederNotification: false,
+  noticeNotification: true,
 };

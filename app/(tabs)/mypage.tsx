@@ -26,7 +26,7 @@ const quickMenus: MenuItem[] = [
   { label: '성장기록', icon: 'analytics-outline', href: '/growth' },
   { label: '알림', icon: 'notifications-outline', href: '/notifications' },
   { label: '공지사항', icon: 'megaphone-outline', href: '/notices' },
-  { label: '설정', icon: 'settings-outline', href: '/mypage/settings' },
+  { label: '설정', icon: 'settings-outline', href: '/settings' },
 ];
 
 const breederMenus: BreederMenuItem[] = [
@@ -63,7 +63,7 @@ export default function MyPageScreen() {
                 </View>
               ) : null}
             </AnimatedPressable>
-            <AnimatedPressable onPress={() => router.push('/mypage/settings')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
+            <AnimatedPressable onPress={() => router.push('/settings')} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
               <Ionicons name="settings-outline" size={19} color={colors.ink} />
             </AnimatedPressable>
           </View>
