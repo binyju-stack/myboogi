@@ -2,6 +2,7 @@ export type BreederBadge = '일반 브리더' | '인증 브리더' | '우수 브
 
 export interface Breeder {
   id: string;
+  userId?: string;
   name: string;
   badge: BreederBadge;
   breederType?: BreederType;
@@ -66,6 +67,8 @@ export type ReviewType = 'general' | 'contact_based' | 'verified_trade';
 
 export type ReviewStatus = 'active' | 'hidden' | 'pending';
 
+export type Review = BreederReview;
+
 export interface Listing {
   id: string;
   breederId: string;
@@ -92,6 +95,7 @@ export type ListingStatus = 'active' | 'reserved' | 'completed';
 
 export interface Post {
   id: string;
+  userId?: string;
   category: string;
   author: string;
   avatar: string;
@@ -111,6 +115,7 @@ export interface Post {
 export interface PostComment {
   id: string;
   postId: string;
+  userId?: string;
   author: string;
   avatar: string;
   content: string;
@@ -118,8 +123,11 @@ export interface PostComment {
   likes: number;
 }
 
+export type Comment = PostComment;
+
 export interface Turtle {
   id: string;
+  userId?: string;
   name: string;
   species: string;
   sex: '수컷' | '암컷' | '미구분';
@@ -186,4 +194,80 @@ export interface AppSettings {
   listingNotification: boolean;
   breederNotification: boolean;
   noticeNotification: boolean;
+}
+
+export type UserSettings = AppSettings & {
+  userId: string;
+};
+
+export interface Favorite {
+  id: string;
+  userId: string;
+  listingId: string;
+  createdAt: string;
+}
+
+export interface Follow {
+  id: string;
+  userId: string;
+  breederId: string;
+  createdAt: string;
+}
+
+export interface ContactLog {
+  id: string;
+  userId: string;
+  breederId: string;
+  listingId?: string;
+  contactType: 'phone' | 'kakao' | 'open_chat';
+  contactedAt: string;
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: 'comment' | 'like' | 'follow' | 'review' | 'listing' | 'notice' | 'system';
+  title: string;
+  message: string;
+  targetType?: 'post' | 'listing' | 'breeder' | 'review' | 'notice';
+  targetId?: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface Report {
+  id: string;
+  reporterId: string;
+  targetType: 'user' | 'post' | 'comment' | 'listing' | 'breeder' | 'review';
+  targetId: string;
+  reason: string;
+  status: 'pending' | 'resolved' | 'rejected';
+  createdAt: string;
+}
+
+export interface Banner {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  actionLabel: string;
+  linkUrl: string;
+  isActive: boolean;
+  isAd: boolean;
+  sortOrder: number;
+  startDate: string;
+  endDate: string;
+  createdBy: string;
+}
+
+export interface BreederApplication {
+  id: string;
+  userId: string;
+  breederType: BreederType;
+  breederName: string;
+  region: string;
+  specialties: string[];
+  introduction: string;
+  status: 'pending' | 'approved' | 'rejected';
+  appliedAt: string;
 }

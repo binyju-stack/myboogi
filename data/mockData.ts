@@ -1,4 +1,24 @@
-import type { AppSettings, BlockedUser, Breeder, BreederReview, GrowthRecord, Listing, Post, PostComment, Turtle, User, UserProfile } from '@/types';
+import type {
+  AppSettings,
+  Banner,
+  BlockedUser,
+  Breeder,
+  BreederApplication,
+  BreederReview,
+  ContactLog,
+  Favorite,
+  Follow,
+  GrowthRecord,
+  Listing,
+  Notification,
+  Post,
+  PostComment,
+  Report,
+  Turtle,
+  User,
+  UserProfile,
+  UserSettings,
+} from '@/types';
 
 const turtleImages = [
   'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
@@ -86,6 +106,7 @@ export const breeders: Breeder[] = baseBreeders.map((breeder, index) => {
   return {
     ...breeder,
     ...profiles[index],
+    userId: ['u1', 'u4', 'u6'][index],
     breederType: typeByIndex,
     verificationBadgeLabel: typeByIndex === 'business' ? '사업자 인증 브리더' : '개인 인증 브리더',
     ...followMeta,
@@ -162,9 +183,9 @@ void legacyPosts;
 void legacyPostComments;
 
 export const turtles: Turtle[] = [
-  { id: 't1', name: '부기', species: '레오파드 육지거북', sex: '미구분', image: turtleImages[0], birthDate: '2025.09.21' },
-  { id: 't2', name: '초록이', species: '설가타 육지거북', sex: '수컷', image: turtleImages[2], birthDate: '2024.11.08' },
-  { id: 't3', name: '보석이', species: '다이아몬드백 테라핀', sex: '암컷', image: turtleImages[3], birthDate: '2025.04.16' },
+  { id: 't1', userId: 'u1', name: '부기', species: '레오파드 육지거북', sex: '미구분', image: turtleImages[0], birthDate: '2025.09.21' },
+  { id: 't2', userId: 'u1', name: '초록이', species: '설가타 육지거북', sex: '수컷', image: turtleImages[2], birthDate: '2024.11.08' },
+  { id: 't3', userId: 'u1', name: '보석이', species: '다이아몬드백 테라핀', sex: '암컷', image: turtleImages[3], birthDate: '2025.04.16' },
 ];
 
 export const growthRecords: GrowthRecord[] = [
@@ -193,6 +214,12 @@ export const users: User[] = [
     nextLevelXp: 150,
     trustScore: 82,
   },
+  { id: 'u2', name: '느림보아빠', type: '일반회원', location: '서울 송파구', level: 4, levelName: '성장기', xp: 188, nextLevelXp: 260, trustScore: 86 },
+  { id: 'u3', name: '작은등갑', type: '일반회원', location: '경기 성남시', level: 3, levelName: '유체', xp: 114, nextLevelXp: 150, trustScore: 80 },
+  { id: 'u4', name: '초록정원', type: '브리더', location: '서울 송파구', level: 6, levelName: '브리더', xp: 510, nextLevelXp: 700, trustScore: 91 },
+  { id: 'u5', name: '느린하루', type: '일반회원', location: '서울 강동구', level: 2, levelName: '입문', xp: 62, nextLevelXp: 100, trustScore: 74 },
+  { id: 'u6', name: '꼬북집사', type: '일반회원', location: '인천 연수구', level: 5, levelName: '집사', xp: 320, nextLevelXp: 420, trustScore: 88 },
+  { id: 'u7', name: '아쿠아집사', type: '일반회원', location: '인천 연수구', level: 5, levelName: '집사', xp: 338, nextLevelXp: 420, trustScore: 90 },
 ];
 
 export const userProfile: UserProfile = {
@@ -228,3 +255,98 @@ export const settings: AppSettings = {
   breederNotification: false,
   noticeNotification: true,
 };
+
+export const comments: PostComment[] = postComments.map((comment, index) => ({
+  ...comment,
+  userId: ['u1', 'u4', 'u6', 'u2'][index % 4],
+}));
+
+export const reviews: BreederReview[] = breederReviews;
+
+export const favorites: Favorite[] = [
+  { id: 'favorite-1', userId: 'u1', listingId: 'l1', createdAt: '2026.06.16' },
+  { id: 'favorite-2', userId: 'u1', listingId: 'l3', createdAt: '2026.06.15' },
+];
+
+export const follows: Follow[] = [
+  { id: 'follow-1', userId: 'u1', breederId: 'b1', createdAt: '2026.06.10' },
+  { id: 'follow-2', userId: 'u1', breederId: 'b3', createdAt: '2026.06.12' },
+];
+
+export const contactLogs: ContactLog[] = [
+  { id: 'contact-1', userId: 'u1', breederId: 'b1', listingId: 'l1', contactType: 'kakao', contactedAt: '2026.06.13' },
+  { id: 'contact-2', userId: 'u4', breederId: 'b2', listingId: 'l2', contactType: 'phone', contactedAt: '2026.06.14' },
+  { id: 'contact-3', userId: 'u6', breederId: 'b3', listingId: 'l3', contactType: 'open_chat', contactedAt: '2026.06.15' },
+];
+
+export const notifications: Notification[] = [
+  { id: 'notification-1', userId: 'u1', type: 'comment', title: '새 댓글', message: '내 게시글에 새 댓글이 달렸어요.', targetType: 'post', targetId: 'p1', read: false, createdAt: '2026.06.16' },
+  { id: 'notification-2', userId: 'u1', type: 'listing', title: '분양글 알림', message: '관심 분양글 상태가 변경되었어요.', targetType: 'listing', targetId: 'l3', read: false, createdAt: '2026.06.15' },
+  { id: 'notification-3', userId: 'u1', type: 'notice', title: '공지사항', message: '서비스 운영 정책 안내가 등록되었어요.', targetType: 'notice', targetId: 'notice-1', read: true, createdAt: '2026.06.10' },
+];
+
+export const reports: Report[] = [
+  { id: 'report-1', reporterId: 'u1', targetType: 'post', targetId: 'p3', reason: '부정확한 사육 정보', status: 'pending', createdAt: '2026.06.15' },
+  { id: 'report-2', reporterId: 'u4', targetType: 'listing', targetId: 'l3', reason: '분양 정보 확인 필요', status: 'resolved', createdAt: '2026.06.12' },
+  { id: 'report-3', reporterId: 'u6', targetType: 'review', targetId: 'br3', reason: '후기 내용 검토 요청', status: 'pending', createdAt: '2026.06.11' },
+];
+
+export const banners: Banner[] = [
+  {
+    id: 'banner-1',
+    title: '이번주 추천 개체',
+    description: '희귀 뉴블러드 테라핀 입고',
+    image: turtleImages[0],
+    actionLabel: '자세히 보기',
+    linkUrl: '/listing/l3',
+    isActive: true,
+    isAd: false,
+    sortOrder: 1,
+    startDate: '2026.06.16',
+    endDate: '2026.06.23',
+    createdBy: 'u1',
+  },
+  {
+    id: 'banner-3',
+    title: '인증 브리더 모집',
+    description: '창립 멤버 혜택 제공',
+    image: turtleImages[3],
+    actionLabel: '신청하기',
+    linkUrl: '/breeder/verification/apply',
+    isActive: true,
+    isAd: true,
+    sortOrder: 2,
+    startDate: '2026.06.16',
+    endDate: '2026.07.15',
+    createdBy: 'u1',
+  },
+];
+
+export const breederApplications: BreederApplication[] = [
+  {
+    id: 'application-1',
+    userId: 'u4',
+    breederType: 'individual',
+    breederName: '초록정원',
+    region: '서울 송파구',
+    specialties: ['그리스 육지거북', '호스필드 육지거북'],
+    introduction: '초보 집사를 위한 친절한 상담형 브리더입니다.',
+    status: 'approved',
+    appliedAt: '2026.06.09',
+  },
+  {
+    id: 'application-2',
+    userId: 'u6',
+    breederType: 'business',
+    breederName: '보석거북 연구소',
+    region: '인천 연수구',
+    specialties: ['다이아몬드백 테라핀'],
+    introduction: '수생거북 전문 브리더로 건강한 사육 환경을 연구합니다.',
+    status: 'pending',
+    appliedAt: '2026.06.11',
+  },
+];
+
+export const userSettings: UserSettings[] = [
+  { userId: 'u1', ...settings },
+];
