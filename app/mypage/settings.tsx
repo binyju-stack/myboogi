@@ -19,6 +19,7 @@ const accountItems: SettingItem[] = [
 ];
 
 const supportItems: SettingItem[] = [
+  { label: '앱 소개 보기', description: '마이부기의 핵심 기능을 다시 확인해요', icon: 'sparkles-outline', href: '/onboarding' },
   { label: '문의하기', description: '궁금한 점을 마이부기에 문의해요', icon: 'help-circle-outline' },
   { label: '이용약관', description: '서비스 이용약관을 확인해요', icon: 'document-text-outline' },
   { label: '개인정보처리방침', description: '개인정보 처리 기준을 확인해요', icon: 'shield-checkmark-outline' },
@@ -62,8 +63,12 @@ export default function SettingsScreen() {
       </View>
 
       <View className="px-5 pb-5">
-        <FadeInView><SettingGroup title="계정" items={accountItems} onReady={setReadyTitle} /></FadeInView>
-        <FadeInView delay={60}><SettingGroup title="고객지원 및 약관" items={supportItems} onReady={setReadyTitle} /></FadeInView>
+        <FadeInView>
+          <SettingGroup title="계정" items={accountItems} onReady={setReadyTitle} />
+        </FadeInView>
+        <FadeInView delay={60}>
+          <SettingGroup title="고객지원 및 약관" items={supportItems} onReady={setReadyTitle} />
+        </FadeInView>
         <Text className="pb-5 pt-6 text-center text-[9px] text-subtle">마이부기 앱 버전 1.0.0</Text>
       </View>
 
