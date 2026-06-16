@@ -34,7 +34,7 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
         </Pressable>
       </View>
       {!compact ? (
-        <Pressable className="mt-5 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
+        <Pressable onPress={() => router.push('/search')} className="mt-5 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
           <Ionicons name="search" color={colors.muted} size={18} />
           <Text className="ml-2 text-[13px] text-muted">거북이, 브리더, 게시글 검색</Text>
         </Pressable>
