@@ -13,6 +13,7 @@ import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { formatLevel } from '@/data/levelData';
+import { getListingStatus } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import type { BreederReview } from '@/types';
 import { useMockUserState } from '@/components/MockUserState';
@@ -81,8 +82,8 @@ export default function BreederShopScreen() {
   const [blockVisible, setBlockVisible] = useState(false);
   const { isFollowing, toggleFollow } = useMockUserState();
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
-  const selling = listings.filter((item) => item.breederId === breeder.id && !item.status.includes('완료'));
-  const completed = listings.filter((item) => item.breederId === breeder.id && item.status.includes('완료'));
+  const selling = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) !== 'completed');
+  const completed = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) === 'completed');
   const reviews = breederReviews.filter((review) => review.breederId === breeder.id);
   const activeListings = activeTab === 'selling' ? selling : completed;
   const following = isFollowing(breeder.id);

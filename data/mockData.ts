@@ -80,13 +80,25 @@ export const breeders: Breeder[] = baseBreeders.map((breeder, index) => {
   return { ...breeder, ...profiles[index] };
 });
 
-export const listings: Listing[] = [
+const baseListings: Listing[] = [
   { id: 'l1', breederId: 'b1', title: '건강한 레오파드 육지거북 유체', species: '레오파드 육지거북', price: 380000, location: '경기 성남시', sex: '미구분', stage: '유체', size: '등갑 6.2cm', hatchDate: '2026.03.18', views: 128, likes: 24, image: turtleImages[0], images: [turtleImages[0], turtleImages[2], turtleImages[3]], description: '먹성이 좋고 활동량이 많은 건강한 유체입니다. 충분히 상담한 뒤 분양을 결정해 주세요.', verified: true, status: '분양중' },
   { id: 'l2', breederId: 'b2', title: '순하고 사람을 잘 따르는 설가타', species: '설가타 육지거북', price: 260000, location: '서울 송파구', sex: '수컷', stage: '유체', size: '등갑 8.1cm', hatchDate: '2025.12.02', views: 302, likes: 48, image: turtleImages[2], images: [turtleImages[2], turtleImages[0]], description: '사람 손을 잘 타고 순합니다. 현재 채소와 전용 사료를 균형 있게 급여하고 있습니다.', verified: true, status: '분양중' },
   { id: 'l3', breederId: 'b3', title: '선명한 무늬의 다이아몬드백', species: '다이아몬드백 테라핀', price: 450000, location: '인천 연수구', sex: '암컷', stage: '유체', size: '등갑 7.5cm', hatchDate: '2026.01.14', views: 511, likes: 81, image: turtleImages[3], images: [turtleImages[3], turtleImages[1]], description: '등갑 무늬가 선명한 개체입니다. 수질과 먹이 관리 방법을 상세히 안내해 드립니다.', verified: true, status: '분양중' },
   { id: 'l4', breederId: 'b1', title: '체리헤드 레드풋 성체', species: '체리헤드 레드풋', price: 720000, location: '경기 성남시', sex: '암컷', stage: '성체', size: '등갑 21cm', hatchDate: '2022.08.11', views: 221, likes: 37, image: turtleImages[1], images: [turtleImages[1], turtleImages[0]], description: '건강하게 성장한 성체입니다. 넓은 사육 환경이 준비된 분께 분양합니다.', verified: true, status: '분양완료' },
   { id: 'l5', breederId: 'b2', title: '귀여운 동헤르만 육지거북', species: '동헤르만 육지거북', price: 330000, location: '서울 송파구', sex: '미구분', stage: '유체', size: '등갑 5.8cm', hatchDate: '2026.04.03', views: 94, likes: 19, image: turtleImages[2], images: [turtleImages[2], turtleImages[3]], description: '초보 집사도 충분히 상담받고 데려갈 수 있습니다.', verified: false, status: '분양중' },
 ];
+
+export const listings: Listing[] = baseListings.map((listing) => {
+  const statusById: Record<string, Listing['listingStatus']> = {
+    l1: 'active',
+    l2: 'reserved',
+    l3: 'active',
+    l4: 'completed',
+    l5: 'active',
+  };
+  const listingStatus = statusById[listing.id] ?? 'active';
+  return { ...listing, listingStatus, reviewEligible: listingStatus === 'completed' };
+});
 
 export const listingDetails: Record<string, { parentInfo: string; foodResponse: string; healthStatus: string; notes: string }> = {
   l1: { parentInfo: '부모 개체 모두 건강검진 완료', foodResponse: '채소와 전용 사료 반응이 좋아요', healthStatus: '활동량과 배변 상태 모두 양호', notes: '새 환경 적응을 위해 첫 주는 조용한 공간을 권장해요' },

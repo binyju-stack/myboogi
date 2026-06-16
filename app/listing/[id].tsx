@@ -6,13 +6,14 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
-import { useMockUserState } from '@/components/MockUserState';
 import { LevelPill } from '@/components/LevelProgress';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { colors } from '@/constants/theme';
 import { formatLevel } from '@/data/levelData';
+import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
 import { breederReviews, breeders, listingDetails, listings } from '@/data/mockData';
+import { useMockUserState } from '@/components/MockUserState';
 
 function InfoRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
   return <View className={`flex-row py-3.5 ${last ? '' : 'border-b border-line'}`}><Text className="w-24 text-[11px] font-bold text-muted">{label}</Text><Text className="flex-1 text-[12px] font-black leading-5 text-ink">{value}</Text></View>;
@@ -34,6 +35,9 @@ export default function ListingDetailScreen() {
   const favorite = isFavorite(item.id);
   const followerCount = breeder.followers + (isFollowing(breeder.id) ? 1 : 0);
   const likeCount = item.likes + (favorite ? 1 : 0);
+  const listingStatus = getListingStatus(item);
+  const statusMeta = listingStatusMeta[listingStatus];
+  const completed = listingStatus === 'completed';
 
   const showModal = (title: string) => {
     setModalTitle(title);
@@ -43,18 +47,32 @@ export default function ListingDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TopBar title="분양 상세" right="ellipsis-horizontal" onRightPress={() => setActionVisible(true)} />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 92 + insets.bottom }} className="bg-page">
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 104 + insets.bottom }} className="bg-page">
         <View className="bg-white">
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={(event) => setImageIndex(Math.round(event.nativeEvent.contentOffset.x / width))}>
             {item.images.map((image) => <Image key={image} source={{ uri: image }} style={{ width, height: width }} className="bg-shell" resizeMode="cover" />)}
           </ScrollView>
           <View className="absolute bottom-4 right-4 rounded-full bg-black/45 px-3 py-1.5"><Text className="text-[10px] font-bold text-white">{imageIndex + 1} / {item.images.length}</Text></View>
+          {completed ? (
+            <View className="absolute left-4 top-4 rounded-[18px] bg-black/60 px-4 py-3">
+              <Text className="text-[12px] font-black text-white">분양완료된 개체입니다</Text>
+            </View>
+          ) : null}
         </View>
 
         <View className="bg-white px-5 pb-6 pt-5">
-          <View className="flex-row items-center"><VerifiedBadge /><Text className="ml-2 text-[10px] font-bold text-muted">{item.status}</Text></View>
-          <Text className="mt-3 text-[22px] font-black tracking-[-0.6px] text-ink">{item.species}</Text>
+          <View className="flex-row items-center"><VerifiedBadge /><Text className="ml-2 text-[10px] font-bold text-muted">{item.stage}</Text></View>
+          <Text className="mt-3 text-[22px] font-black text-ink">{item.species}</Text>
           <Text className="mt-3 text-[26px] font-black text-ink">{item.price.toLocaleString()}원</Text>
+          <View className={`mt-4 self-start rounded-full px-4 py-2.5 ${statusMeta.badgeClass}`}>
+            <Text className={`text-[13px] font-black ${statusMeta.textClass}`}>현재 상태 · {statusMeta.label}</Text>
+          </View>
+          {completed ? (
+            <View className="mt-4 rounded-[18px] bg-soft px-4 py-3">
+              <Text className="text-[12px] font-black text-ink">후기 작성 가능 상태</Text>
+              <Text className="mt-1 text-[10px] text-muted">reviewEligible: {item.reviewEligible ? 'true' : 'false'}</Text>
+            </View>
+          ) : null}
           <View className="mt-4 flex-row items-center"><Text className="text-[11px] text-muted">{item.location} · {item.stage}</Text><View className="ml-auto flex-row"><Stat icon="eye-outline" value={item.views} /><Stat icon={favorite ? 'heart' : 'heart-outline'} value={likeCount} /></View></View>
         </View>
 
@@ -79,11 +97,8 @@ export default function ListingDetailScreen() {
         </View>
 
         <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <Text className="text-[9px] font-black text-berry">PARENTS</Text><Text className="mt-1 text-[18px] font-black text-ink">부모 개체</Text>
-          <View className="mt-4 flex-row gap-3">{[['부 개체', `${detail.parentInfo} · 활발한 체형`], ['모 개체', `${detail.parentInfo} · 안정적인 먹이 반응`]].map(([label, value], index) => <View key={label} className="flex-1 rounded-[18px] bg-soft p-4"><View className="h-9 w-9 items-center justify-center rounded-[13px] bg-white"><Ionicons name={index ? 'female-outline' : 'male-outline'} size={17} color={colors.berry} /></View><Text className="mt-3 text-[11px] font-black text-ink">{label}</Text><Text className="mt-2 text-[9px] leading-4 text-muted">{value}</Text></View>)}</View>
+          <Text className="text-[9px] font-black text-berry">ABOUT TURTLE</Text><Text className="mt-1 text-[18px] font-black text-ink">분양 설명</Text><Text className="mt-4 text-[13px] leading-7 text-muted">{item.description}</Text><View className="mt-4 rounded-[16px] bg-cream px-4 py-3"><Text className="text-[10px] font-bold leading-5 text-ink">특이사항 · {detail.notes}</Text></View>
         </View>
-
-        <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm"><Text className="text-[9px] font-black text-berry">ABOUT TURTLE</Text><Text className="mt-1 text-[18px] font-black text-ink">분양 설명</Text><Text className="mt-4 text-[13px] leading-7 text-muted">{item.description}</Text><View className="mt-4 rounded-[16px] bg-cream px-4 py-3"><Text className="text-[10px] font-bold leading-5 text-ink">특이사항 · {detail.notes}</Text></View></View>
 
         <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
           <View className="flex-row items-end justify-between"><View><Text className="text-[9px] font-black text-berry">REAL REVIEW</Text><Text className="mt-1 text-[18px] font-black text-ink">후기 미리보기</Text></View><Text className="text-[10px] font-bold text-muted">전체 {breeder.reviews}</Text></View>
@@ -94,10 +109,14 @@ export default function ListingDetailScreen() {
 
       <View style={{ paddingBottom: Math.max(insets.bottom, 12) }} className="absolute bottom-0 left-0 right-0 w-full flex-row items-center border-t border-line bg-white px-5 pt-3 shadow-sm">
         <View style={{ width: 96 }}>
-          <AnimatedPressable onPress={() => { const added = toggleFavorite(item.id); showModal(added ? '찜 목록에 추가되었습니다.' : '찜 목록에서 삭제되었습니다.'); }} className={`h-14 w-full flex-row items-center justify-center rounded-[20px] ${favorite ? 'bg-blush' : 'bg-soft'}`}><Ionicons name={favorite ? 'heart' : 'heart-outline'} size={18} color={colors.berry} /><Text className="ml-2 text-[11px] font-black text-berry">{favorite ? '찜 완료' : '찜하기'}</Text></AnimatedPressable>
+          <AnimatedPressable onPress={() => { const added = toggleFavorite(item.id); showModal(added ? '찜 목록에 추가되었습니다.' : '찜 목록에서 제거되었습니다.'); }} className={`h-14 w-full flex-row items-center justify-center rounded-[20px] ${favorite ? 'bg-blush' : 'bg-soft'}`}><Ionicons name={favorite ? 'heart' : 'heart-outline'} size={18} color={colors.berry} /><Text className="ml-2 text-[11px] font-black text-berry">{favorite ? '찜 완료' : '찜하기'}</Text></AnimatedPressable>
         </View>
         <View className="ml-3 flex-1">
-          <AnimatedPressable onPress={() => showModal('카카오 문의 연결 기능은 준비중입니다.')} className="h-14 w-full flex-row items-center justify-center rounded-[20px] bg-[#FEE500]"><Ionicons name="chatbubble" size={17} color={colors.ink} /><Text className="ml-2 text-[12px] font-black text-ink">카카오 문의</Text></AnimatedPressable>
+          {completed ? (
+            <View className="h-14 w-full flex-row items-center justify-center rounded-[20px] bg-soft"><Ionicons name="checkmark-circle-outline" size={17} color={colors.muted} /><Text className="ml-2 text-[12px] font-black text-muted">분양완료</Text></View>
+          ) : (
+            <AnimatedPressable onPress={() => showModal('카카오 문의 연결 기능은 준비중입니다.')} className="h-14 w-full flex-row items-center justify-center rounded-[20px] bg-[#FEE500]"><Ionicons name="chatbubble" size={17} color={colors.ink} /><Text className="ml-2 text-[12px] font-black text-ink">카카오 문의</Text></AnimatedPressable>
+          )}
         </View>
       </View>
       <ReadyModal visible={modalVisible} title={modalTitle} onClose={() => setModalVisible(false)} />
