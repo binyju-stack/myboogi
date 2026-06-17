@@ -8,10 +8,13 @@ import { colors } from '@/constants/theme';
 import { posts as communityPosts } from '@/data/communityData';
 import { followActivities } from '@/data/followData';
 import { homeBanners, homeBreederStories, homeListings, homeReviews } from '@/data/homeScreenData';
+import { breeders } from '@/data/mockData';
+import { getReviewSummary } from '@/data/reviewData';
 
 import { BrandHeader } from './common';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Page } from './screen';
+import { ReviewRatingSummary } from './StarRating';
 import { useMockUserState } from './MockUserState';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -22,6 +25,16 @@ const bannerStyles: Record<string, { background: string; accent: string }> = {
   'banner-3': { background: '#EAF5FF', accent: '#4593D6' },
   'banner-4': { background: '#E9F7EF', accent: colors.moss },
 };
+
+function getBreederReviewMeta(breederId: string, fallbackRating?: string | number) {
+  const breeder = breeders.find((item) => item.id === breederId);
+  const summary = getReviewSummary(breederId);
+  const numericFallback = typeof fallbackRating === 'string' ? Number(fallbackRating) : fallbackRating;
+  return {
+    rating: summary.averageRating || breeder?.rating || numericFallback || 0,
+    reviewCount: summary.totalReviews || breeder?.reviews || 0,
+  };
+}
 
 function Section({ eyebrow, title, action, children }: { eyebrow: string; title: string; action?: () => void; children: ReactNode }) {
   return (
@@ -221,6 +234,8 @@ function BreederCard({ item }: { item: (typeof homeBreederStories)[number] }) {
 }
 
 function FollowActivityCard({ item, width }: { item: (typeof followActivities)[number]; width: number }) {
+  const reviewMeta = item.activityType === 'review' ? getBreederReviewMeta(item.breederId) : null;
+
   return (
     <AnimatedPressable
       onPress={() => router.push(item.targetType === 'listing' ? `/listing/${item.targetId}` as never : `/breeder/${item.targetId}` as never)}
@@ -238,7 +253,14 @@ function FollowActivityCard({ item, width }: { item: (typeof followActivities)[n
         </View>
       </View>
       <Text className="mt-3 text-[13px] font-black leading-5 text-ink" numberOfLines={2} ellipsizeMode="tail">{item.title}</Text>
-      <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2} ellipsizeMode="tail">{item.description}</Text>
+      {reviewMeta ? (
+        <View className="mt-2">
+          <ReviewRatingSummary rating={reviewMeta.rating} reviewCount={reviewMeta.reviewCount} size={16} />
+          <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={1}>인증 브리더 후기</Text>
+        </View>
+      ) : (
+        <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2} ellipsizeMode="tail">{item.description}</Text>
+      )}
       {item.listingStatus ? (
         <View className="mt-2 self-start rounded-full bg-ink px-2.5 py-1.5">
           <Text className="text-[8px] font-black text-white">{item.listingStatus}</Text>
@@ -249,11 +271,13 @@ function FollowActivityCard({ item, width }: { item: (typeof followActivities)[n
 }
 
 function ReviewCard({ item }: { item: (typeof homeReviews)[number] }) {
+  const reviewMeta = getBreederReviewMeta(item.breederId, item.rating);
+
   return (
     <Pressable onPress={() => router.push(`/breeder/${item.breederId}`)} className="mr-3 w-[272px] flex-row rounded-[24px] border border-line bg-white p-3 shadow-sm">
       <View className="h-[86px] w-[86px] overflow-hidden rounded-[17px]"><TurtleArt color={item.color} height={86} /></View>
       <View className="ml-3 flex-1">
-        <View className="flex-row items-center"><Ionicons name="star" size={12} color="#FFB443" /><Text className="ml-1 text-[10px] font-black text-ink">{item.rating}</Text><Text className="ml-2 text-[9px] text-muted">{item.author}</Text></View>
+        <ReviewRatingSummary rating={reviewMeta.rating} reviewCount={reviewMeta.reviewCount} size={15} />
         <Text className="mt-2 text-[12px] font-bold leading-5 text-ink" numberOfLines={2}>{item.text}</Text>
         <Text className="mt-2 text-[9px] font-bold text-berry">{item.breeder}</Text>
       </View>

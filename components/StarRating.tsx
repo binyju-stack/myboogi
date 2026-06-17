@@ -4,7 +4,7 @@ import { Animated, Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 
-const filledColor = '#FFB443';
+const filledColor = '#FFC83D';
 const emptyColor = '#DDE2E8';
 
 export function StarRating({
@@ -27,7 +27,7 @@ export function StarRating({
 
   useEffect(() => {
     Animated.stagger(
-      55,
+      90,
       starProgress.map((progress) =>
         Animated.spring(progress, {
           toValue: 1,
@@ -96,6 +96,25 @@ export function ReviewTypeBadge({ type }: { type: 'general' | 'contact_based' | 
   return (
     <View className={`self-start rounded-full px-2.5 py-1.5 ${meta.className.split(' ')[0]}`}>
       <Text className={`text-[9px] font-black ${meta.className.split(' ')[1]}`}>{meta.label}</Text>
+    </View>
+  );
+}
+
+export function ReviewRatingSummary({
+  rating,
+  reviewCount,
+  size = 18,
+}: {
+  rating: number;
+  reviewCount?: number;
+  size?: number;
+}) {
+  return (
+    <View>
+      <StarRating rating={rating} size={size} showValue={false} />
+      <Text className="mt-1.5 text-[11px] font-black text-ink">
+        평점 {rating.toFixed(1)}{typeof reviewCount === 'number' ? ` · 후기 ${reviewCount.toLocaleString()}개` : ''}
+      </Text>
     </View>
   );
 }

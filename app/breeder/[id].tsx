@@ -11,7 +11,7 @@ import { ChatReadyModal } from '@/components/ChatReadyModal';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { Page } from '@/components/screen';
-import { ReviewTypeBadge, StarRating } from '@/components/StarRating';
+import { ReviewRatingSummary, ReviewTypeBadge, StarRating } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
 import { formatLevel } from '@/data/levelData';
 import { getListingStatus } from '@/data/listingStatusData';
@@ -56,6 +56,8 @@ function LegacyReviewCard({ review }: { review: BreederReview }) {
 }
 
 function ReviewCard({ review }: { review: BreederReview }) {
+  const summary = getReviewSummary(review.breederId);
+
   return (
     <View className="mb-3 rounded-[22px] border border-line bg-white p-4 shadow-sm">
       <View className="flex-row items-center">
@@ -67,7 +69,7 @@ function ReviewCard({ review }: { review: BreederReview }) {
         <AnimatedPressable onPress={() => Alert.alert('해당 사용자를 차단했습니다.')} className="mr-2 rounded-full bg-soft px-2.5 py-1.5">
           <Text className="text-[9px] font-black text-muted">차단</Text>
         </AnimatedPressable>
-        <StarRating rating={review.rating} size={12} />
+        <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={15} />
       </View>
       <View className="mt-3 flex-row items-center justify-between">
         <ReviewTypeBadge type={review.reviewType} />

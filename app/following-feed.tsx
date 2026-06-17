@@ -6,8 +6,20 @@ import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { TopBar } from '@/components/common';
 import { useMockUserState } from '@/components/MockUserState';
 import { Page } from '@/components/screen';
+import { ReviewRatingSummary } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
 import { followActivities } from '@/data/followData';
+import { breeders } from '@/data/mockData';
+import { getReviewSummary } from '@/data/reviewData';
+
+function getBreederReviewMeta(breederId: string) {
+  const breeder = breeders.find((item) => item.id === breederId);
+  const summary = getReviewSummary(breederId);
+  return {
+    rating: summary.averageRating || breeder?.rating || 0,
+    reviewCount: summary.totalReviews || breeder?.reviews || 0,
+  };
+}
 
 function EmptyFeed() {
   return (
@@ -38,6 +50,9 @@ export default function FollowingFeedScreen() {
         {activities.length ? (
           activities.map((activity, index) => (
             <FadeInView key={activity.id} delay={index * 50}>
+              {(() => {
+                const reviewMeta = activity.activityType === 'review' ? getBreederReviewMeta(activity.breederId) : null;
+                return (
               <AnimatedPressable
                 onPress={() => router.push(activity.targetType === 'listing' ? `/listing/${activity.targetId}` as never : `/breeder/${activity.targetId}` as never)}
                 className="mb-3 rounded-[24px] bg-white p-4 shadow-sm"
@@ -54,7 +69,14 @@ export default function FollowingFeedScreen() {
                 </View>
                 <View className="mt-4 rounded-[18px] bg-soft p-4">
                   <Text className="text-[15px] font-black text-ink">{activity.title}</Text>
-                  <Text className="mt-1 text-[11px] text-muted">{activity.description}</Text>
+                  {reviewMeta ? (
+                    <View className="mt-2">
+                      <ReviewRatingSummary rating={reviewMeta.rating} reviewCount={reviewMeta.reviewCount} size={20} />
+                      <Text className="mt-2 text-[11px] font-bold text-muted">인증 브리더 후기</Text>
+                    </View>
+                  ) : (
+                    <Text className="mt-1 text-[11px] text-muted">{activity.description}</Text>
+                  )}
                   {activity.listingStatus ? <Text className="mt-3 self-start rounded-full bg-berry px-2.5 py-1.5 text-[9px] font-black text-white">{activity.listingStatus}</Text> : null}
                 </View>
                 <View className="mt-4 flex-row items-center justify-center rounded-[16px] bg-blush py-3">
@@ -62,6 +84,8 @@ export default function FollowingFeedScreen() {
                   <Ionicons name="chevron-forward" size={14} color={colors.berry} />
                 </View>
               </AnimatedPressable>
+                );
+              })()}
             </FadeInView>
           ))
         ) : (

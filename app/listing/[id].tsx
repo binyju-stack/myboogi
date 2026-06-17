@@ -9,11 +9,12 @@ import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
 import { LevelPill } from '@/components/LevelProgress';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
-import { ReviewTypeBadge, StarRating } from '@/components/StarRating';
+import { ReviewRatingSummary, ReviewTypeBadge, StarRating } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
 import { formatLevel } from '@/data/levelData';
 import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
 import { breederReviews, breeders, listingDetails, listings } from '@/data/mockData';
+import { getReviewSummary } from '@/data/reviewData';
 import { useMockUserState } from '@/components/MockUserState';
 import type { BreederReview } from '@/types';
 
@@ -22,6 +23,8 @@ function InfoRow({ label, value, last = false }: { label: string; value: string;
 }
 
 function ListingReviewPreview({ review, divider = false }: { review: BreederReview; divider?: boolean }) {
+  const summary = getReviewSummary(review.breederId);
+
   return (
     <View className={`py-3 ${divider ? 'border-t border-line' : ''}`}>
       <View className="flex-row items-center">
@@ -30,7 +33,7 @@ function ListingReviewPreview({ review, divider = false }: { review: BreederRevi
           <Text className="text-[10px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
           <Text className="mt-1 text-[8px] text-muted">{review.createdAt}</Text>
         </View>
-        <StarRating rating={review.rating} size={11} />
+        <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={13} />
       </View>
       <View className="mt-2">
         <ReviewTypeBadge type={review.reviewType} />

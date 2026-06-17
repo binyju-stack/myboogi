@@ -3,15 +3,16 @@ import { Text, View } from 'react-native';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { MyListLayout } from '@/components/MyListLayout';
-import { ReviewTypeBadge, StarRating } from '@/components/StarRating';
+import { ReviewRatingSummary, ReviewTypeBadge } from '@/components/StarRating';
 import { breeders } from '@/data/mockData';
-import { myReviews } from '@/data/reviewData';
+import { getReviewSummary, myReviews } from '@/data/reviewData';
 
 export default function MyReviewsScreen() {
   return (
     <MyListLayout title="내가 작성한 후기" eyebrow="MY REVIEW" description="내가 남긴 후기의 평점과 신뢰도 유형을 확인해요." count={myReviews.length}>
       {myReviews.map((review, index) => {
         const breeder = breeders.find((item) => item.id === review.breederId);
+        const summary = getReviewSummary(review.breederId);
 
         return (
           <FadeInView key={review.id} delay={index * 45}>
@@ -21,7 +22,7 @@ export default function MyReviewsScreen() {
                   <Text className="text-[13px] font-black text-ink">{breeder?.name ?? '브리더'}</Text>
                   <Text className="mt-1 text-[9px] text-muted">{review.species} · {review.createdAt}</Text>
                 </View>
-                <StarRating rating={review.rating} size={12} />
+                <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={15} />
               </View>
               <View className="mt-3">
                 <ReviewTypeBadge type={review.reviewType} />

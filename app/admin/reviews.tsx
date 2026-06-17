@@ -2,8 +2,8 @@ import { Alert, Text, View } from 'react-native';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { AdminListLayout } from '@/components/AdminListLayout';
-import { ReviewTypeBadge, StarRating } from '@/components/StarRating';
-import { adminReviewRows, reviewStatusLabels } from '@/data/reviewData';
+import { ReviewRatingSummary, ReviewTypeBadge } from '@/components/StarRating';
+import { adminReviewRows, getReviewSummary, reviewStatusLabels } from '@/data/reviewData';
 
 const statusClass = {
   active: 'bg-mint text-moss',
@@ -18,6 +18,7 @@ export default function AdminReviewsScreen() {
     <AdminListLayout title="후기 관리" description="후기 신뢰도 유형, 신고 수, 노출 상태를 검토해요." count={adminReviewRows.length}>
       {adminReviewRows.map((review, index) => {
         const [bgClass, textClass] = statusClass[review.status].split(' ');
+        const summary = getReviewSummary(review.breederId);
 
         return (
           <FadeInView key={review.id} delay={index * 45}>
@@ -27,7 +28,7 @@ export default function AdminReviewsScreen() {
                   <Text className="text-[13px] font-black text-ink">{review.author}</Text>
                   <Text className="mt-1 text-[9px] text-muted">{review.breederName} · {review.createdAt}</Text>
                 </View>
-                <StarRating rating={review.rating} size={12} />
+                <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={15} />
               </View>
 
               <View className="mt-3 flex-row flex-wrap items-center">
