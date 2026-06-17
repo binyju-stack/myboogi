@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, Easing, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { posts as communityPosts } from '@/data/communityData';
@@ -38,6 +38,47 @@ function Section({ eyebrow, title, action, children }: { eyebrow: string; title:
   );
 }
 
+function HotSectionTitle() {
+  const progress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(progress, { toValue: 1, duration: 1450, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(progress, { toValue: 0, duration: 1450, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [progress]);
+
+  const rotate = progress.interpolate({ inputRange: [0, 0.5, 1], outputRange: ['-4deg', '5deg', '-4deg'] });
+  const scale = progress.interpolate({ inputRange: [0, 0.5, 1], outputRange: [1, 1.08, 1] });
+
+  return (
+    <View className="flex-row items-center">
+      <Animated.View style={{ transform: [{ rotate }, { scale }] }} className="mr-1.5 h-7 w-7 items-center justify-center rounded-full bg-blush">
+        <Ionicons name="flame" size={17} color={colors.berry} />
+      </Animated.View>
+      <Text className="mt-1 text-[20px] font-black text-ink">오늘 핫한 분양 개체</Text>
+    </View>
+  );
+}
+
+function BannerIndicator({ active }: { active: boolean }) {
+  const progress = useRef(new Animated.Value(active ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.spring(progress, { toValue: active ? 1 : 0, useNativeDriver: false, speed: 18, bounciness: 5 }).start();
+  }, [active, progress]);
+
+  const width = progress.interpolate({ inputRange: [0, 1], outputRange: [6, 24] });
+  const scale = progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.14] });
+  const backgroundColor = progress.interpolate({ inputRange: [0, 1], outputRange: [colors.line, colors.berry] });
+
+  return <Animated.View style={{ width, backgroundColor, transform: [{ scale }] }} className="h-1.5 rounded-full" />;
+}
+
 function PromotionBannerCarousel() {
   const listRef = useRef<FlatList<(typeof homeBanners)[number]>>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -66,7 +107,7 @@ function PromotionBannerCarousel() {
     return () => clearInterval(timer);
   }, []);
 
-  const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+  const syncActiveIndex = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const nextIndex = Math.round(event.nativeEvent.contentOffset.x / snapInterval);
     setActiveIndex(Math.min(homeBanners.length - 1, Math.max(0, nextIndex)));
   };
@@ -115,7 +156,9 @@ function PromotionBannerCarousel() {
         snapToAlignment="start"
         decelerationRate="fast"
         pagingEnabled={false}
-        onMomentumScrollEnd={onMomentumScrollEnd}
+        onScroll={syncActiveIndex}
+        scrollEventThrottle={16}
+        onMomentumScrollEnd={syncActiveIndex}
         contentContainerClassName="px-5"
         ItemSeparatorComponent={() => <View style={{ width: bannerGap }} />}
         getItemLayout={(_, index) => ({ length: snapInterval, offset: snapInterval * index, index })}
@@ -125,7 +168,7 @@ function PromotionBannerCarousel() {
       <View className="mt-3 flex-row justify-center">
         {homeBanners.map((banner, index) => (
           <Pressable key={banner.id} onPress={() => goToIndex(index)} className="px-1 py-1">
-            <View className={`h-1.5 rounded-full ${index === activeIndex ? 'w-6 bg-berry' : 'w-1.5 bg-line'}`} />
+            <BannerIndicator active={index === activeIndex} />
           </Pressable>
         ))}
       </View>
@@ -182,7 +225,7 @@ function FollowActivityCard({ item, width }: { item: (typeof followActivities)[n
     <AnimatedPressable
       onPress={() => router.push(item.targetType === 'listing' ? `/listing/${item.targetId}` as never : `/breeder/${item.targetId}` as never)}
       style={{ width }}
-      className="mr-2.5 min-h-[136px] rounded-[20px] border border-line bg-white p-3 shadow-sm"
+      className="mr-2.5 h-[150px] rounded-[20px] border border-line bg-white p-3 shadow-sm"
     >
       <View className="flex-row items-start">
         <Image source={{ uri: item.breederLogo }} className="h-10 w-10 rounded-[14px] bg-shell" />
@@ -194,8 +237,8 @@ function FollowActivityCard({ item, width }: { item: (typeof followActivities)[n
           <Text className="text-[8px] font-black text-berry">NEW</Text>
         </View>
       </View>
-      <Text className="mt-3 text-[13px] font-black leading-5 text-ink" numberOfLines={2}>{item.title}</Text>
-      <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2}>{item.description}</Text>
+      <Text className="mt-3 text-[13px] font-black leading-5 text-ink" numberOfLines={2} ellipsizeMode="tail">{item.title}</Text>
+      <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2} ellipsizeMode="tail">{item.description}</Text>
       {item.listingStatus ? (
         <View className="mt-2 self-start rounded-full bg-ink px-2.5 py-1.5">
           <Text className="text-[8px] font-black text-white">{item.listingStatus}</Text>
@@ -233,11 +276,20 @@ export function HomeScreen() {
       <BrandHeader />
       <PromotionBannerCarousel />
 
-      <Section eyebrow="CURATED FOR YOU" title="오늘의 추천 분양" action={() => router.push('/marketplace')}>
+      <View className="mt-7">
+        <View className="mb-4 flex-row items-end justify-between px-5">
+          <View>
+            <Text className="text-[10px] font-black text-berry">CURATED FOR YOU</Text>
+            <HotSectionTitle />
+          </View>
+          <Pressable onPress={() => router.push('/marketplace')} className="rounded-full bg-soft px-3 py-2">
+            <Text className="text-[10px] font-bold text-muted">전체보기</Text>
+          </Pressable>
+        </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
           {homeListings.map((item) => <ListingCard key={item.id} item={item} />)}
         </ScrollView>
-      </Section>
+      </View>
 
       <Section eyebrow="VERIFIED SHOP" title="믿고 만나는 인증 브리더">
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">

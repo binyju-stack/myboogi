@@ -10,6 +10,13 @@ import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { colors } from '@/constants/theme';
 import { postComments, posts } from '@/data/communityData';
 import { xpMessages } from '@/data/levelData';
+import type { PostComment } from '@/types';
+
+const bestLabels = ['🥇 BEST 댓글', '🥈 BEST 댓글', '🥉 BEST 댓글'];
+
+function getReplyCount(comment: PostComment) {
+  return Math.floor(comment.likes / 6);
+}
 
 export default function CommunityDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,6 +25,9 @@ export default function CommunityDetailScreen() {
   const [actionVisible, setActionVisible] = useState(false);
   const post = posts.find((item) => item.id === id) ?? posts[0];
   const comments = useMemo(() => postComments.filter((comment) => comment.postId === post.id), [post.id]);
+  const bestComments = useMemo(() => [...comments].filter((comment) => comment.likes >= 3).sort((a, b) => b.likes - a.likes).slice(0, 3), [comments]);
+  const bestCommentIds = useMemo(() => new Set(bestComments.map((comment) => comment.id)), [bestComments]);
+  const displayComments = useMemo(() => [...bestComments, ...comments.filter((comment) => !bestCommentIds.has(comment.id))], [bestCommentIds, bestComments, comments]);
   const likeCount = post.likes + (liked ? 1 : 0);
   const commentCount = post.commentsCount ?? post.comments;
   const images = post.images?.length ? post.images : post.image ? [post.image] : [];
@@ -97,25 +107,38 @@ export default function CommunityDetailScreen() {
           </View>
 
           <View className="px-5 pt-3">
-            {comments.map((comment, index) => (
+            {displayComments.map((comment, index) => {
+              const bestIndex = bestComments.findIndex((item) => item.id === comment.id);
+              const isBest = bestIndex >= 0;
+              const replyCount = getReplyCount(comment);
+              return (
               <FadeInView key={comment.id} delay={index * 60}>
-                <View className="mb-3 rounded-[24px] bg-white p-4 shadow-sm">
+                <View className="mb-3 rounded-[24px] border border-line bg-white p-4 shadow-sm">
+                  {isBest ? (
+                    <View className="mb-3 flex-row items-center justify-between rounded-[16px] bg-blush px-3 py-2">
+                      <Text className="text-[11px] font-black text-berry">{bestLabels[bestIndex]}</Text>
+                      <Text className="text-[10px] font-black text-berry">좋아요 {comment.likes}</Text>
+                    </View>
+                  ) : null}
                   <View className="flex-row items-center">
                     <Avatar uri={comment.avatar} size={34} />
                     <View className="ml-3 flex-1">
                       <Text className="text-[11px] font-black text-ink">{comment.author}</Text>
-                      <Text className="mt-1 text-[9px] text-muted">{comment.createdAt}</Text>
+                      <Text className="mt-1 text-[9px] text-muted">{comment.createdAt} · 답글 {replyCount}</Text>
                     </View>
                     <AnimatedPressable onPress={showBlockDone} className="mr-3 rounded-full bg-soft px-2.5 py-1.5">
                       <Text className="text-[9px] font-black text-muted">차단</Text>
                     </AnimatedPressable>
-                    <Ionicons name="heart-outline" size={14} color={colors.muted} />
-                    <Text className="ml-1 text-[9px] text-muted">{comment.likes}</Text>
+                    <AnimatedPressable onPress={() => undefined} className="flex-row items-center rounded-full bg-blush px-3 py-2">
+                      <Ionicons name="heart" size={18} color={colors.berry} />
+                      <Text className="ml-1.5 text-[13px] font-black text-berry">{comment.likes}</Text>
+                    </AnimatedPressable>
                   </View>
-                  <Text className="mt-3 text-[12px] leading-6 text-ink">{comment.content}</Text>
+                  <Text className="mt-4 text-[13px] leading-6 text-ink">{comment.content}</Text>
                 </View>
               </FadeInView>
-            ))}
+              );
+            })}
           </View>
         </ScrollView>
 
