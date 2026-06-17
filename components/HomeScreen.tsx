@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, Easing, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { homeBanners } from '@/data/homeScreenData';
@@ -16,6 +16,7 @@ import { Page } from './screen';
 import { StarRating } from './StarRating';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
+type SectionIconVariant = 'flame' | 'community' | 'trophy' | 'review';
 
 const promoBanners = [
   {
@@ -56,10 +57,80 @@ const breederSpecialties: Record<string, string> = {
   b3: '테라핀 · 뉴블러드 · 하이퀄리티',
 };
 
-function SectionHeader({ title, onPress }: { title: string; onPress?: () => void }) {
+const sectionIcons: Record<SectionIconVariant, { name: IconName; color: string; backgroundColor: string }> = {
+  flame: { name: 'flame', color: '#FF7A1A', backgroundColor: '#FFF3E8' },
+  community: { name: 'chatbubble-ellipses', color: '#4593D6', backgroundColor: '#EAF5FF' },
+  trophy: { name: 'trophy', color: '#E9A008', backgroundColor: '#FFF7D6' },
+  review: { name: 'star', color: '#FFC83D', backgroundColor: '#FFF7D6' },
+};
+
+function SectionIcon({ variant }: { variant: SectionIconVariant }) {
+  const progress = useRef(new Animated.Value(0)).current;
+  const meta = sectionIcons[variant];
+
+  useEffect(() => {
+    if (variant === 'review') return;
+
+    const duration = variant === 'flame' ? 1000 : variant === 'community' ? 2000 : 3000;
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(progress, {
+          toValue: 1,
+          duration: duration / 2,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(progress, {
+          toValue: 0,
+          duration: duration / 2,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    animation.start();
+    return () => animation.stop();
+  }, [progress, variant]);
+
+  const animatedStyle =
+    variant === 'flame'
+      ? {
+          opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }),
+          transform: [
+            { scale: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] }) },
+            { rotate: progress.interpolate({ inputRange: [0, 0.5, 1], outputRange: ['-3deg', '3deg', '-2deg'] }) },
+          ],
+        }
+      : variant === 'community'
+        ? {
+            opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }),
+            transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [0, -2] }) }],
+          }
+        : variant === 'trophy'
+          ? {
+              opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] }),
+              transform: [{ scale: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.02] }) }],
+            }
+          : {};
+
+  return (
+    <Animated.View
+      className="mr-2 h-8 w-8 items-center justify-center rounded-full"
+      style={[animatedStyle, { backgroundColor: meta.backgroundColor }]}
+    >
+      <Ionicons name={meta.name} size={17} color={meta.color} />
+    </Animated.View>
+  );
+}
+
+function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionIconVariant; onPress?: () => void }) {
   return (
     <View className="mb-3 flex-row items-center justify-between px-5">
-      <Text className="text-[20px] font-black text-[#111827]">{title}</Text>
+      <View className="flex-1 flex-row items-center">
+        <SectionIcon variant={icon} />
+        <Text className="flex-1 text-[20px] font-black text-[#111827]" numberOfLines={1}>{title}</Text>
+      </View>
       {onPress ? (
         <Pressable onPress={onPress} className="flex-row items-center">
           <Text className="text-[12px] font-bold text-[#9CA3AF]">더보기</Text>
@@ -83,7 +154,7 @@ function NoticeBar() {
   return (
     <View className="mx-5 mt-4 h-10 flex-row items-center rounded-[18px] bg-[#111827] px-4">
       <Ionicons name="megaphone-outline" size={15} color="white" />
-      <Text className="ml-2 flex-1 text-[11px] font-bold text-white" numberOfLines={1}>공지  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
+      <Text className="ml-2 flex-1 text-[11px] font-bold text-white" numberOfLines={1}>공지사항  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
       <Ionicons name="close" size={14} color="white" />
     </View>
   );
@@ -177,7 +248,7 @@ function PromotionBannerCarousel() {
 function CommunityHotSection() {
   return (
     <View className="mt-7">
-      <SectionHeader title="커뮤니티 HOT" onPress={() => router.push('/community')} />
+      <SectionHeader title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')} />
       <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
         {hotPosts.map((post, index) => (
           <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-3.5 ${index ? 'border-t border-line' : ''}`}>
@@ -199,7 +270,7 @@ function CommunityHotSection() {
 function PopularBreedersSection() {
   return (
     <View className="mt-7">
-      <SectionHeader title="인기 브리더" onPress={() => router.push('/marketplace')} />
+      <SectionHeader title="많이 찾는 브리더" icon="trophy" onPress={() => router.push('/marketplace')} />
       <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
@@ -229,7 +300,7 @@ function HotListingsSection() {
   const hotListings = [...listings].sort((a, b) => b.views + b.likes - (a.views + a.likes)).slice(0, 5);
   return (
     <View className="mt-7">
-      <SectionHeader title="🔥 오늘 핫한 분양 개체" onPress={() => router.push('/marketplace')} />
+      <SectionHeader title="오늘 핫한 분양 개체" icon="flame" onPress={() => router.push('/marketplace')} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
         {hotListings.map((listing, index) => <ListingCard key={listing.id} item={listing} wide index={index} />)}
       </ScrollView>
@@ -240,7 +311,7 @@ function HotListingsSection() {
 function RecentReviewsSection() {
   return (
     <View className="mt-7">
-      <SectionHeader title="최근 후기" />
+      <SectionHeader title="최근 후기" icon="review" />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
         {breederReviews.slice(0, 4).map((review, index) => {
           const breeder = breeders.find((item) => item.id === review.breederId);
