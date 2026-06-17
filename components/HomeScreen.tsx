@@ -1,79 +1,90 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { posts as communityPosts } from '@/data/communityData';
-import { followActivities } from '@/data/followData';
-import { homeBanners, homeBreederStories, homeListings, homeReviews } from '@/data/homeScreenData';
-import { breeders } from '@/data/mockData';
+import { homeBanners } from '@/data/homeScreenData';
+import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
 
-import { BrandHeader } from './common';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
+import { BrandHeader, Avatar } from './common';
+import { ListingCard } from './ListingCard';
 import { Page } from './screen';
-import { ReviewRatingSummary } from './StarRating';
-import { useMockUserState } from './MockUserState';
+import { StarRating } from './StarRating';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
-const bannerStyles: Record<string, { background: string; accent: string }> = {
-  'banner-1': { background: '#FFF5F8', accent: colors.berry },
-  'banner-2': { background: '#FFF7E8', accent: '#F59E0B' },
-  'banner-3': { background: '#EAF5FF', accent: '#4593D6' },
-  'banner-4': { background: '#E9F7EF', accent: colors.moss },
+const promoBanners = [
+  {
+    id: 'home-promo-1',
+    title: '건강한 거북이 분양은\n신뢰할 수 있는 브리더부터',
+    description: '인증 브리더의 분양 개체를 확인해보세요.',
+    actionLabel: '바로가기 >',
+    image: homeBanners[0]?.image,
+    href: '/marketplace',
+  },
+  {
+    id: 'home-promo-2',
+    title: '처음 키우는 거북이\n무엇부터 준비해야 할까요?',
+    description: '커뮤니티에서 사육 정보를 확인해보세요.',
+    actionLabel: '바로가기 >',
+    image: homeBanners[1]?.image ?? homeBanners[0]?.image,
+    href: '/community',
+  },
+  {
+    id: 'home-promo-3',
+    title: '마이부기 브리더 인증\n지금 신청할 수 있어요.',
+    description: '분양 신뢰도를 높이는 첫 단계입니다.',
+    actionLabel: '신청하기 >',
+    image: homeBanners[2]?.image ?? homeBanners[0]?.image,
+    href: '/breeder/verification/apply',
+  },
+];
+
+const hotPosts = [
+  { id: 'p1', badge: '베스트글', category: '사육상담', title: '헤르만 육지거북 온욕 주기 궁금합니다.', views: 3652, comments: 76, likes: 126 },
+  { id: 'p3', badge: '새글', category: '질병상담', title: '눈을 자꾸 감고 있는데 병원 가야 할까요?', views: 842, comments: 14, likes: 32 },
+  { id: 'p2', badge: '베스트글', category: '산란정보', title: '초산 테라핀 산란장 세팅 공유합니다.', views: 1208, comments: 33, likes: 91 },
+];
+
+const breederSpecialties: Record<string, string> = {
+  b1: '레오파드 육지거북 · 별거북',
+  b2: '설가타 · 헤르만 · 육지거북',
+  b3: '테라핀 · 뉴블러드 · 하이퀄리티',
 };
 
-function getBreederReviewMeta(breederId: string, fallbackRating?: string | number) {
-  const breeder = breeders.find((item) => item.id === breederId);
-  const summary = getReviewSummary(breederId);
-  const numericFallback = typeof fallbackRating === 'string' ? Number(fallbackRating) : fallbackRating;
-  return {
-    rating: summary.averageRating || breeder?.rating || numericFallback || 0,
-    reviewCount: summary.totalReviews || breeder?.reviews || 0,
-  };
-}
-
-function Section({ eyebrow, title, action, children }: { eyebrow: string; title: string; action?: () => void; children: ReactNode }) {
+function SectionHeader({ title, onPress }: { title: string; onPress?: () => void }) {
   return (
-    <View className="mt-7">
-      <View className="mb-4 flex-row items-end justify-between px-5">
-        <View>
-          <Text className="text-[10px] font-black text-berry">{eyebrow}</Text>
-          <Text className="mt-1 text-[20px] font-black text-ink">{title}</Text>
-        </View>
-        {action ? <Pressable onPress={action} className="rounded-full bg-soft px-3 py-2"><Text className="text-[10px] font-bold text-muted">전체보기</Text></Pressable> : null}
-      </View>
-      {children}
+    <View className="mb-3 flex-row items-center justify-between px-5">
+      <Text className="text-[20px] font-black text-[#111827]">{title}</Text>
+      {onPress ? (
+        <Pressable onPress={onPress} className="flex-row items-center">
+          <Text className="text-[12px] font-bold text-[#9CA3AF]">더보기</Text>
+          <Ionicons name="chevron-forward" size={14} color="#9CA3AF" />
+        </Pressable>
+      ) : null}
     </View>
   );
 }
 
-function HotSectionTitle() {
-  const progress = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(progress, { toValue: 1, duration: 1450, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(progress, { toValue: 0, duration: 1450, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [progress]);
-
-  const rotate = progress.interpolate({ inputRange: [0, 0.5, 1], outputRange: ['-4deg', '5deg', '-4deg'] });
-  const scale = progress.interpolate({ inputRange: [0, 0.5, 1], outputRange: [1, 1.08, 1] });
-
+function Meta({ icon, value }: { icon: IconName; value: number }) {
   return (
-    <View className="flex-row items-center">
-      <Animated.View style={{ transform: [{ rotate }, { scale }] }} className="mr-1.5 h-7 w-7 items-center justify-center rounded-full bg-blush">
-        <Ionicons name="flame" size={17} color={colors.berry} />
-      </Animated.View>
-      <Text className="mt-1 text-[20px] font-black text-ink">오늘 핫한 분양 개체</Text>
+    <View className="ml-2 flex-row items-center">
+      <Ionicons name={icon} size={12} color="#9CA3AF" />
+      <Text className="ml-1 text-[10px] font-medium text-[#9CA3AF]">{value.toLocaleString()}</Text>
+    </View>
+  );
+}
+
+function NoticeBar() {
+  return (
+    <View className="mx-5 mt-4 h-10 flex-row items-center rounded-[18px] bg-[#111827] px-4">
+      <Ionicons name="megaphone-outline" size={15} color="white" />
+      <Text className="ml-2 flex-1 text-[11px] font-bold text-white" numberOfLines={1}>공지  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
+      <Ionicons name="close" size={14} color="white" />
     </View>
   );
 }
@@ -85,90 +96,52 @@ function BannerIndicator({ active }: { active: boolean }) {
     Animated.spring(progress, { toValue: active ? 1 : 0, useNativeDriver: false, speed: 18, bounciness: 5 }).start();
   }, [active, progress]);
 
-  const width = progress.interpolate({ inputRange: [0, 1], outputRange: [6, 24] });
-  const scale = progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.14] });
-  const backgroundColor = progress.interpolate({ inputRange: [0, 1], outputRange: [colors.line, colors.berry] });
+  const width = progress.interpolate({ inputRange: [0, 1], outputRange: [6, 22] });
+  const backgroundColor = progress.interpolate({ inputRange: [0, 1], outputRange: ['#E5E7EB', colors.berry] });
 
-  return <Animated.View style={{ width, backgroundColor, transform: [{ scale }] }} className="h-1.5 rounded-full" />;
+  return <Animated.View style={{ width, backgroundColor }} className="h-1.5 rounded-full" />;
 }
 
 function PromotionBannerCarousel() {
-  const listRef = useRef<FlatList<(typeof homeBanners)[number]>>(null);
+  const listRef = useRef<FlatList<(typeof promoBanners)[number]>>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const { width } = useWindowDimensions();
   const bannerWidth = Math.max(280, width - 40);
   const bannerGap = 12;
   const snapInterval = bannerWidth + bannerGap;
 
-  const goToIndex = useCallback((index: number, animated = true) => {
-    if (!homeBanners.length) return;
-    listRef.current?.scrollToIndex({ index, animated });
+  const goToIndex = useCallback((index: number) => {
+    listRef.current?.scrollToIndex({ index, animated: true });
     setActiveIndex(index);
   }, []);
 
   useEffect(() => {
-    if (homeBanners.length <= 1) return;
-
     const timer = setInterval(() => {
-      setActiveIndex((currentIndex) => {
-        const nextIndex = (currentIndex + 1) % homeBanners.length;
-        listRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-        return nextIndex;
+      setActiveIndex((current) => {
+        const next = (current + 1) % promoBanners.length;
+        listRef.current?.scrollToIndex({ index: next, animated: true });
+        return next;
       });
-    }, 3600);
-
+    }, 3800);
     return () => clearInterval(timer);
   }, []);
 
   const syncActiveIndex = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const nextIndex = Math.round(event.nativeEvent.contentOffset.x / snapInterval);
-    setActiveIndex(Math.min(homeBanners.length - 1, Math.max(0, nextIndex)));
-  };
-
-  const renderBanner = ({ item: banner }: { item: (typeof homeBanners)[number] }) => {
-    const style = bannerStyles[banner.id] ?? bannerStyles['banner-1'];
-
-    return (
-      <AnimatedPressable
-        onPress={() => router.push(banner.linkUrl as never)}
-        style={{ width: bannerWidth, backgroundColor: style.background }}
-        className="h-[184px] overflow-hidden rounded-[26px] p-4 shadow-sm"
-      >
-        <Image source={{ uri: banner.image }} className="absolute bottom-0 right-0 h-full w-[48%]" resizeMode="cover" />
-        <View className="absolute bottom-0 right-0 h-full w-[52%] bg-white/30" />
-        <View className="absolute bottom-0 left-0 right-0 h-20 bg-white/20" />
-        {banner.isAd ? (
-          <View className="absolute right-4 top-4 rounded-full bg-black/55 px-2.5 py-1">
-            <Text className="text-[9px] font-black text-white">광고</Text>
-          </View>
-        ) : null}
-        <View className="max-w-[57%] flex-1 justify-between">
-          <View>
-            <Text style={{ color: style.accent }} className="text-[10px] font-black">MYBOOGI PICK</Text>
-            <Text className="mt-2 text-[21px] font-black leading-7 text-ink" numberOfLines={2}>{banner.title}</Text>
-            <Text className="mt-2 text-[11px] font-bold leading-5 text-muted" numberOfLines={2}>{banner.description}</Text>
-          </View>
-          <View className="self-start rounded-full bg-white px-3.5 py-2 shadow-sm">
-            <Text style={{ color: style.accent }} className="text-[10px] font-black">{banner.actionLabel}</Text>
-          </View>
-        </View>
-      </AnimatedPressable>
-    );
+    setActiveIndex(Math.min(promoBanners.length - 1, Math.max(0, nextIndex)));
   };
 
   return (
-    <View className="pt-5">
+    <View className="mt-4">
       <FlatList
         ref={listRef}
-        data={homeBanners}
-        renderItem={renderBanner}
+        data={promoBanners}
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={snapInterval}
         snapToAlignment="start"
         decelerationRate="fast"
-        pagingEnabled={false}
         onScroll={syncActiveIndex}
         scrollEventThrottle={16}
         onMomentumScrollEnd={syncActiveIndex}
@@ -176,10 +149,22 @@ function PromotionBannerCarousel() {
         ItemSeparatorComponent={() => <View style={{ width: bannerGap }} />}
         getItemLayout={(_, index) => ({ length: snapInterval, offset: snapInterval * index, index })}
         onScrollToIndexFailed={({ index }) => listRef.current?.scrollToOffset({ offset: snapInterval * index, animated: true })}
+        renderItem={({ item }) => (
+          <AnimatedPressable onPress={() => router.push(item.href as never)} style={{ width: bannerWidth }} className="h-[188px] overflow-hidden rounded-[26px] bg-ink shadow-sm">
+            <Image source={{ uri: item.image }} className="absolute h-full w-full" resizeMode="cover" />
+            <View className="absolute inset-0 bg-black/45" />
+            <View className="absolute right-4 top-4">
+              <Text className="text-[12px] font-black text-white">{item.actionLabel}</Text>
+            </View>
+            <View className="absolute bottom-5 left-5 right-5">
+              <Text className="text-[22px] font-black leading-7 text-white" numberOfLines={2}>{item.title}</Text>
+              <Text className="mt-2 text-[12px] font-semibold leading-5 text-white/80" numberOfLines={2}>{item.description}</Text>
+            </View>
+          </AnimatedPressable>
+        )}
       />
-
       <View className="mt-3 flex-row justify-center">
-        {homeBanners.map((banner, index) => (
+        {promoBanners.map((banner, index) => (
           <Pressable key={banner.id} onPress={() => goToIndex(index)} className="px-1 py-1">
             <BannerIndicator active={index === activeIndex} />
           </Pressable>
@@ -189,180 +174,101 @@ function PromotionBannerCarousel() {
   );
 }
 
-function TurtleArt({ color, height = 154 }: { color: string; height?: number }) {
+function CommunityHotSection() {
   return (
-    <View style={{ height, backgroundColor: color }} className="w-full items-center justify-center overflow-hidden rounded-[20px]">
-      <View className="absolute -right-10 -top-12 h-32 w-32 rounded-full bg-white/25" />
-      <View className="absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-white/20" />
-      <View className="h-20 w-28 items-center justify-center rounded-[50px] bg-[#758C70]">
-        <View className="h-10 w-10 rotate-45 rounded-xl border-2 border-white/50" />
-      </View>
-      <View className="absolute right-[22%] h-10 w-10 rounded-full bg-[#758C70]">
-        <View className="absolute left-3 top-3 h-1.5 w-1.5 rounded-full bg-ink" />
+    <View className="mt-7">
+      <SectionHeader title="커뮤니티 HOT" onPress={() => router.push('/community')} />
+      <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
+        {hotPosts.map((post, index) => (
+          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-3.5 ${index ? 'border-t border-line' : ''}`}>
+            <View className="flex-row items-center">
+              <Text className={`rounded-full px-2.5 py-1 text-[9px] font-black ${post.badge === '새글' ? 'bg-[#EAF5FF] text-[#4593D6]' : 'bg-blush text-berry'}`}>{post.badge}</Text>
+              <Text className="ml-2 flex-1 text-[10px] font-bold text-[#9CA3AF]">{post.category}</Text>
+              <Meta icon="eye-outline" value={post.views} />
+              <Meta icon="chatbubble-outline" value={post.comments} />
+              <Meta icon="heart-outline" value={post.likes} />
+            </View>
+            <Text className="mt-2 text-[14px] font-black leading-5 text-[#111827]" numberOfLines={1}>{post.title}</Text>
+          </AnimatedPressable>
+        ))}
       </View>
     </View>
   );
 }
 
-function ListingCard({ item }: { item: (typeof homeListings)[number] }) {
-  const { isFavorite, toggleFavorite } = useMockUserState();
-  const favorite = isFavorite(item.id);
+function PopularBreedersSection() {
   return (
-    <Pressable onPress={() => router.push(`/listing/${item.id}`)} className="mr-3 w-[260px] rounded-[24px] border border-line bg-white p-3 shadow-sm">
-      <View><TurtleArt color={item.color} /><Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className="absolute right-3 top-3 h-9 w-9 items-center justify-center rounded-full bg-white/90"><Ionicons name={favorite ? 'heart' : 'heart-outline'} size={18} color={colors.berry} /></Pressable></View>
-      <View className="px-1 pb-1 pt-3">
-        <View className="flex-row items-center"><Text className="rounded-full bg-blush px-2 py-1 text-[9px] font-black text-berry">오늘의 추천</Text><Text className="ml-2 text-[10px] text-muted">{item.breeder}</Text></View>
-        <Text className="mt-2 text-[15px] font-black text-ink" numberOfLines={1}>{item.species}</Text>
-        <Text className="mt-1 text-[17px] font-black text-ink">{item.price.toLocaleString()}원</Text>
+    <View className="mt-7">
+      <SectionHeader title="인기 브리더" onPress={() => router.push('/marketplace')} />
+      <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
+        {breeders.slice(0, 3).map((breeder, index) => {
+          const summary = getReviewSummary(breeder.id);
+          return (
+            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
+              <Avatar uri={breeder.logo ?? breeder.avatar} size={48} />
+              <View className="ml-3 flex-1">
+                <View className="flex-row items-center">
+                  <Text className="text-[14px] font-black text-[#111827]" numberOfLines={1}>{breeder.name}</Text>
+                  <Text className="ml-2 rounded-full bg-blush px-2 py-1 text-[8px] font-black text-berry">인증</Text>
+                </View>
+                <Text className="mt-1 text-[11px] font-medium text-[#9CA3AF]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
+                <View className="mt-1 flex-row items-center">
+                  <Ionicons name="star" size={12} color="#FFC83D" />
+                  <Text className="ml-1 text-[10px] font-black text-[#374151]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
+                </View>
+              </View>
+            </AnimatedPressable>
+          );
+        })}
       </View>
-    </Pressable>
+    </View>
   );
 }
 
-function BreederCard({ item }: { item: (typeof homeBreederStories)[number] }) {
-  const { isFollowing } = useMockUserState();
-  const following = isFollowing(item.id);
+function HotListingsSection() {
+  const hotListings = [...listings].sort((a, b) => b.views + b.likes - (a.views + a.likes)).slice(0, 5);
   return (
-    <Pressable onPress={() => router.push(`/breeder/${item.id}`)} className="mr-3 w-[212px] rounded-[24px] border border-line bg-white p-4 shadow-sm">
-      <View className="flex-row items-center">
-        <View className="h-14 w-14 overflow-hidden rounded-full"><TurtleArt color={item.color} height={56} /></View>
-        <View className="ml-3 flex-1"><Text className="text-[9px] font-black text-berry">✓ {item.badge} 브리더</Text><Text className="mt-1 text-[14px] font-black text-ink">{item.name}</Text><Text className="mt-1 text-[9px] text-muted">팔로워 {item.followers}</Text></View>
-      </View>
-      <View className={`mt-4 rounded-[14px] py-2.5 ${following ? 'bg-blush' : 'bg-soft'}`}><Text className={`text-center text-[10px] font-black ${following ? 'text-berry' : 'text-ink'}`}>{following ? '팔로잉 · 상점 방문' : '상점 방문'}</Text></View>
-    </Pressable>
+    <View className="mt-7">
+      <SectionHeader title="🔥 오늘 핫한 분양 개체" onPress={() => router.push('/marketplace')} />
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
+        {hotListings.map((listing, index) => <ListingCard key={listing.id} item={listing} wide index={index} />)}
+      </ScrollView>
+    </View>
   );
 }
 
-function FollowActivityCard({ item, width }: { item: (typeof followActivities)[number]; width: number }) {
-  const reviewMeta = item.activityType === 'review' ? getBreederReviewMeta(item.breederId) : null;
-
+function RecentReviewsSection() {
   return (
-    <AnimatedPressable
-      onPress={() => router.push(item.targetType === 'listing' ? `/listing/${item.targetId}` as never : `/breeder/${item.targetId}` as never)}
-      style={{ width }}
-      className="mr-2.5 h-[150px] rounded-[20px] border border-line bg-white p-3 shadow-sm"
-    >
-      <View className="flex-row items-start">
-        <Image source={{ uri: item.breederLogo }} className="h-10 w-10 rounded-[14px] bg-shell" />
-        <View className="ml-2.5 flex-1">
-          <Text className="text-[12px] font-black text-ink" numberOfLines={1}>{item.breederName}</Text>
-          <Text className="mt-1 text-[9px] text-muted">{item.createdAt}</Text>
-        </View>
-        <View className="rounded-full bg-blush px-2 py-1">
-          <Text className="text-[8px] font-black text-berry">NEW</Text>
-        </View>
-      </View>
-      <Text className="mt-3 text-[13px] font-black leading-5 text-ink" numberOfLines={2} ellipsizeMode="tail">{item.title}</Text>
-      {reviewMeta ? (
-        <View className="mt-2">
-          <ReviewRatingSummary rating={reviewMeta.rating} reviewCount={reviewMeta.reviewCount} size={16} />
-          <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={1}>인증 브리더 후기</Text>
-        </View>
-      ) : (
-        <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2} ellipsizeMode="tail">{item.description}</Text>
-      )}
-      {item.listingStatus ? (
-        <View className="mt-2 self-start rounded-full bg-ink px-2.5 py-1.5">
-          <Text className="text-[8px] font-black text-white">{item.listingStatus}</Text>
-        </View>
-      ) : null}
-    </AnimatedPressable>
+    <View className="mt-7">
+      <SectionHeader title="최근 후기" />
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
+        {breederReviews.slice(0, 4).map((review, index) => {
+          const breeder = breeders.find((item) => item.id === review.breederId);
+          return (
+            <FadeInView key={review.id} delay={index * 45}>
+              <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mr-3 w-[276px] rounded-[24px] border border-line bg-white p-4 shadow-sm">
+                <StarRating rating={review.rating} size={16} showValue={false} />
+                <Text className="mt-3 text-[13px] font-bold leading-6 text-[#374151]" numberOfLines={2}>{review.content}</Text>
+                <Text className="mt-3 text-[10px] font-bold text-[#9CA3AF]" numberOfLines={1}>{breeder?.name ?? '브리더'} · {review.species}</Text>
+              </AnimatedPressable>
+            </FadeInView>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
-}
-
-function ReviewCard({ item }: { item: (typeof homeReviews)[number] }) {
-  const reviewMeta = getBreederReviewMeta(item.breederId, item.rating);
-
-  return (
-    <Pressable onPress={() => router.push(`/breeder/${item.breederId}`)} className="mr-3 w-[272px] flex-row rounded-[24px] border border-line bg-white p-3 shadow-sm">
-      <View className="h-[86px] w-[86px] overflow-hidden rounded-[17px]"><TurtleArt color={item.color} height={86} /></View>
-      <View className="ml-3 flex-1">
-        <ReviewRatingSummary rating={reviewMeta.rating} reviewCount={reviewMeta.reviewCount} size={15} />
-        <Text className="mt-2 text-[12px] font-bold leading-5 text-ink" numberOfLines={2}>{item.text}</Text>
-        <Text className="mt-2 text-[9px] font-bold text-berry">{item.breeder}</Text>
-      </View>
-    </Pressable>
-  );
-}
-
-function Metric({ icon, value }: { icon: IconName; value: number }) {
-  return <View className="ml-3 flex-row items-center"><Ionicons name={icon} size={11} color={colors.muted} /><Text className="ml-1 text-[9px] text-muted">{value}</Text></View>;
 }
 
 export function HomeScreen() {
-  const { followedBreederIds } = useMockUserState();
-  const { width } = useWindowDimensions();
-  const followedActivities = followActivities.filter((item) => followedBreederIds.includes(item.breederId));
-  const followActivityCardWidth = Math.min(168, Math.max(142, (width - 50) / 2.35));
-
   return (
     <Page>
-      <BrandHeader />
+      <BrandHeader compact />
+      <NoticeBar />
       <PromotionBannerCarousel />
-
-      <View className="mt-7">
-        <View className="mb-4 flex-row items-end justify-between px-5">
-          <View>
-            <Text className="text-[10px] font-black text-berry">CURATED FOR YOU</Text>
-            <HotSectionTitle />
-          </View>
-          <Pressable onPress={() => router.push('/marketplace')} className="rounded-full bg-soft px-3 py-2">
-            <Text className="text-[10px] font-bold text-muted">전체보기</Text>
-          </Pressable>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-          {homeListings.map((item) => <ListingCard key={item.id} item={item} />)}
-        </ScrollView>
-      </View>
-
-      <Section eyebrow="VERIFIED SHOP" title="믿고 만나는 인증 브리더">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-          {homeBreederStories.slice(0, 3).map((item) => <BreederCard key={item.id} item={item} />)}
-        </ScrollView>
-      </Section>
-
-      <Section eyebrow="FOLLOWING" title="팔로우 브리더 소식" action={() => router.push('/following-feed')}>
-        {followedActivities.length ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-            {followedActivities.map((item) => <FollowActivityCard key={item.id} item={item} width={followActivityCardWidth} />)}
-          </ScrollView>
-        ) : (
-          <View className="mx-5 rounded-[24px] bg-white px-5 py-10 shadow-sm">
-            <Text className="text-center text-[13px] font-black text-ink">관심있는 브리더를 팔로우해보세요</Text>
-            <Text className="mt-2 text-center text-[10px] text-muted">새 분양과 후기 소식을 홈에서 바로 볼 수 있어요.</Text>
-          </View>
-        )}
-      </Section>
-
-      <Section eyebrow="REAL REVIEW" title="최근 분양 후기">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-          {homeReviews.map((item) => <ReviewCard key={item.id} item={item} />)}
-        </ScrollView>
-      </Section>
-
-      <Section eyebrow="COMMUNITY" title="오늘 많이 본 이야기" action={() => router.push('/community')}>
-        <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
-          {communityPosts.slice(0, 3).map((post, index) => (
-            <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}`)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
-              <Text className="mr-3 text-[16px] font-black text-berry">{index + 1}</Text>
-              <View className="flex-1"><Text className="text-[10px] font-bold text-muted">{post.category} · {post.author}</Text><Text className="mt-1.5 text-[13px] font-black text-ink" numberOfLines={1}>{post.title}</Text></View>
-              <Metric icon="heart-outline" value={post.likes} /><Metric icon="chatbubble-outline" value={post.commentsCount ?? post.comments} />
-            </AnimatedPressable>
-          ))}
-        </View>
-      </Section>
-
-      <View className="px-5 pt-8">
-        <FadeInView><AnimatedPressable onPress={() => router.push('/ai')} className="rounded-[24px] bg-ink p-5 shadow-sm">
-          <View className="flex-row items-center"><View className="h-11 w-11 items-center justify-center rounded-[15px] bg-berry"><Ionicons name="sparkles" size={19} color="white" /></View><View className="ml-3 flex-1"><Text className="text-[10px] font-black text-petal">BOOGI AI</Text><Text className="mt-1 text-[16px] font-black text-white">사육 고민, 바로 물어보세요</Text></View><Ionicons name="chevron-forward" size={18} color="white" /></View>
-          <View className="mt-4 flex-row"><Text className="mr-2 rounded-full bg-white/10 px-3 py-2 text-[9px] font-bold text-white">눈이 부었어요</Text><Text className="rounded-full bg-white/10 px-3 py-2 text-[9px] font-bold text-white">합사 가능할까요?</Text></View>
-        </AnimatedPressable></FadeInView>
-
-        <FadeInView delay={70}><AnimatedPressable onPress={() => router.push('/growth')} className="mt-3 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <View className="flex-row items-center justify-between"><View><Text className="text-[10px] font-black text-berry">GROWTH NOTE</Text><Text className="mt-1 text-[17px] font-black text-ink">부기가 이번 달 17g 자랐어요</Text><Text className="mt-2 text-[11px] text-muted">현재 238g · 등갑 길이 10.8cm</Text></View><View className="h-11 w-11 items-center justify-center rounded-[15px] bg-blush"><Ionicons name="analytics-outline" size={21} color={colors.berry} /></View></View>
-          <View className="mt-5 h-12 flex-row items-end justify-between">{[18, 24, 29, 35, 41, 47].map((height) => <View key={height} style={{ height }} className="w-8 rounded-t-lg bg-petal" />)}</View>
-        </AnimatedPressable></FadeInView>
-      </View>
+      <CommunityHotSection />
+      <PopularBreedersSection />
+      <HotListingsSection />
+      <RecentReviewsSection />
     </Page>
   );
 }
