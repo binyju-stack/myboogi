@@ -11,6 +11,7 @@ import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { ReviewRatingSummary, ReviewTypeBadge, StarRating } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
+import { getChatRoomIdForListing } from '@/data/chat';
 import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
@@ -111,6 +112,10 @@ export default function ListingDetailScreen() {
   const showModal = (title: string) => {
     setModalTitle(title);
     setModalVisible(true);
+  };
+
+  const openChatRoom = () => {
+    router.push(`/chat/${getChatRoomIdForListing(item.id)}`);
   };
 
   const showContactAlert = () => {
@@ -283,15 +288,19 @@ export default function ListingDetailScreen() {
         ) : (
           <>
             <View className="ml-3 flex-1">
-              <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-[#FEE500]">
-                <Ionicons name="chatbubble" size={17} color={colors.ink} />
-                <Text className="ml-2 text-[12px] font-black text-ink">카카오 문의</Text>
+              <AnimatedPressable onPress={openChatRoom} className="h-14 flex-row items-center justify-center rounded-[20px] bg-berry">
+                <Ionicons name="chatbubble-ellipses" size={17} color={colors.white} />
+                <Text className="ml-2 text-[12px] font-black text-white">문의하기</Text>
               </AnimatedPressable>
             </View>
-            <View className="ml-2 w-24">
+            <View className="ml-2 w-20">
+              <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-[#FEE500]">
+                <Text className="text-[11px] font-black text-ink">카카오</Text>
+              </AnimatedPressable>
+            </View>
+            <View className="ml-2 w-20">
               <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-ink">
-                <Ionicons name="call-outline" size={16} color={colors.white} />
-                <Text className="ml-1.5 text-[11px] font-black text-white">전화</Text>
+                <Text className="text-[11px] font-black text-white">전화</Text>
               </AnimatedPressable>
             </View>
           </>

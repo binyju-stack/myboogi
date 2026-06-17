@@ -143,9 +143,9 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
 
 function Meta({ icon, value }: { icon: IconName; value: number }) {
   return (
-    <View className="ml-2 flex-row items-center">
-      <Ionicons name={icon} size={12} color="#9CA3AF" />
-      <Text className="ml-1 text-[10px] font-medium text-[#9CA3AF]">{value.toLocaleString()}</Text>
+    <View className="ml-2 flex-row items-center rounded-full bg-[#F3F4F6] px-2 py-1">
+      <Ionicons name={icon} size={13} color="#6B7280" />
+      <Text className="ml-1 text-[11px] font-bold text-[#6B7280]">{value.toLocaleString()}</Text>
     </View>
   );
 }
@@ -249,17 +249,17 @@ function CommunityHotSection() {
   return (
     <View className="mt-7">
       <SectionHeader title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')} />
-      <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
+      <View className="mx-5 overflow-hidden rounded-[26px] border border-[#E2E8F0] bg-white px-4 shadow-sm">
         {hotPosts.map((post, index) => (
-          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-3.5 ${index ? 'border-t border-line' : ''}`}>
+          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-4 ${index ? 'border-t border-[#EEF2F7]' : ''}`}>
             <View className="flex-row items-center">
-              <Text className={`rounded-full px-2.5 py-1 text-[9px] font-black ${post.badge === '새글' ? 'bg-[#EAF5FF] text-[#4593D6]' : 'bg-blush text-berry'}`}>{post.badge}</Text>
-              <Text className="ml-2 flex-1 text-[10px] font-bold text-[#9CA3AF]">{post.category}</Text>
+              <Text className={`rounded-full px-3 py-1.5 text-[10px] font-black ${post.badge === '새글' ? 'bg-[#EAF5FF] text-[#2563EB]' : 'bg-berry text-white'}`}>{post.badge}</Text>
+              <Text className="ml-2 flex-1 text-[11px] font-bold text-[#6B7280]">{post.category}</Text>
               <Meta icon="eye-outline" value={post.views} />
               <Meta icon="chatbubble-outline" value={post.comments} />
               <Meta icon="heart-outline" value={post.likes} />
             </View>
-            <Text className="mt-2 text-[14px] font-black leading-5 text-[#111827]" numberOfLines={1}>{post.title}</Text>
+            <Text className="mt-2.5 text-[16px] font-black leading-6 text-[#111827]" numberOfLines={1}>{post.title}</Text>
           </AnimatedPressable>
         ))}
       </View>
@@ -271,22 +271,22 @@ function PopularBreedersSection() {
   return (
     <View className="mt-7">
       <SectionHeader title="많이 찾는 브리더" icon="trophy" onPress={() => router.push('/marketplace')} />
-      <View className="mx-5 overflow-hidden rounded-[24px] border border-line bg-white px-4 shadow-sm">
+      <View className="mx-5 overflow-hidden rounded-[26px] border border-[#E2E8F0] bg-white px-4 shadow-sm">
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
-            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
-              <Avatar uri={breeder.logo ?? breeder.avatar} size={48} />
-              <View className="ml-3 flex-1">
+            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-4.5 ${index ? 'border-t border-[#EEF2F7]' : ''}`}>
+              <Avatar uri={breeder.logo ?? breeder.avatar} size={68} />
+              <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
                 <View className="flex-row items-center">
-                  <Text className="text-[14px] font-black text-[#111827]" numberOfLines={1}>{breeder.name}</Text>
-                  <Text className="ml-2 rounded-full bg-blush px-2 py-1 text-[8px] font-black text-berry">인증</Text>
+                  <Text className="flex-1 text-[19px] font-black text-[#111827]" numberOfLines={1}>{breeder.name}</Text>
+                  <Text className="ml-2 rounded-full bg-blush px-2.5 py-1.5 text-[10px] font-black text-berry">✓ 인증 브리더</Text>
                 </View>
-                <Text className="mt-1 text-[11px] font-medium text-[#9CA3AF]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
-                <View className="mt-1 flex-row items-center">
-                  <Ionicons name="star" size={12} color="#FFC83D" />
-                  <Text className="ml-1 text-[10px] font-black text-[#374151]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
+                <View className="mt-1.5 flex-row items-center">
+                  <Ionicons name="star" size={15} color="#FFC83D" />
+                  <Text className="ml-1.5 text-[13px] font-black text-[#111827]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
                 </View>
+                <Text className="mt-1.5 text-[12px] font-medium leading-5 text-[#9CA3AF]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
               </View>
             </AnimatedPressable>
           );

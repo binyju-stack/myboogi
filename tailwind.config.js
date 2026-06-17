@@ -5,6 +5,17 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Pretendard'],
+      },
+      fontWeight: {
+        normal: '500',
+        medium: '500',
+        semibold: '700',
+        bold: '700',
+        extrabold: '800',
+        black: '800',
+      },
       colors: {
         ink: '#191F28',
         muted: '#8B95A1',
