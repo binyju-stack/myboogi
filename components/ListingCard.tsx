@@ -28,7 +28,7 @@ function isHotListing(item: Listing) {
 
 function ListingChip({ label }: { label: string }) {
   return (
-    <View className="mr-1.5 mt-1.5 rounded-full bg-soft px-2.5 py-1">
+    <View className="mr-1.5 mt-1 rounded-full bg-soft px-2.5 py-1">
       <Text className="text-[8px] font-black text-muted" numberOfLines={1}>{label}</Text>
     </View>
   );
@@ -102,7 +102,7 @@ export function ListingCard({
   return (
     <View style={width ? { width } : undefined} className={wide ? 'mr-4' : 'mb-6'}>
       <FadeInView delay={index * 45}>
-        <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className="w-full rounded-[24px] border border-line bg-white p-2.5 shadow-sm">
+        <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className="w-full rounded-[24px] border border-line bg-white p-2 shadow-sm">
           <View className="aspect-[4/5] overflow-hidden rounded-[20px] bg-shell">
             <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
             <View className="absolute left-2 top-2 flex-row flex-wrap">
@@ -116,33 +116,24 @@ export function ListingCard({
             </Pressable>
           </View>
 
-          <View className="px-1 pb-1 pt-3" style={{ minWidth: 0 }}>
+          <View className="px-1 pb-0.5 pt-2.5" style={{ minWidth: 0 }}>
             <Text className="text-[13px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">{item.species}</Text>
-            <Text className="mt-1 text-[10px] font-bold text-muted" numberOfLines={1} ellipsizeMode="tail">{item.title}</Text>
-            <Text className="mt-2 text-[17px] font-black text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
+            <Text className="mt-1 text-[17px] font-black text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
 
-            <View className="mt-1 flex-row flex-wrap">
+            <View className="mt-0.5 flex-row flex-wrap">
               <ListingChip label={item.sex} />
               <ListingChip label={item.stage} />
             </View>
 
-            <View className="mt-3" style={{ minWidth: 0 }}>
-              <Text className="text-[9px] font-black text-berry" numberOfLines={1}>✓ 인증 브리더</Text>
-              <Text className="mt-1 text-[11px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">{breeder?.name ?? '브리더 정보 없음'}</Text>
+            <View className="mt-2" style={{ minWidth: 0 }}>
+              <Text className="text-[11px] font-black text-berry" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
             </View>
 
-            <View className="mt-2 flex-row items-center" style={{ minWidth: 0 }}>
+            <View className="mt-1 flex-row items-center" style={{ minWidth: 0 }}>
               <Ionicons name="star" size={12} color="#FFC83D" />
               <Text className="ml-1 flex-1 text-[10px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">
                 {rating.toFixed(1)} · 후기 {reviewSummary.totalReviews.toLocaleString()}개
               </Text>
-            </View>
-
-            <View className="mt-2 flex-row items-center">
-              <Ionicons name="eye-outline" size={12} color={colors.muted} />
-              <Text className="ml-1 mr-3 text-[9px] font-bold text-muted" numberOfLines={1}>{item.views.toLocaleString()}</Text>
-              <Ionicons name="heart" size={11} color={colors.berry} />
-              <Text className="ml-1 text-[9px] font-bold text-muted" numberOfLines={1}>{likes.toLocaleString()}</Text>
             </View>
           </View>
         </AnimatedPressable>
