@@ -29,7 +29,7 @@ function isHotListing(item: Listing) {
 function ListingChip({ label }: { label: string }) {
   return (
     <View className="mr-1.5 mt-1.5 rounded-full bg-soft px-2.5 py-1">
-      <Text className="text-[8px] font-black text-muted">{label}</Text>
+      <Text className="text-[8px] font-black text-muted" numberOfLines={1}>{label}</Text>
     </View>
   );
 }
@@ -40,12 +40,14 @@ export function ListingCard({
   list = false,
   index = 0,
   onStatusPress,
+  cardWidth,
 }: {
   item: Listing;
   wide?: boolean;
   list?: boolean;
   index?: number;
   onStatusPress?: (item: Listing) => void;
+  cardWidth?: number;
 }) {
   const { isFavorite, toggleFavorite } = useMockUserState();
   const favorite = isFavorite(item.id);
@@ -73,14 +75,14 @@ export function ListingCard({
             <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
             <View className="absolute left-2 top-2">{statusBadge}</View>
           </View>
-          <View className="ml-4 flex-1 py-1">
-            <Text className="text-[9px] font-bold text-berry">{item.verified ? '✓ 인증 브리더' : '일반 브리더'}</Text>
+          <View className="ml-4 flex-1 py-1" style={{ minWidth: 0 }}>
+            <Text className="text-[9px] font-bold text-berry" numberOfLines={1}>{item.verified ? '✓ 인증 브리더' : '일반 브리더'}</Text>
             <Text className="mt-2 text-[14px] font-black leading-5 text-ink" numberOfLines={2}>{item.species}</Text>
-            <Text className="mt-1 text-[17px] font-black text-ink">{item.price.toLocaleString()}원</Text>
+            <Text className="mt-1 text-[17px] font-black text-ink" numberOfLines={1}>{item.price.toLocaleString()}원</Text>
             <View className="mt-auto flex-row items-center justify-between">
-              <Text className="text-[10px] text-muted">{item.location}</Text>
+              <Text className="text-[10px] text-muted" numberOfLines={1}>{item.location}</Text>
               <View className="flex-row items-center">
-                <Text className="mr-2 text-[9px] text-subtle">조회 {item.views} · 찜 {likes}</Text>
+                <Text className="mr-2 text-[9px] text-subtle" numberOfLines={1}>조회 {item.views} · 찜 {likes}</Text>
                 {heart(true)}
               </View>
             </View>
@@ -95,46 +97,56 @@ export function ListingCard({
     );
   }
 
+  const width = wide ? 212 : cardWidth;
+
   return (
-    <FadeInView delay={index * 45}>
-      <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className={`${wide ? 'mr-4 w-[212px]' : 'mb-6 w-[48%]'} rounded-[24px] border border-line bg-white p-2.5 shadow-sm`}>
-        <View className="aspect-[4/5] overflow-hidden rounded-[20px] bg-shell">
-          <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
-          <View className="absolute left-2 top-2 flex-row flex-wrap">
-            {statusBadge}
-            {hot ? <Text className="ml-1 rounded-full bg-ink px-2.5 py-1.5 text-[9px] font-black text-white">🔥 HOT</Text> : null}
-            {fresh ? <Text className="ml-1 rounded-full bg-white px-2.5 py-1.5 text-[9px] font-black text-berry">NEW</Text> : null}
+    <View style={width ? { width } : undefined} className={wide ? 'mr-4' : 'mb-6'}>
+      <FadeInView delay={index * 45}>
+        <AnimatedPressable onPress={() => router.push(`/listing/${item.id}`)} className="w-full rounded-[24px] border border-line bg-white p-2.5 shadow-sm">
+          <View className="aspect-[4/5] overflow-hidden rounded-[20px] bg-shell">
+            <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
+            <View className="absolute left-2 top-2 flex-row flex-wrap">
+              {statusBadge}
+              {hot ? <Text className="ml-1 rounded-full bg-ink px-2.5 py-1.5 text-[9px] font-black text-white">HOT</Text> : null}
+              {fresh ? <Text className="ml-1 rounded-full bg-white px-2.5 py-1.5 text-[9px] font-black text-berry">NEW</Text> : null}
+            </View>
+            <Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className="absolute right-2 top-2 flex-row items-center rounded-full bg-white/95 px-2.5 py-1.5">
+              <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={13} color={colors.berry} />
+              <Text className="ml-1 text-[9px] font-black text-berry" numberOfLines={1}>{likes}</Text>
+            </Pressable>
           </View>
-          <Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className="absolute right-2 top-2 flex-row items-center rounded-full bg-white/95 px-2.5 py-1.5">
-            <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={13} color={colors.berry} />
-            <Text className="ml-1 text-[9px] font-black text-berry">{likes}</Text>
-          </Pressable>
-        </View>
-        <View className="px-1 pb-1 pt-3">
-          <Text className="text-[13px] font-black text-ink" numberOfLines={1}>{item.species}</Text>
-          <Text className="mt-1 text-[10px] font-bold text-muted" numberOfLines={1}>{item.title}</Text>
-          <Text className="mt-2 text-[18px] font-black text-ink">{item.price.toLocaleString()}원</Text>
-          <View className="mt-1 flex-row flex-wrap">
-            <ListingChip label={item.sex} />
-            <ListingChip label={item.stage} />
+
+          <View className="px-1 pb-1 pt-3" style={{ minWidth: 0 }}>
+            <Text className="text-[13px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">{item.species}</Text>
+            <Text className="mt-1 text-[10px] font-bold text-muted" numberOfLines={1} ellipsizeMode="tail">{item.title}</Text>
+            <Text className="mt-2 text-[17px] font-black text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
+
+            <View className="mt-1 flex-row flex-wrap">
+              <ListingChip label={item.sex} />
+              <ListingChip label={item.stage} />
+            </View>
+
+            <View className="mt-3" style={{ minWidth: 0 }}>
+              <Text className="text-[9px] font-black text-berry" numberOfLines={1}>✓ 인증 브리더</Text>
+              <Text className="mt-1 text-[11px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">{breeder?.name ?? '브리더 정보 없음'}</Text>
+            </View>
+
+            <View className="mt-2 flex-row items-center" style={{ minWidth: 0 }}>
+              <Ionicons name="star" size={12} color="#FFC83D" />
+              <Text className="ml-1 flex-1 text-[10px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">
+                {rating.toFixed(1)} · 후기 {reviewSummary.totalReviews.toLocaleString()}개
+              </Text>
+            </View>
+
+            <View className="mt-2 flex-row items-center">
+              <Ionicons name="eye-outline" size={12} color={colors.muted} />
+              <Text className="ml-1 mr-3 text-[9px] font-bold text-muted" numberOfLines={1}>{item.views.toLocaleString()}</Text>
+              <Ionicons name="heart" size={11} color={colors.berry} />
+              <Text className="ml-1 text-[9px] font-bold text-muted" numberOfLines={1}>{likes.toLocaleString()}</Text>
+            </View>
           </View>
-          <View className="mt-3">
-            <Text className="text-[9px] font-black text-berry">✓ 인증 브리더</Text>
-            <Text className="mt-1 text-[11px] font-black text-ink" numberOfLines={1}>{breeder?.name ?? '브리더 정보 없음'}</Text>
-          </View>
-          <View className="mt-2 flex-row items-center">
-            <Ionicons name="star" size={12} color="#FFC83D" />
-            <Text className="ml-1 text-[10px] font-black text-ink">{rating.toFixed(1)}</Text>
-            <Text className="ml-1.5 text-[9px] font-bold text-muted">후기 {reviewSummary.totalReviews.toLocaleString()}개</Text>
-          </View>
-          <View className="mt-2 flex-row items-center">
-            <Ionicons name="eye-outline" size={12} color={colors.muted} />
-            <Text className="ml-1 mr-3 text-[9px] font-bold text-muted">{item.views.toLocaleString()}</Text>
-            <Ionicons name="heart" size={11} color={colors.berry} />
-            <Text className="ml-1 text-[9px] font-bold text-muted">{likes.toLocaleString()}</Text>
-          </View>
-        </View>
-      </AnimatedPressable>
-    </FadeInView>
+        </AnimatedPressable>
+      </FadeInView>
+    </View>
   );
 }

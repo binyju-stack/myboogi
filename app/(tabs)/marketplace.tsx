@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Alert, Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { Alert, FlatList, Modal, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useMemo, useState } from 'react';
 
 import { AnimatedPressable } from '@/components/AnimatedPressable';
 import { BrandHeader, Chip } from '@/components/common';
 import { ListingCard } from '@/components/ListingCard';
-import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { listings } from '@/data/mockData';
 
@@ -76,16 +75,21 @@ function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => vo
 
 export default function MarketplaceScreen() {
   const [filterVisible, setFilterVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const horizontalPadding = 40;
+  const columnGap = 12;
+  const cardWidth = useMemo(() => Math.min(240, Math.max(156, Math.floor((width - horizontalPadding - columnGap) / 2))), [width]);
 
-  return (
-    <Page>
+  const header = (
+    <View>
       <BrandHeader compact />
       <View className="bg-white px-5 pb-4">
         <Text className="mb-4 text-[22px] font-black text-ink">건강한 새 가족을 만나보세요</Text>
         <View className="flex-row gap-2">
           <Pressable onPress={() => router.push('/search')} className="flex-1 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
             <Ionicons name="search" size={18} color={colors.muted} />
-            <Text className="ml-2 text-[13px] text-muted">어떤 거북이를 찾고 계신가요?</Text>
+            <Text className="ml-2 text-[13px] text-muted" numberOfLines={1}>어떤 거북이를 찾고 계신가요?</Text>
           </Pressable>
           <AnimatedPressable onPress={() => setFilterVisible(true)} className="h-[50px] w-[50px] items-center justify-center rounded-[18px] bg-blush">
             <Ionicons name="options-outline" size={20} color={colors.berry} />
@@ -111,11 +115,22 @@ export default function MarketplaceScreen() {
           <Text className="ml-1 text-[10px] font-black text-white">분양글 등록</Text>
         </Pressable>
       </View>
+    </View>
+  );
 
-      <View className="flex-row flex-wrap justify-between px-5 pb-5">
-        {listings.map((item, index) => <ListingCard key={item.id} item={item} index={index} />)}
-      </View>
+  return (
+    <SafeAreaView className="flex-1 bg-page" edges={['top']}>
+      <FlatList
+        data={listings}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        ListHeaderComponent={header}
+        renderItem={({ item, index }) => <ListingCard item={item} index={index} cardWidth={cardWidth} />}
+        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 20 }}
+        contentContainerStyle={{ paddingBottom: 32 + insets.bottom }}
+        showsVerticalScrollIndicator={false}
+      />
       <FilterSheet visible={filterVisible} onClose={() => setFilterVisible(false)} />
-    </Page>
+    </SafeAreaView>
   );
 }
