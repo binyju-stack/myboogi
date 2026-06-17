@@ -80,6 +80,7 @@ export interface Listing {
   stage: '유체' | '성체';
   size: string;
   hatchDate: string;
+  listedAt?: string;
   shellLength?: string;
   weight?: string;
   feedingResponse?: string;

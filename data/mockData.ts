@@ -132,6 +132,7 @@ export const listings: Listing[] = baseListings.map((listing) => {
   const listingStatus = statusById[listing.id] ?? 'active';
   const detailById: Record<string, Partial<Listing>> = {
     l1: {
+      listedAt: '2026.06.15',
       shellLength: '6.2cm',
       weight: '238g',
       feedingResponse: '전용 사료와 채소 반응이 좋아요',
@@ -142,6 +143,7 @@ export const listings: Listing[] = baseListings.map((listing) => {
       relatedListingIds: ['l4'],
     },
     l2: {
+      listedAt: '2026.06.11',
       shellLength: '8.1cm',
       weight: '412g',
       feedingResponse: '건초와 치커리를 잘 먹어요',
@@ -152,6 +154,7 @@ export const listings: Listing[] = baseListings.map((listing) => {
       relatedListingIds: ['l5'],
     },
     l3: {
+      listedAt: '2026.06.16',
       shellLength: '7.5cm',
       weight: '186g',
       feedingResponse: '전용 사료와 생먹이 반응이 좋아요',
@@ -162,6 +165,7 @@ export const listings: Listing[] = baseListings.map((listing) => {
       relatedListingIds: [],
     },
     l4: {
+      listedAt: '2026.05.20',
       shellLength: '21cm',
       weight: '2.8kg',
       feedingResponse: '채소와 과일을 균형 있게 먹어요',
@@ -172,6 +176,7 @@ export const listings: Listing[] = baseListings.map((listing) => {
       relatedListingIds: ['l1'],
     },
     l5: {
+      listedAt: '2026.06.13',
       shellLength: '5.8cm',
       weight: '154g',
       feedingResponse: '민들레와 전용 사료를 잘 먹어요',

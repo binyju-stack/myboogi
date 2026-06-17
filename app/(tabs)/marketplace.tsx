@@ -16,7 +16,7 @@ const filterGroups = [
   { title: '지역', options: ['서울', '경기', '인천', '전국 상담'] },
   { title: '가격대', options: ['30만원 이하', '30-50만원', '50만원 이상'] },
   { title: '성별', options: ['수컷', '암컷', '미구분'] },
-  { title: '성장 단계', options: ['유체', '성체'] },
+  { title: '성장 단계', options: ['유체', '아성체', '성체'] },
 ];
 
 function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -104,7 +104,7 @@ export default function MarketplaceScreen() {
       <View className="flex-row items-center justify-between px-5 pb-4 pt-1">
         <View>
           <Text className="text-[10px] font-black text-berry">MARKETPLACE</Text>
-          <Text className="mt-1 text-[19px] font-black text-ink">분양 중인 거북이</Text>
+          <Text className="mt-1 text-[19px] font-black text-ink">분양중인 거북이</Text>
         </View>
         <Pressable onPress={() => router.push('/listing/create')} className="flex-row items-center rounded-full bg-berry px-3.5 py-2.5">
           <Ionicons name="add" size={14} color="white" />
@@ -112,7 +112,9 @@ export default function MarketplaceScreen() {
         </Pressable>
       </View>
 
-      <View className="px-5">{listings.map((item, index) => <ListingCard key={item.id} item={item} list index={index} />)}</View>
+      <View className="flex-row flex-wrap justify-between px-5 pb-5">
+        {listings.map((item, index) => <ListingCard key={item.id} item={item} index={index} />)}
+      </View>
       <FilterSheet visible={filterVisible} onClose={() => setFilterVisible(false)} />
     </Page>
   );
