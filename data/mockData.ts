@@ -280,9 +280,20 @@ export const users: User[] = [
 ];
 
 export const userProfile: UserProfile = {
+  userType: 'personal_breeder',
+  profileImage: turtleImages[2],
+  coverImage: turtleImages[3],
   nickname: '느린숲',
-  bio: '테라핀 전문 브리더',
+  bio: '레오파드 육지거북과 별거북을 전문으로 브리딩합니다.',
   region: '서울 송파구',
+  isVerified: true,
+  breederType: 'individual',
+  rating: 4.8,
+  reviewCount: 53,
+  followerCount: 842,
+  postCount: 18,
+  commentCount: 64,
+  likeCount: 326,
   instagram: 'https://instagram.com/slowforest',
   blog: 'https://blog.example.com/slowforest',
   youtube: 'https://youtube.com/@slowforest',

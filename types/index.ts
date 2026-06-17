@@ -176,10 +176,23 @@ export interface User {
   trustScore: number;
 }
 
+export type UserType = 'normal' | 'personal_breeder' | 'business_breeder';
+
 export interface UserProfile {
+  userType: UserType;
+  profileImage: string;
+  coverImage?: string;
   nickname: string;
   bio: string;
   region: string;
+  isVerified: boolean;
+  breederType?: BreederType;
+  rating?: number;
+  reviewCount?: number;
+  followerCount?: number;
+  postCount: number;
+  commentCount: number;
+  likeCount: number;
   instagram: string;
   blog: string;
   youtube: string;
