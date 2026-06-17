@@ -129,7 +129,7 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
     <View className="mb-3 flex-row items-center justify-between px-5">
       <View className="flex-1 flex-row items-center">
         <SectionIcon variant={icon} />
-        <Text className="flex-1 text-[20px] font-black text-[#111827]" numberOfLines={1}>{title}</Text>
+        <Text className="flex-1 text-[20px] font-bold text-[#111827]" numberOfLines={1}>{title}</Text>
       </View>
       {onPress ? (
         <Pressable onPress={onPress} className="flex-row items-center">
@@ -143,20 +143,30 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
 
 function Meta({ icon, value }: { icon: IconName; value: number }) {
   return (
-    <View className="ml-2 flex-row items-center rounded-full bg-[#F3F4F6] px-2 py-1">
-      <Ionicons name={icon} size={13} color="#6B7280" />
-      <Text className="ml-1 text-[11px] font-bold text-[#6B7280]">{value.toLocaleString()}</Text>
+    <View className="ml-2 flex-row items-center">
+      <Ionicons name={icon} size={12} color="#9CA3AF" />
+      <Text className="ml-1 text-[12px] font-normal text-[#9CA3AF]">{value.toLocaleString()}</Text>
     </View>
   );
 }
 
 function NoticeBar() {
   return (
-    <View className="mx-5 mt-4 h-10 flex-row items-center rounded-[18px] bg-[#111827] px-4">
+    <View className="mx-5 mt-4 h-9 flex-row items-center rounded-[18px] bg-[#111827] px-4">
       <Ionicons name="megaphone-outline" size={15} color="white" />
-      <Text className="ml-2 flex-1 text-[11px] font-bold text-white" numberOfLines={1}>공지사항  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
+      <Text className="ml-2 flex-1 text-[12px] font-medium text-white" numberOfLines={1}>공지사항  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
       <Ionicons name="close" size={14} color="white" />
     </View>
+  );
+}
+
+function SearchBar() {
+  return (
+    <AnimatedPressable onPress={() => router.push('/search')} className="mx-5 mt-4 h-12 flex-row items-center rounded-full border border-[#E5E7EB] bg-white px-4 shadow-sm">
+      <Ionicons name="search" size={18} color="#9CA3AF" />
+      <Text className="ml-2 flex-1 text-[15px] font-medium text-[#6B7280]">어떤 거북이를 찾고 계신가요?</Text>
+      <Ionicons name="chevron-forward" size={16} color="#D1D5DB" />
+    </AnimatedPressable>
   );
 }
 
@@ -225,11 +235,11 @@ function PromotionBannerCarousel() {
             <Image source={{ uri: item.image }} className="absolute h-full w-full" resizeMode="cover" />
             <View className="absolute inset-0 bg-black/45" />
             <View className="absolute right-4 top-4">
-              <Text className="text-[12px] font-black text-white">{item.actionLabel}</Text>
+              <Text className="text-[12px] font-bold text-white">{item.actionLabel}</Text>
             </View>
             <View className="absolute bottom-5 left-5 right-5">
-              <Text className="text-[22px] font-black leading-7 text-white" numberOfLines={2}>{item.title}</Text>
-              <Text className="mt-2 text-[12px] font-semibold leading-5 text-white/80" numberOfLines={2}>{item.description}</Text>
+              <Text className="text-[21px] font-bold leading-7 text-white" numberOfLines={2}>{item.title}</Text>
+              <Text className="mt-2 text-[14px] font-medium leading-5 text-white/85" numberOfLines={2}>{item.description}</Text>
             </View>
           </AnimatedPressable>
         )}
@@ -249,17 +259,17 @@ function CommunityHotSection() {
   return (
     <View className="mt-7">
       <SectionHeader title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')} />
-      <View className="mx-5 overflow-hidden rounded-[26px] border border-[#E2E8F0] bg-white px-4 shadow-sm">
+      <View className="bg-white px-5">
         {hotPosts.map((post, index) => (
-          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-4 ${index ? 'border-t border-[#EEF2F7]' : ''}`}>
+          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-4 ${index ? 'border-t border-[#E5E7EB]' : ''}`}>
             <View className="flex-row items-center">
-              <Text className={`rounded-full px-3 py-1.5 text-[10px] font-black ${post.badge === '새글' ? 'bg-[#EAF5FF] text-[#2563EB]' : 'bg-berry text-white'}`}>{post.badge}</Text>
-              <Text className="ml-2 flex-1 text-[11px] font-bold text-[#6B7280]">{post.category}</Text>
+              <Text className={`text-[13px] font-bold ${post.badge === '새글' ? 'text-[#2563EB]' : 'text-berry'}`}>{post.badge}</Text>
+              <Text className="ml-2 flex-1 text-[12px] font-normal text-[#9CA3AF]">{post.category}</Text>
               <Meta icon="eye-outline" value={post.views} />
               <Meta icon="chatbubble-outline" value={post.comments} />
               <Meta icon="heart-outline" value={post.likes} />
             </View>
-            <Text className="mt-2.5 text-[16px] font-black leading-6 text-[#111827]" numberOfLines={1}>{post.title}</Text>
+            <Text className="mt-2 text-[18px] font-bold leading-6 text-[#111827]" numberOfLines={1}>{post.title}</Text>
           </AnimatedPressable>
         ))}
       </View>
@@ -271,22 +281,22 @@ function PopularBreedersSection() {
   return (
     <View className="mt-7">
       <SectionHeader title="많이 찾는 브리더" icon="trophy" onPress={() => router.push('/marketplace')} />
-      <View className="mx-5 overflow-hidden rounded-[26px] border border-[#E2E8F0] bg-white px-4 shadow-sm">
+      <View className="bg-white px-5">
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
-            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-4.5 ${index ? 'border-t border-[#EEF2F7]' : ''}`}>
-              <Avatar uri={breeder.logo ?? breeder.avatar} size={68} />
+            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-4 ${index ? 'border-t border-[#E5E7EB]' : ''}`}>
+              <Avatar uri={breeder.logo ?? breeder.avatar} size={72} />
               <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
                 <View className="flex-row items-center">
-                  <Text className="flex-1 text-[19px] font-black text-[#111827]" numberOfLines={1}>{breeder.name}</Text>
+                  <Text className="flex-1 text-[18px] font-bold text-[#111827]" numberOfLines={1}>{breeder.name}</Text>
                   <Text className="ml-2 rounded-full bg-blush px-2.5 py-1.5 text-[10px] font-black text-berry">✓ 인증 브리더</Text>
                 </View>
                 <View className="mt-1.5 flex-row items-center">
-                  <Ionicons name="star" size={15} color="#FFC83D" />
-                  <Text className="ml-1.5 text-[13px] font-black text-[#111827]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
+                  <Ionicons name="star" size={16} color="#FFC83D" />
+                  <Text className="ml-1.5 text-[15px] font-semibold text-[#111827]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
                 </View>
-                <Text className="mt-1.5 text-[12px] font-medium leading-5 text-[#9CA3AF]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
+                <Text className="mt-1.5 text-[13px] font-medium leading-5 text-[#9CA3AF]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
               </View>
             </AnimatedPressable>
           );
@@ -317,10 +327,16 @@ function RecentReviewsSection() {
           const breeder = breeders.find((item) => item.id === review.breederId);
           return (
             <FadeInView key={review.id} delay={index * 45}>
-              <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mr-3 w-[276px] rounded-[24px] border border-line bg-white p-4 shadow-sm">
-                <StarRating rating={review.rating} size={16} showValue={false} />
-                <Text className="mt-3 text-[13px] font-bold leading-6 text-[#374151]" numberOfLines={2}>{review.content}</Text>
-                <Text className="mt-3 text-[10px] font-bold text-[#9CA3AF]" numberOfLines={1}>{breeder?.name ?? '브리더'} · {review.species}</Text>
+              <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mr-3 w-[286px] rounded-[22px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
+                <View className="flex-row items-center">
+                  <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={38} />
+                  <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
+                    <Text className="text-[15px] font-bold text-[#111827]" numberOfLines={1}>{breeder?.name ?? '브리더'}</Text>
+                    <Text className="mt-0.5 text-[12px] font-normal text-[#9CA3AF]" numberOfLines={1}>{review.species}</Text>
+                  </View>
+                  <StarRating rating={review.rating} size={14} showValue={false} />
+                </View>
+                <Text className="mt-3 text-[15px] font-medium leading-6 text-[#374151]" numberOfLines={3}>{review.content}</Text>
               </AnimatedPressable>
             </FadeInView>
           );
@@ -336,9 +352,10 @@ export function HomeScreen() {
       <BrandHeader compact />
       <NoticeBar />
       <PromotionBannerCarousel />
+      <SearchBar />
+      <HotListingsSection />
       <CommunityHotSection />
       <PopularBreedersSection />
-      <HotListingsSection />
       <RecentReviewsSection />
     </Page>
   );

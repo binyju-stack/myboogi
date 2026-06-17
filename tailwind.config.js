@@ -9,7 +9,7 @@ module.exports = {
         sans: ['Pretendard'],
       },
       fontWeight: {
-        normal: '500',
+        normal: '400',
         medium: '500',
         semibold: '700',
         bold: '700',
