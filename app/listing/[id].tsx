@@ -1,25 +1,52 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Image, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Alert, Image, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
-import { Avatar, Stat, TopBar, VerifiedBadge } from '@/components/common';
-import { LevelPill } from '@/components/LevelProgress';
+import { Avatar, TopBar, VerifiedBadge } from '@/components/common';
+import { ListingCard } from '@/components/ListingCard';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { ReviewRatingSummary, ReviewTypeBadge, StarRating } from '@/components/StarRating';
 import { colors } from '@/constants/theme';
-import { formatLevel } from '@/data/levelData';
 import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
-import { breederReviews, breeders, listingDetails, listings } from '@/data/mockData';
+import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
 import { useMockUserState } from '@/components/MockUserState';
-import type { BreederReview } from '@/types';
+import type { BreederReview, Listing, ParentTurtleInfo } from '@/types';
 
-function InfoRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
-  return <View className={`flex-row py-3.5 ${last ? '' : 'border-b border-line'}`}><Text className="w-24 text-[11px] font-bold text-muted">{label}</Text><Text className="flex-1 text-[12px] font-black leading-5 text-ink">{value}</Text></View>;
+function InfoTile({ label, value }: { label: string; value?: string }) {
+  return (
+    <View className="mb-2 w-[48%] rounded-[18px] bg-soft px-4 py-3.5">
+      <Text className="text-[9px] font-bold text-muted">{label}</Text>
+      <Text className="mt-1 text-[12px] font-black leading-5 text-ink">{value || '-'}</Text>
+    </View>
+  );
+}
+
+function MetricTile({ label, value }: { label: string; value: string | number }) {
+  return (
+    <View className="flex-1 items-center">
+      <Text className="text-[15px] font-black text-ink">{typeof value === 'number' ? value.toLocaleString() : value}</Text>
+      <Text className="mt-1 text-[9px] text-muted">{label}</Text>
+    </View>
+  );
+}
+
+function ParentCard({ title, parent }: { title: string; parent?: ParentTurtleInfo }) {
+  return (
+    <View className="w-[48%] overflow-hidden rounded-[20px] border border-line bg-white">
+      <Image source={{ uri: parent?.image }} className="h-28 w-full bg-shell" resizeMode="cover" />
+      <View className="p-3">
+        <Text className="text-[9px] font-black text-berry">{title}</Text>
+        <Text className="mt-1 text-[13px] font-black text-ink">{parent?.name ?? '-'}</Text>
+        <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2}>{parent?.feature ?? '-'}</Text>
+        <Text className="mt-2 rounded-full bg-soft px-2.5 py-1.5 text-[8px] font-bold text-muted" numberOfLines={1}>{parent?.lineage ?? '-'}</Text>
+      </View>
+    </View>
+  );
 }
 
 function ListingReviewPreview({ review, divider = false }: { review: BreederReview; divider?: boolean }) {
@@ -28,18 +55,30 @@ function ListingReviewPreview({ review, divider = false }: { review: BreederRevi
   return (
     <View className={`py-3 ${divider ? 'border-t border-line' : ''}`}>
       <View className="flex-row items-center">
-        <Avatar uri={review.avatar} size={32} />
-        <View className="ml-2 flex-1">
-          <Text className="text-[10px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
-          <Text className="mt-1 text-[8px] text-muted">{review.createdAt}</Text>
+        <Avatar uri={review.avatar} size={34} />
+        <View className="ml-3 flex-1">
+          <Text className="text-[11px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
+          <Text className="mt-1 text-[9px] text-muted">{review.species} · {review.createdAt}</Text>
         </View>
         <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={13} />
       </View>
-      <View className="mt-2">
+      <View className="mt-3">
         <ReviewTypeBadge type={review.reviewType} />
       </View>
-      <Text className="mt-2 text-[10px] leading-5 text-muted" numberOfLines={2}>{review.content}</Text>
+      <Text className="mt-2 text-[11px] leading-5 text-muted" numberOfLines={2}>{review.content}</Text>
     </View>
+  );
+}
+
+function SectionCard({ eyebrow, title, children }: { eyebrow?: string; title: string; children: React.ReactNode }) {
+  return (
+    <FadeInView>
+      <View className="mx-5 mt-4 rounded-[26px] border border-line bg-white p-5 shadow-sm">
+        {eyebrow ? <Text className="text-[9px] font-black text-berry">{eyebrow}</Text> : null}
+        <Text className={`${eyebrow ? 'mt-1' : ''} text-[18px] font-black text-ink`}>{title}</Text>
+        {children}
+      </View>
+    </FadeInView>
   );
 }
 
@@ -54,100 +93,209 @@ export default function ListingDetailScreen() {
   const { isFavorite, isFollowing, toggleFavorite } = useMockUserState();
   const item = listings.find((listing) => listing.id === id) ?? listings[0];
   const breeder = breeders.find((entry) => entry.id === item.breederId) ?? breeders[0];
-  const detail = listingDetails[item.id] ?? listingDetails.l1;
-  const reviews = breederReviews.filter((review) => review.breederId === breeder.id).slice(0, 2);
+  const summary = getReviewSummary(breeder.id);
+  const reviews = breederReviews.filter((review) => review.breederId === breeder.id && review.status !== 'hidden').slice(0, 2);
   const favorite = isFavorite(item.id);
   const followerCount = breeder.followers + (isFollowing(breeder.id) ? 1 : 0);
   const likeCount = item.likes + (favorite ? 1 : 0);
   const listingStatus = getListingStatus(item);
   const statusMeta = listingStatusMeta[listingStatus];
   const completed = listingStatus === 'completed';
+  const relatedListings = useMemo(() => {
+    const explicitIds = item.relatedListingIds ?? [];
+    const explicit = explicitIds.map((listingId) => listings.find((listing) => listing.id === listingId)).filter(Boolean) as Listing[];
+    const sameBreeder = listings.filter((listing) => listing.breederId === breeder.id && listing.id !== item.id && !explicitIds.includes(listing.id));
+    return [...explicit, ...sameBreeder].slice(0, 5);
+  }, [breeder.id, item.id, item.relatedListingIds]);
 
   const showModal = (title: string) => {
     setModalTitle(title);
     setModalVisible(true);
   };
 
+  const showContactAlert = () => {
+    Alert.alert('문의 연결 기록이 저장되었습니다. 거래가 진행되었다면 나중에 후기를 남길 수 있어요.');
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TopBar title="분양 상세" right="ellipsis-horizontal" onRightPress={() => setActionVisible(true)} />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 104 + insets.bottom }} className="bg-page">
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 128 + insets.bottom }} className="bg-page">
         <View className="bg-white">
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={(event) => setImageIndex(Math.round(event.nativeEvent.contentOffset.x / width))}>
-            {item.images.map((image) => <Image key={image} source={{ uri: image }} style={{ width, height: width }} className="bg-shell" resizeMode="cover" />)}
+            {item.images.map((image) => <Image key={image} source={{ uri: image }} style={{ width, height: Math.min(width, 430) }} className="bg-shell" resizeMode="cover" />)}
           </ScrollView>
-          <View className="absolute bottom-4 right-4 rounded-full bg-black/45 px-3 py-1.5"><Text className="text-[10px] font-bold text-white">{imageIndex + 1} / {item.images.length}</Text></View>
-          {completed ? (
-            <View className="absolute left-4 top-4 rounded-[18px] bg-black/60 px-4 py-3">
-              <Text className="text-[12px] font-black text-white">분양완료된 개체입니다</Text>
-            </View>
-          ) : null}
+          <View className="absolute bottom-0 left-0 right-0 h-32 bg-black/20" />
+          <View className="absolute bottom-0 left-0 right-0 h-16 bg-black/25" />
+          <View className={`absolute left-5 top-5 rounded-full px-3.5 py-2 ${statusMeta.badgeClass}`}>
+            <Text className={`text-[10px] font-black ${statusMeta.textClass}`}>{statusMeta.label}</Text>
+          </View>
+          <View className="absolute bottom-4 right-5 rounded-full bg-black/55 px-3 py-1.5">
+            <Text className="text-[10px] font-bold text-white">{imageIndex + 1} / {item.images.length}</Text>
+          </View>
+          <View className="absolute bottom-4 left-5 flex-row">
+            <AnimatedPressable onPress={() => showModal('공유 기능은 준비중입니다.')} className="mr-2 h-11 w-11 items-center justify-center rounded-full bg-white/90">
+              <Ionicons name="share-outline" size={19} color={colors.ink} />
+            </AnimatedPressable>
+            <AnimatedPressable onPress={() => toggleFavorite(item.id)} className="h-11 w-11 items-center justify-center rounded-full bg-white/90">
+              <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={20} color={colors.berry} />
+            </AnimatedPressable>
+          </View>
         </View>
 
         <View className="bg-white px-5 pb-6 pt-5">
-          <View className="flex-row items-center"><VerifiedBadge /><Text className="ml-2 text-[10px] font-bold text-muted">{item.stage}</Text></View>
-          <Text className="mt-3 text-[22px] font-black text-ink">{item.species}</Text>
-          <Text className="mt-3 text-[26px] font-black text-ink">{item.price.toLocaleString()}원</Text>
-          <View className={`mt-4 self-start rounded-full px-4 py-2.5 ${statusMeta.badgeClass}`}>
-            <Text className={`text-[13px] font-black ${statusMeta.textClass}`}>현재 상태 · {statusMeta.label}</Text>
+          <View className="flex-row items-center">
+            <VerifiedBadge />
+            <View className={`ml-2 rounded-full px-3 py-1.5 ${statusMeta.softClass}`}>
+              <Text className="text-[9px] font-black text-ink">{statusMeta.label}</Text>
+            </View>
           </View>
-          {completed ? (
-            <View className="mt-4 rounded-[18px] bg-soft px-4 py-3">
-              <Text className="text-[12px] font-black text-ink">후기 작성 가능 상태</Text>
-              <Text className="mt-1 text-[10px] text-muted">reviewEligible: {item.reviewEligible ? 'true' : 'false'}</Text>
-              <AnimatedPressable onPress={() => router.push('/reviews/create' as never)} className="mt-3 items-center rounded-[14px] bg-white py-3">
-                <Text className="text-[10px] font-black text-berry">후기 작성하기</Text>
+          <Text className="mt-4 text-[23px] font-black leading-8 text-ink">{item.species}</Text>
+          <Text className="mt-3 text-[30px] font-black text-ink">{item.price.toLocaleString()}원</Text>
+          <View className="mt-4 flex-row rounded-[20px] bg-soft px-3 py-3">
+            <MetricTile label="지역" value={item.location} />
+            <View className="w-px bg-line" />
+            <MetricTile label="성별" value={item.sex} />
+            <View className="w-px bg-line" />
+            <MetricTile label="단계" value={item.stage} />
+          </View>
+          <View className="mt-3 flex-row rounded-[20px] bg-white">
+            <View className="flex-row items-center rounded-full bg-soft px-3 py-2">
+              <Ionicons name="eye-outline" size={14} color={colors.muted} />
+              <Text className="ml-1.5 text-[10px] font-bold text-muted">조회 {item.views.toLocaleString()}</Text>
+            </View>
+            <View className="ml-2 flex-row items-center rounded-full bg-blush px-3 py-2">
+              <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={14} color={colors.berry} />
+              <Text className="ml-1.5 text-[10px] font-bold text-berry">찜 {likeCount.toLocaleString()}</Text>
+            </View>
+          </View>
+        </View>
+
+        <SectionCard eyebrow="TURTLE PROFILE" title="개체 정보">
+          <View className="mt-4 flex-row flex-wrap justify-between">
+            <InfoTile label="부화일" value={item.hatchDate} />
+            <InfoTile label="등갑 길이" value={item.shellLength ?? item.size} />
+            <InfoTile label="몸무게" value={item.weight} />
+            <InfoTile label="먹이 반응" value={item.feedingResponse} />
+            <InfoTile label="건강 상태" value={item.healthStatus} />
+            <InfoTile label="특이사항" value={item.specialNotes} />
+          </View>
+        </SectionCard>
+
+        <SectionCard eyebrow="PARENT LINE" title="부모 개체">
+          <View className="mt-4 flex-row justify-between">
+            <ParentCard title="부 개체" parent={item.fatherInfo} />
+            <ParentCard title="모 개체" parent={item.motherInfo} />
+          </View>
+        </SectionCard>
+
+        <SectionCard eyebrow="BREEDER TRUST" title="브리더 신뢰 정보">
+          <View className="mt-4 flex-row items-center">
+            <Image source={{ uri: breeder.logo ?? breeder.avatar }} className="h-16 w-16 rounded-[20px] bg-shell" />
+            <View className="ml-3 flex-1">
+              <VerifiedBadge label={breeder.badge} />
+              <Text className="mt-2 text-[15px] font-black text-ink">{breeder.name}</Text>
+              <Text className="mt-1 text-[10px] font-bold text-muted">{breeder.breederType === 'business' ? '사업자 브리더' : '개인 브리더'} · {breeder.location}</Text>
+            </View>
+          </View>
+          <View className="mt-4">
+            <StarRating rating={summary.averageRating} size={15} />
+          </View>
+          <View className="mt-4 flex-row rounded-[20px] bg-soft py-3.5">
+            <MetricTile label="팔로워" value={followerCount} />
+            <View className="w-px bg-line" />
+            <MetricTile label="분양완료" value={summary.completedTrades} />
+            <View className="w-px bg-line" />
+            <MetricTile label="문의 후기" value={summary.contactBasedCount} />
+            <View className="w-px bg-line" />
+            <MetricTile label="평균 평점" value={summary.averageRating.toFixed(1)} />
+          </View>
+          <View className="mt-4 flex-row">
+            <View className="mr-2 flex-1">
+              <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="items-center rounded-[18px] bg-blush py-3.5">
+                <Text className="text-[11px] font-black text-berry">미니샵 가기</Text>
               </AnimatedPressable>
             </View>
-          ) : null}
-          <View className="mt-4 flex-row items-center"><Text className="text-[11px] text-muted">{item.location} · {item.stage}</Text><View className="ml-auto flex-row"><Stat icon="eye-outline" value={item.views} /><Stat icon={favorite ? 'heart' : 'heart-outline'} value={likeCount} /></View></View>
-        </View>
-
-        <FadeInView>
-          <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-            <View className="flex-row items-center"><Avatar uri={breeder.avatar} size={54} /><View className="ml-3 flex-1"><VerifiedBadge label={breeder.badge} /><Text className="mt-1.5 text-[14px] font-black text-ink">{breeder.name}</Text><Text className="mt-1 text-[9px] text-muted">{breeder.location} · 후기 평점 {breeder.rating}</Text></View><Ionicons name="chevron-forward" size={18} color={colors.subtle} /></View>
-            <View className="mt-3">
-              <StarRating rating={breeder.rating} size={13} />
+            <View className="flex-1">
+              <AnimatedPressable onPress={() => showModal(isFollowing(breeder.id) ? '이미 팔로우 중인 브리더입니다.' : '팔로우 기능은 준비중입니다.')} className="items-center rounded-[18px] bg-ink py-3.5">
+                <Text className="text-[11px] font-black text-white">{isFollowing(breeder.id) ? '팔로잉' : '팔로우'}</Text>
+              </AnimatedPressable>
             </View>
-            <View className="mt-3 flex-row flex-wrap gap-2">
-              <LevelPill label={formatLevel(breeder.level ?? 6, breeder.levelName ?? '브리더')} icon="ribbon-outline" />
-              <View className="flex-row items-center self-start rounded-full bg-soft px-3 py-2">
-                <Ionicons name="shield-checkmark-outline" size={13} color={colors.muted} />
-                <Text className="ml-1 text-[10px] font-black text-muted">거래 신뢰도 {breeder.trustScore ?? 90}</Text>
-              </View>
-            </View>
-            <View className="mt-4 flex-row rounded-[18px] bg-soft py-3.5"><View className="flex-1 items-center"><Text className="text-[15px] font-black text-ink">{followerCount.toLocaleString()}</Text><Text className="mt-1 text-[9px] text-muted">팔로워</Text></View><View className="flex-1 items-center border-l border-line"><Text className="text-[15px] font-black text-ink">{breeder.trades}</Text><Text className="mt-1 text-[9px] text-muted">분양완료</Text></View></View>
-            <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="mt-3 items-center rounded-[16px] bg-blush py-3.5"><Text className="text-[11px] font-black text-berry">브리더 미니샵 보기</Text></AnimatedPressable>
           </View>
-        </FadeInView>
+        </SectionCard>
 
-        <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <Text className="text-[9px] font-black text-berry">TURTLE PROFILE</Text><Text className="mt-1 text-[18px] font-black text-ink">개체 정보</Text>
-          <View className="mt-4"><InfoRow label="성별" value={item.sex} /><InfoRow label="부화일" value={item.hatchDate} /><InfoRow label="사이즈" value={item.size} /><InfoRow label="먹이 반응" value={detail.foodResponse} /><InfoRow label="건강 상태" value={detail.healthStatus} last /></View>
-        </View>
+        <SectionCard eyebrow="REAL REVIEW" title="최근 후기 미리보기">
+          <View className="mt-4">
+            {reviews.map((review, index) => <ListingReviewPreview key={review.id} review={review} divider={Boolean(index)} />)}
+          </View>
+          <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className={`${completed ? 'bg-berry' : 'bg-soft'} mt-3 items-center rounded-[18px] py-3.5`}>
+            <Text className={`text-[11px] font-black ${completed ? 'text-white' : 'text-ink'}`}>전체 후기 보기</Text>
+          </AnimatedPressable>
+        </SectionCard>
 
-        <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <Text className="text-[9px] font-black text-berry">ABOUT TURTLE</Text><Text className="mt-1 text-[18px] font-black text-ink">분양 설명</Text><Text className="mt-4 text-[13px] leading-7 text-muted">{item.description}</Text><View className="mt-4 rounded-[16px] bg-cream px-4 py-3"><Text className="text-[10px] font-bold leading-5 text-ink">특이사항 · {detail.notes}</Text></View>
-        </View>
+        <SectionCard eyebrow="ABOUT TURTLE" title="분양 설명">
+          <Text className="mt-4 text-[13px] leading-7 text-muted">{item.description}</Text>
+          <View className="mt-4 rounded-[18px] bg-cream px-4 py-3">
+            <Text className="text-[10px] font-bold leading-5 text-ink">{item.specialNotes}</Text>
+          </View>
+        </SectionCard>
 
-        <View className="mx-5 mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <View className="flex-row items-end justify-between"><View><Text className="text-[9px] font-black text-berry">REAL REVIEW</Text><Text className="mt-1 text-[18px] font-black text-ink">후기 미리보기</Text></View><Text className="text-[10px] font-bold text-muted">전체 {breeder.reviews}</Text></View>
-          <View className="mt-4">{reviews.map((review, index) => <ListingReviewPreview key={review.id} review={review} divider={Boolean(index)} />)}</View>
-          <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="mt-2 items-center rounded-[16px] bg-soft py-3.5"><Text className="text-[10px] font-black text-ink">후기 더보기</Text></AnimatedPressable>
+        {relatedListings.length ? (
+          <View className="mt-4">
+            <View className="mb-4 px-5">
+              <Text className="text-[9px] font-black text-berry">MORE FROM SHOP</Text>
+              <Text className="mt-1 text-[18px] font-black text-ink">같은 브리더의 다른 개체</Text>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
+              {relatedListings.map((listing) => <ListingCard key={listing.id} item={listing} wide />)}
+            </ScrollView>
+          </View>
+        ) : null}
+
+        <View className="mx-5 mt-4 rounded-[24px] bg-soft px-4 py-4">
+          <View className="flex-row">
+            <Ionicons name="information-circle-outline" size={18} color={colors.muted} />
+            <Text className="ml-2 flex-1 text-[11px] font-bold leading-5 text-muted">
+              마이부기는 분양 정보를 연결하는 플랫폼입니다. 실제 거래 전 개체 상태, 브리더 정보, 분양 조건을 반드시 확인하세요.
+            </Text>
+          </View>
         </View>
       </ScrollView>
 
       <View style={{ paddingBottom: Math.max(insets.bottom, 12) }} className="absolute bottom-0 left-0 right-0 w-full flex-row items-center border-t border-line bg-white px-5 pt-3 shadow-sm">
-        <View style={{ width: 96 }}>
-          <AnimatedPressable onPress={() => { const added = toggleFavorite(item.id); showModal(added ? '찜 목록에 추가되었습니다.' : '찜 목록에서 제거되었습니다.'); }} className={`h-14 w-full flex-row items-center justify-center rounded-[20px] ${favorite ? 'bg-blush' : 'bg-soft'}`}><Ionicons name={favorite ? 'heart' : 'heart-outline'} size={18} color={colors.berry} /><Text className="ml-2 text-[11px] font-black text-berry">{favorite ? '찜 완료' : '찜하기'}</Text></AnimatedPressable>
-        </View>
-        <View className="ml-3 flex-1">
-          {completed ? (
-            <View className="h-14 w-full flex-row items-center justify-center rounded-[20px] bg-soft"><Ionicons name="checkmark-circle-outline" size={17} color={colors.muted} /><Text className="ml-2 text-[12px] font-black text-muted">분양완료</Text></View>
-          ) : (
-            <AnimatedPressable onPress={() => showModal('카카오 문의 연결 기능은 준비중입니다.')} className="h-14 w-full flex-row items-center justify-center rounded-[20px] bg-[#FEE500]"><Ionicons name="chatbubble" size={17} color={colors.ink} /><Text className="ml-2 text-[12px] font-black text-ink">카카오 문의</Text></AnimatedPressable>
-          )}
-        </View>
+        <AnimatedPressable onPress={() => toggleFavorite(item.id)} className={`h-14 w-16 items-center justify-center rounded-[20px] ${favorite ? 'bg-blush' : 'bg-soft'}`}>
+          <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={20} color={colors.berry} />
+          <Text className="mt-1 text-[9px] font-black text-berry">{favorite ? '찜완료' : '찜'}</Text>
+        </AnimatedPressable>
+        {completed ? (
+          <>
+            <View className="ml-3 h-14 flex-1 flex-row items-center justify-center rounded-[20px] bg-soft">
+              <Ionicons name="checkmark-circle-outline" size={17} color={colors.muted} />
+              <Text className="ml-2 text-[12px] font-black text-muted">분양완료</Text>
+            </View>
+            <View className="ml-3 flex-1">
+              <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="h-14 flex-row items-center justify-center rounded-[20px] bg-berry">
+                <Ionicons name="star" size={16} color={colors.white} />
+                <Text className="ml-2 text-[12px] font-black text-white">후기 보기</Text>
+              </AnimatedPressable>
+            </View>
+          </>
+        ) : (
+          <>
+            <View className="ml-3 flex-1">
+              <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-[#FEE500]">
+                <Ionicons name="chatbubble" size={17} color={colors.ink} />
+                <Text className="ml-2 text-[12px] font-black text-ink">카카오 문의</Text>
+              </AnimatedPressable>
+            </View>
+            <View className="ml-2 w-24">
+              <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-ink">
+                <Ionicons name="call-outline" size={16} color={colors.white} />
+                <Text className="ml-1.5 text-[11px] font-black text-white">전화</Text>
+              </AnimatedPressable>
+            </View>
+          </>
+        )}
       </View>
       <ReadyModal visible={modalVisible} title={modalTitle} onClose={() => setModalVisible(false)} />
       <ReportActionMenu

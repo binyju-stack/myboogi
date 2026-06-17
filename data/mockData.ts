@@ -130,7 +130,59 @@ export const listings: Listing[] = baseListings.map((listing) => {
     l5: 'active',
   };
   const listingStatus = statusById[listing.id] ?? 'active';
-  return { ...listing, listingStatus, reviewEligible: listingStatus === 'completed' };
+  const detailById: Record<string, Partial<Listing>> = {
+    l1: {
+      shellLength: '6.2cm',
+      weight: '238g',
+      feedingResponse: '전용 사료와 채소 반응이 좋아요',
+      healthStatus: '활동량과 배변 상태 모두 양호',
+      specialNotes: '첫 주는 조용한 적응 공간을 권장해요',
+      fatherInfo: { name: '아폴로', image: turtleImages[2], feature: '선명한 갑 패턴과 안정적인 체형', lineage: '국내 CB 레오파드 라인' },
+      motherInfo: { name: '루나', image: turtleImages[3], feature: '먹이 반응이 좋고 온순한 성격', lineage: '프리미엄 레오파드 라인' },
+      relatedListingIds: ['l4'],
+    },
+    l2: {
+      shellLength: '8.1cm',
+      weight: '412g',
+      feedingResponse: '건초와 치커리를 잘 먹어요',
+      healthStatus: '등갑과 눈 상태 양호',
+      specialNotes: '넓은 사육 공간이 필요해요',
+      fatherInfo: { name: '바오', image: turtleImages[0], feature: '성장 속도가 고르고 사람 손을 잘 타요', lineage: '설가타 안정 성장 라인' },
+      motherInfo: { name: '모리', image: turtleImages[1], feature: '체형 밸런스가 좋고 온순해요', lineage: '국내 브리딩 설가타 라인' },
+      relatedListingIds: ['l5'],
+    },
+    l3: {
+      shellLength: '7.5cm',
+      weight: '186g',
+      feedingResponse: '전용 사료와 생먹이 반응이 좋아요',
+      healthStatus: '수질 적응 및 활동 상태 양호',
+      specialNotes: '수질 관리 방법을 안내해 드려요',
+      fatherInfo: { name: '오션', image: turtleImages[1], feature: '밝은 갑색과 또렷한 무늬', lineage: '하이 콘트라스트 테라핀 라인' },
+      motherInfo: { name: '마린', image: turtleImages[2], feature: '수영 활동성이 좋고 먹성이 안정적', lineage: '프리미엄 다이아몬드백 라인' },
+      relatedListingIds: [],
+    },
+    l4: {
+      shellLength: '21cm',
+      weight: '2.8kg',
+      feedingResponse: '채소와 과일을 균형 있게 먹어요',
+      healthStatus: '정기 검진 완료',
+      specialNotes: '성체 사육 경험이 있는 집사를 권장해요',
+      fatherInfo: { name: '체로', image: turtleImages[0], feature: '붉은 발색과 안정적인 체형', lineage: '체리헤드 레드풋 라인' },
+      motherInfo: { name: '로지', image: turtleImages[2], feature: '온순하고 식성이 좋아요', lineage: '국내 CB 레드풋 라인' },
+      relatedListingIds: ['l1'],
+    },
+    l5: {
+      shellLength: '5.8cm',
+      weight: '154g',
+      feedingResponse: '민들레와 전용 사료를 잘 먹어요',
+      healthStatus: '활동량과 배변 상태 양호',
+      specialNotes: '초보 집사에게도 사육 상담을 제공해요',
+      fatherInfo: { name: '허먼', image: turtleImages[3], feature: '작고 단단한 체형', lineage: '동헤르만 국내 브리딩 라인' },
+      motherInfo: { name: '엘리', image: turtleImages[0], feature: '온순하고 적응력이 좋아요', lineage: '동헤르만 안정 라인' },
+      relatedListingIds: ['l2'],
+    },
+  };
+  return { ...listing, ...detailById[listing.id], listingStatus, reviewEligible: listingStatus === 'completed' };
 });
 
 export const listingDetails: Record<string, { parentInfo: string; foodResponse: string; healthStatus: string; notes: string }> = {

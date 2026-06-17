@@ -80,6 +80,14 @@ export interface Listing {
   stage: '유체' | '성체';
   size: string;
   hatchDate: string;
+  shellLength?: string;
+  weight?: string;
+  feedingResponse?: string;
+  healthStatus?: string;
+  specialNotes?: string;
+  fatherInfo?: ParentTurtleInfo;
+  motherInfo?: ParentTurtleInfo;
+  relatedListingIds?: string[];
   views: number;
   likes: number;
   image: string;
@@ -92,6 +100,13 @@ export interface Listing {
 }
 
 export type ListingStatus = 'active' | 'reserved' | 'completed';
+
+export interface ParentTurtleInfo {
+  name: string;
+  image: string;
+  feature: string;
+  lineage: string;
+}
 
 export interface Post {
   id: string;
