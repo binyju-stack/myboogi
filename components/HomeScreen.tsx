@@ -176,10 +176,18 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
 
 function Meta({ icon, value }: { icon: IconName; value: number }) {
   return (
-    <View className="mr-3 flex-row items-center">
+    <View className="mr-2 flex-row items-center rounded-full bg-[#F5F6F8] px-2 py-1">
       <Ionicons name={icon} size={12} color="#A0A5AD" />
       <Text className="ml-1 text-[12px] font-medium text-[#A0A5AD]">{value.toLocaleString()}</Text>
     </View>
+  );
+}
+
+function PostBadge({ label }: { label: string }) {
+  return (
+    <Text className="overflow-hidden rounded-full bg-[#FFF1E6] px-2.5 py-1 text-[12px] font-semibold leading-[18px] text-[#FF9B4A]">
+      {label}
+    </Text>
   );
 }
 
@@ -295,10 +303,16 @@ function CommunityHotSection() {
       <View className="bg-white px-5">
         {hotPosts.map((post, index) => (
           <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-6 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
-            <Text className="text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>{post.badge} · {post.category}</Text>
+            <View className="flex-row items-center">
+              <PostBadge label={post.badge} />
+              <Text className="ml-2 text-[13px] font-medium leading-[18px] text-[#6B7280]" numberOfLines={1}>{post.category}</Text>
+            </View>
             <Text className="mt-3 text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
             <Text className="mt-2.5 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2} ellipsizeMode="tail">{post.content}</Text>
-            <Text className="mt-3 text-[13px] font-medium text-[#9CA3AF]" numberOfLines={1}>{post.author} · {post.createdAt}</Text>
+            <View className="mt-3 flex-row items-center">
+              <Text className="text-[13px] font-semibold leading-[18px] text-[#FF4F8B]" numberOfLines={1}>{post.author}</Text>
+              <Text className="text-[13px] font-normal leading-[18px] text-[#9CA3AF]"> · {post.createdAt}</Text>
+            </View>
             <View className="mt-2.5 flex-row items-center">
               <Meta icon="eye-outline" value={post.views} />
               <Meta icon="chatbubble-outline" value={post.comments} />
