@@ -1,6 +1,7 @@
 export type BreedingTargetSex = 'male' | 'female' | 'mixed';
 export type BreedingStatus = 'incubating' | 'hatched' | 'failed';
 export type BreedingEventType = 'laid' | 'candling' | 'hatch' | 'temperature';
+export type EggStatus = 'unknown' | 'developing' | 'infertile' | 'stopped' | 'hatched' | 'discarded';
 
 export interface TemperatureLog {
   id: string;
@@ -15,6 +16,25 @@ export interface BreedingEvent {
   type: BreedingEventType;
   title: string;
   description: string;
+}
+
+export interface BreedingEgg {
+  id: string;
+  clutchId: string;
+  eggNumber: number;
+  status: EggStatus;
+  memo?: string;
+  lastCheckedAt?: string;
+  photos: string[];
+}
+
+export interface CandlingRecord {
+  id: string;
+  clutchId: string;
+  date: string;
+  eggNumber: number;
+  status: EggStatus;
+  memo: string;
 }
 
 export interface BreedingClutch {
@@ -41,6 +61,8 @@ export interface BreedingClutch {
   memo?: string;
   temperatureLogs: TemperatureLog[];
   events: BreedingEvent[];
+  eggs: BreedingEgg[];
+  candlingRecords: CandlingRecord[];
 }
 
 export interface BreedingClutchCreateInput {

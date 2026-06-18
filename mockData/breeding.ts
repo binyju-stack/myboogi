@@ -1,8 +1,10 @@
-import type { BreedingClutch, BreedingClutchCreateInput, BreedingStatus, BreedingTargetSex } from '@/types/breeding';
+import type { BreedingClutch, BreedingClutchCreateInput, BreedingEgg, BreedingStatus, BreedingTargetSex, CandlingRecord, EggStatus } from '@/types/breeding';
 import { calculateBreedingSchedule } from '@/utils/breedingCalculator';
 import { formatDate, parseDate } from '@/utils/holiday';
 
-const initialBreedingClutches: Array<Omit<BreedingClutch, 'expectedHatchStartDate' | 'expectedHatchEndDate' | 'candlingDate' | 'temperatureCheckDates' | 'temperatureWarning'>> = [
+const sampleEggStatuses: EggStatus[] = ['developing', 'infertile', 'stopped', 'unknown', 'hatched', 'discarded'];
+
+const initialBreedingClutches: Array<Omit<BreedingClutch, 'expectedHatchStartDate' | 'expectedHatchEndDate' | 'candlingDate' | 'temperatureCheckDates' | 'temperatureWarning' | 'eggs' | 'candlingRecords'>> = [
   {
     id: 'clutch-4',
     turtleId: 'turtle-1',
@@ -155,12 +157,43 @@ function formatShortDate(date: Date) {
   return `${month}.${day}`;
 }
 
+function buildEggs(clutchId: string, eggCount: number): BreedingEgg[] {
+  return Array.from({ length: eggCount }, (_, index) => {
+    const eggNumber = index + 1;
+    const status = sampleEggStatuses[index] ?? 'unknown';
+    return {
+      id: `${clutchId}-egg-${eggNumber}`,
+      clutchId,
+      eggNumber,
+      status,
+      memo: status === 'developing' ? '혈관 확인됨' : status === 'infertile' ? '무정란 의심' : status === 'stopped' ? '발달 중지 의심' : undefined,
+      lastCheckedAt: '2026.06.12',
+      photos: [],
+    };
+  });
+}
+
+function buildCandlingRecords(clutchId: string, eggs: BreedingEgg[]): CandlingRecord[] {
+  return eggs
+    .filter((egg) => egg.status !== 'unknown')
+    .slice(0, 4)
+    .map((egg, index) => ({
+      id: `${clutchId}-candling-${egg.eggNumber}`,
+      clutchId,
+      date: index < 2 ? '2026.06.12' : '2026.06.20',
+      eggNumber: egg.eggNumber,
+      status: egg.status,
+      memo: egg.memo ?? '검란 상태 기록',
+    }));
+}
+
 export const breedingClutches: BreedingClutch[] = initialBreedingClutches.map((clutch) => {
   const schedule = calculateBreedingSchedule({
     layDate: clutch.layDate,
     targetSex: clutch.targetSex,
     targetTemperature: clutch.targetTemperature,
   });
+  const eggs = buildEggs(clutch.id, clutch.eggCount);
 
   return {
     ...clutch,
@@ -170,6 +203,8 @@ export const breedingClutches: BreedingClutch[] = initialBreedingClutches.map((c
     candlingDate: schedule.candlingDate,
     temperatureCheckDates: schedule.temperatureCheckDates,
     temperatureWarning: schedule.warningMessage,
+    eggs,
+    candlingRecords: buildCandlingRecords(clutch.id, eggs),
     events: [
       ...clutch.events.filter((event) => event.type !== 'hatch' && event.type !== 'temperature'),
       ...schedule.temperatureCheckDates.slice(0, 4).map((date, index) => ({
@@ -229,6 +264,8 @@ export function createBreedingClutch(input: BreedingClutchCreateInput) {
         humidity: input.humidity,
       },
     ],
+    eggs: buildEggs(id, input.eggCount),
+    candlingRecords: [],
     events: [
       { id: `${id}-laid`, date: input.layDate, type: 'laid', title: '산란일', description: `${input.eggCount}개 산란 기록` },
       { id: `${id}-candling`, date: schedule.candlingDate, type: 'candling', title: '검란 예정일', description: '산란일 기준 7일 후 검란 예정' },
