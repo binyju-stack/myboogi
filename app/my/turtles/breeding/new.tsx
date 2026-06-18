@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TopBar } from '@/components/common';
-import { createBreedingClutch } from '@/mockData/breeding';
+import { calculateBreedingSchedule, createBreedingClutch } from '@/mockData/breeding';
 import { managedTurtles } from '@/mockData/turtles';
 import type { BreedingTargetSex } from '@/types/breeding';
 
@@ -16,6 +16,22 @@ const targetSexOptions: { value: BreedingTargetSex; label: string }[] = [
   { value: 'female', label: '암컷' },
   { value: 'mixed', label: '혼합' },
 ];
+
+function parseDate(value: string) {
+  const [year, month, day] = value.split('.').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDate(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+
+function sameDate(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
 
 function Field({
   label,
@@ -53,10 +69,108 @@ function toNumber(value: string) {
   return Number(value.replace(/[^\d.]/g, ''));
 }
 
+function DateField({ value, onPress }: { value: string; onPress: () => void }) {
+  return (
+    <View className="mt-4">
+      <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">산란일</Text>
+      <Pressable onPress={onPress} className="mt-2 h-12 flex-row items-center justify-between rounded-[16px] border border-[#ECECEC] bg-white px-4">
+        <Text className="text-[15px] font-medium text-[#111827]">{value}</Text>
+        <Ionicons name="calendar-outline" size={19} color="#FF4F8B" />
+      </Pressable>
+    </View>
+  );
+}
+
+function DatePickerModal({
+  visible,
+  value,
+  onCancel,
+  onConfirm,
+}: {
+  visible: boolean;
+  value: string;
+  onCancel: () => void;
+  onConfirm: (value: string) => void;
+}) {
+  const today = new Date(2026, 5, 18);
+  const current = parseDate(value);
+  const [viewDate, setViewDate] = useState(new Date(current.getFullYear(), current.getMonth(), 1));
+  const [draftDate, setDraftDate] = useState(current);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [
+    ...Array.from({ length: firstDay }, () => 0),
+    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+  ];
+  const paddedCells = [...cells, ...Array.from({ length: (7 - (cells.length % 7)) % 7 }, () => 0)];
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
+      <Pressable className="flex-1 justify-end bg-black/35" onPress={onCancel}>
+        <Pressable className="rounded-t-[28px] bg-white px-5 pb-6 pt-4" onPress={(event) => event.stopPropagation()}>
+          <View className="self-center h-1 w-10 rounded-full bg-[#D1D5DB]" />
+          <View className="mt-5 flex-row items-center justify-between">
+            <Pressable onPress={() => setViewDate(new Date(year, month - 1, 1))} className="h-10 w-10 items-center justify-center rounded-full bg-[#F5F6F8]">
+              <Ionicons name="chevron-back" size={18} color="#111827" />
+            </Pressable>
+            <Text className="text-[20px] font-bold leading-7 text-[#111827]">{year}년 {month + 1}월</Text>
+            <Pressable onPress={() => setViewDate(new Date(year, month + 1, 1))} className="h-10 w-10 items-center justify-center rounded-full bg-[#F5F6F8]">
+              <Ionicons name="chevron-forward" size={18} color="#111827" />
+            </Pressable>
+          </View>
+
+          <View className="mt-4 flex-row">
+            {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
+              <View key={day} className="items-center py-2" style={{ width: '14.2857%' }}>
+                <Text className="text-[11px] font-medium text-[#9CA3AF]">{day}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View className="flex-row flex-wrap">
+            {paddedCells.map((day, index) => {
+              const date = day ? new Date(year, month, day) : undefined;
+              const selected = Boolean(date && sameDate(date, draftDate));
+              const isToday = Boolean(date && sameDate(date, today));
+              return (
+                <Pressable
+                  key={`${year}-${month}-${day}-${index}`}
+                  disabled={!date}
+                  onPress={() => date ? setDraftDate(date) : undefined}
+                  className="h-11 items-center justify-center"
+                  style={{ width: '14.2857%' }}
+                >
+                  {date ? (
+                    <View className={`h-9 w-9 items-center justify-center rounded-full ${selected ? 'bg-[#FF4F8B]' : isToday ? 'border border-[#FF4F8B] bg-white' : ''}`}>
+                      <Text className={`text-[13px] font-semibold ${selected ? 'text-white' : isToday ? 'text-[#FF4F8B]' : 'text-[#111827]'}`}>{day}</Text>
+                    </View>
+                  ) : null}
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <View className="mt-5 flex-row">
+            <Pressable onPress={onCancel} className="mr-2 h-12 flex-1 items-center justify-center rounded-[16px] bg-[#F5F6F8]">
+              <Text className="text-[14px] font-semibold text-[#8A8F98]">취소</Text>
+            </Pressable>
+            <Pressable onPress={() => onConfirm(formatDate(draftDate))} className="ml-2 h-12 flex-1 items-center justify-center rounded-[16px] bg-[#FF4F8B]">
+              <Text className="text-[14px] font-bold text-white">확인</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
+
 export default function BreedingCreateScreen() {
   const insets = useSafeAreaInsets();
   const [selectedTurtleId, setSelectedTurtleId] = useState(managedTurtles[0]?.id ?? '');
   const [targetSex, setTargetSex] = useState<BreedingTargetSex>('female');
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [form, setForm] = useState<Record<FieldKey, string>>({
     layDate: '2026.06.18',
     eggCount: '6',
@@ -70,6 +184,7 @@ export default function BreedingCreateScreen() {
     () => managedTurtles.find((turtle) => turtle.id === selectedTurtleId) ?? managedTurtles[0],
     [selectedTurtleId],
   );
+  const schedule = useMemo(() => calculateBreedingSchedule(form.layDate), [form.layDate]);
 
   const update = (key: FieldKey) => (value: string) => setForm((prev) => ({ ...prev, [key]: value }));
 
@@ -132,7 +247,13 @@ export default function BreedingCreateScreen() {
             </View>
           </View>
 
-          <Field label="산란일" value={form.layDate} onChangeText={update('layDate')} placeholder="2026.06.18" />
+          <DateField value={form.layDate} onPress={() => setDatePickerVisible(true)} />
+          <View className="mt-3 rounded-[16px] bg-[#FFF8FB] px-4 py-3">
+            <Text className="text-[12px] font-medium leading-4 text-[#8A8F98]">자동 계산</Text>
+            <Text className="mt-1 text-[13px] font-semibold leading-5 text-[#111827]">검란 예정일 {schedule.candlingDate}</Text>
+            <Text className="mt-0.5 text-[13px] font-semibold leading-5 text-[#111827]">부화 예정일 {schedule.expectedHatchDate}</Text>
+            <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#8A8F98]">온도 체크 일정은 산란일 기준 주 1회 생성돼요.</Text>
+          </View>
           <Field label="알 개수" value={form.eggCount} onChangeText={update('eggCount')} placeholder="6" keyboardType="numeric" />
           <Field label="인큐베이터명" value={form.incubatorName} onChangeText={update('incubatorName')} placeholder="부기룸 1호" />
           <Field label="세팅 온도" value={form.targetTemperature} onChangeText={update('targetTemperature')} placeholder="31.5" keyboardType="decimal-pad" />
@@ -166,6 +287,15 @@ export default function BreedingCreateScreen() {
           <Text className="text-[16px] font-bold text-white">산란 기록 저장</Text>
         </Pressable>
       </View>
+      <DatePickerModal
+        visible={datePickerVisible}
+        value={form.layDate}
+        onCancel={() => setDatePickerVisible(false)}
+        onConfirm={(value) => {
+          update('layDate')(value);
+          setDatePickerVisible(false);
+        }}
+      />
     </SafeAreaView>
   );
 }
