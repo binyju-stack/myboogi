@@ -114,13 +114,21 @@ export interface Post {
   id: string;
   userId?: string;
   category: string;
+  badge?: string;
   author: string;
   avatar: string;
   authorAvatar?: string;
+  petInfo?: string;
   title: string;
   content: string;
   image?: string;
   images?: string[];
+  tags?: string[];
+  relatedListing?: {
+    title: string;
+    price: number;
+    actionLabel: string;
+  };
   createdAt: string;
   views: number;
   likes: number;
