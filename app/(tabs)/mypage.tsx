@@ -68,10 +68,10 @@ function getProfileRole(profile: UserProfile) {
 
 function getActivitySummary(profile: UserProfile): ActivitySummaryItem[] {
   return [
-    { label: '내 거북이', value: `${managedTurtles.length}`, icon: 'paw-outline', href: '/my/turtles' },
-    { label: '찜한 분양', value: '12', icon: 'heart-outline', href: '/mypage/favorites' },
-    { label: '게시글', value: `${profile.postCount ?? profile.stats.posts ?? 0}`, icon: 'document-text-outline', href: '/mypage/posts' },
-    { label: '댓글', value: `${profile.commentCount ?? profile.stats.comments ?? 0}`, icon: 'chatbubble-ellipses-outline' },
+    { label: '내거북이', value: `${managedTurtles.length}`, icon: 'paw-outline', href: '/my/turtles' },
+    { label: '찜', value: '12', icon: 'heart-outline', href: '/mypage/favorites' },
+    { label: '게시글', value: '18', icon: 'document-text-outline', href: '/mypage/posts' },
+    { label: '댓글', value: '64', icon: 'chatbubble-ellipses-outline' },
   ];
 }
 
@@ -149,40 +149,37 @@ function ProfileHero({ profile }: { profile: UserProfile }) {
 function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
   return (
     <View
-      className="flex-row px-4"
-      style={{ columnGap: 8, marginTop: 16, marginBottom: 24, overflow: 'visible' }}
+      className="mx-4 flex-row items-center justify-around bg-white shadow-sm"
+      style={{
+        height: 92,
+        marginTop: 16,
+        marginBottom: 24,
+        borderRadius: 20,
+        paddingVertical: 14,
+        paddingHorizontal: 8,
+        overflow: 'visible',
+      }}
     >
       {items.map((item) => (
         <Pressable
           key={item.label}
           onPress={() => item.href ? router.push(item.href as never) : undefined}
-          className="flex-1 items-center justify-center border border-line bg-white shadow-sm"
+          className="flex-1 items-center justify-center"
           style={{
-            height: 104,
-            minWidth: 0,
-            borderRadius: 20,
-            paddingVertical: 12,
-            overflow: 'visible',
+            height: 64,
           }}
         >
-          <View
-            className="items-center justify-center rounded-full bg-blush"
-            style={{ width: 40, height: 40, marginBottom: 8 }}
-          >
-            <Ionicons name={item.icon} size={23} color={colors.berry} />
-          </View>
+          <Ionicons name={item.icon} size={22} color="#FF4F8B" style={{ marginBottom: 4 }} />
           <Text
-            className="text-center text-[24px] font-extrabold leading-[30px] text-[#111827]"
+            className="text-center text-[22px] font-extrabold leading-[26px] text-[#111827]"
             numberOfLines={1}
-            style={{ marginBottom: 4, includeFontPadding: false }}
+            style={{ includeFontPadding: false }}
           >
             {item.value}
           </Text>
           <Text
-            className="text-center text-[13px] font-semibold leading-[18px] text-[#8A8F98]"
+            className="text-center text-[12px] font-semibold leading-4 text-[#8A8F98]"
             numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.82}
             style={{ includeFontPadding: false }}
           >
             {item.label}
