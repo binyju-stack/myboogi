@@ -2,14 +2,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useState } from 'react';
-import { Image, ImageBackground, Text, View } from 'react-native';
+import { Image, ImageBackground, Pressable, Text, View } from 'react-native';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
-import { UserLevelCard } from '@/components/LevelProgress';
 import { ReadyModal } from '@/components/ReadyModal';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
-import { userProfile, users } from '@/data/mockData';
+import { userProfile } from '@/data/mockData';
 import { unreadNotificationCount } from '@/data/notificationData';
 import { managedTurtles } from '@/mockData/turtles';
 import type { UserProfile } from '@/types';
@@ -25,8 +24,6 @@ const breederIdByType: Record<Exclude<UserProfile['userType'], 'normal'>, string
 
 const turtleMenus: MenuItem[] = [
   { label: '내 거북이 관리', description: '등록한 거북이와 성장기록을 관리해요', icon: 'paw-outline', href: '/my/turtles' },
-  { label: '성장 기록', description: '몸무게와 성장 변화를 확인해요', icon: 'analytics-outline', href: '/growth' },
-  { label: '산란 기록', description: '산란 및 번식 기록을 관리해요', icon: 'egg-outline', readyMessage: '산란 기록 기능은 준비중입니다.' },
 ];
 
 const activityMenus: MenuItem[] = [
@@ -34,7 +31,7 @@ const activityMenus: MenuItem[] = [
   { label: '최근 본 분양', description: '방금 확인한 분양 정보를 다시 봐요', icon: 'time-outline', readyMessage: '최근 본 분양 기능은 준비중입니다.' },
   { label: '내가 작성한 글', description: '내가 작성한 커뮤니티 글을 확인해요', icon: 'document-text-outline', href: '/mypage/posts' },
   { label: '내가 작성한 댓글', description: '댓글과 답글 활동을 확인해요', icon: 'chatbubble-ellipses-outline', readyMessage: '내가 작성한 댓글 기능은 준비중입니다.' },
-  { label: '작성한 후기', description: '내가 작성한 후기를 관리해요', icon: 'star-outline', href: '/mypage/reviews' },
+  { label: '내가 작성한 후기', description: '내가 작성한 후기를 관리해요', icon: 'star-outline', href: '/mypage/reviews' },
 ];
 
 const breederMenus: MenuItem[] = [
@@ -43,15 +40,6 @@ const breederMenus: MenuItem[] = [
   { label: '브리더 인증 관리', description: '인증 상태와 신청 정보를 확인해요', icon: 'shield-checkmark-outline', href: '/breeder/verification/apply' },
   { label: '후기 관리', description: '구매자 후기를 확인하고 답변해요', icon: 'star-outline', href: '/mypage/reviews' },
   { label: '문의 관리', description: '전화와 카카오 문의 이력을 확인해요', icon: 'call-outline', readyMessage: '문의 관리 기능은 준비중입니다.' },
-];
-
-const settingsMenus: MenuItem[] = [
-  { label: '프로필 수정', description: '닉네임, 소개, SNS 정보를 관리해요', icon: 'person-outline', href: '/mypage/edit' },
-  { label: '알림 설정', description: '댓글, 좋아요, 팔로우 알림을 선택해요', icon: 'notifications-outline', href: '/settings/notifications' },
-  { label: '차단 회원 관리', description: '차단한 사용자를 확인하고 관리해요', icon: 'ban-outline', href: '/settings/blocked-users' },
-  { label: '고객센터', description: '서비스 이용 중 궁금한 점을 보내요', icon: 'help-circle-outline', href: '/settings/contact' },
-  { label: '이용약관', description: '마이부기 서비스 이용약관을 확인해요', icon: 'document-outline', href: '/settings/terms' },
-  { label: '개인정보처리방침', description: '개인정보 처리 기준을 확인해요', icon: 'lock-closed-outline', href: '/settings/privacy' },
 ];
 
 function getProfileRole(profile: UserProfile) {
@@ -80,9 +68,10 @@ function getProfileRole(profile: UserProfile) {
 
 function getActivitySummary(profile: UserProfile): ActivitySummaryItem[] {
   return [
-    { label: '내 거북이', value: `${managedTurtles.length}마리`, icon: 'paw-outline', href: '/my/turtles' },
-    { label: '찜한 분양', value: '12개', icon: 'heart-outline', href: '/mypage/favorites' },
-    { label: '내 게시글', value: `${profile.postCount ?? profile.stats.posts ?? 0}개`, icon: 'document-text-outline', href: '/mypage/posts' },
+    { label: '내 거북이', value: `${managedTurtles.length}`, icon: 'paw-outline', href: '/my/turtles' },
+    { label: '찜한 분양', value: '12', icon: 'heart-outline', href: '/mypage/favorites' },
+    { label: '게시글', value: `${profile.postCount ?? profile.stats.posts ?? 0}`, icon: 'document-text-outline', href: '/mypage/posts' },
+    { label: '댓글', value: `${profile.commentCount ?? profile.stats.comments ?? 0}`, icon: 'chatbubble-ellipses-outline' },
   ];
 }
 
@@ -159,54 +148,47 @@ function ProfileHero({ profile }: { profile: UserProfile }) {
 
 function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
   return (
-    <FadeInView delay={40}>
-      <View className="mx-5 mt-4 flex-row gap-2">
-        {items.map((item) => (
-          <AnimatedPressable
-            key={item.label}
-            onPress={() => item.href ? router.push(item.href as never) : undefined}
-            className="min-h-[106px] flex-1 justify-between rounded-[18px] border border-line bg-white p-3.5 shadow-sm"
-          >
-            <View className="h-9 w-9 items-center justify-center rounded-[14px] bg-blush">
-              <Ionicons name={item.icon} size={18} color={colors.berry} />
-            </View>
-            <View>
-              <Text className="text-[13px] font-semibold leading-[18px] text-[#8A8F98]" numberOfLines={1}>{item.label}</Text>
-              <Text className="mt-1 text-[20px] font-black leading-7 text-[#111827]" numberOfLines={1}>{item.value}</Text>
-            </View>
-          </AnimatedPressable>
-        ))}
-      </View>
-    </FadeInView>
+    <View className="mt-4 flex-row gap-1.5 px-4">
+      {items.map((item) => (
+        <Pressable
+          key={item.label}
+          onPress={() => item.href ? router.push(item.href as never) : undefined}
+          className="h-[88px] w-[82px] items-center justify-center rounded-[16px] border border-line bg-white px-1 shadow-sm"
+        >
+          <View className="h-7 w-7 items-center justify-center rounded-[11px] bg-blush">
+            <Ionicons name={item.icon} size={15} color={colors.berry} />
+          </View>
+          <Text className="mt-1 text-[18px] font-black leading-6 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{item.value}</Text>
+          <Text className="text-center text-[10px] font-semibold leading-4 text-[#8A8F98]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>{item.label}</Text>
+        </Pressable>
+      ))}
+    </View>
   );
 }
 
-function MenuSection({ title, icon, items, onReady }: { title: string; icon: IconName; items: MenuItem[]; onReady: (message: string) => void }) {
+function MenuSection({ title, items, onReady, compact = false }: { title?: string; items: MenuItem[]; onReady: (message: string) => void; compact?: boolean }) {
   return (
     <FadeInView delay={80}>
-      <View className="mx-5 mt-6 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-        <View className="mb-3 flex-row items-center">
-          <View className="mr-2 h-9 w-9 items-center justify-center rounded-[14px] bg-blush">
-            <Ionicons name={icon} size={18} color={colors.berry} />
-          </View>
-          <Text className="text-[18px] font-bold leading-6 text-[#111827]">{title}</Text>
-        </View>
+      <View className={compact ? 'mt-5' : 'mx-5 mt-6 rounded-[22px] border border-line bg-white px-4 py-3 shadow-sm'}>
+        {title ? <Text className={compact ? 'mx-5 mb-2 text-[13px] font-bold leading-5 text-[#8A8F98]' : 'mb-2 px-1 text-[18px] font-bold leading-6 text-[#111827]'}>{title}</Text> : null}
+        <View className={compact ? 'border-y border-line bg-white' : ''}>
         {items.map((item, index) => (
           <AnimatedPressable
             key={item.label}
             onPress={() => item.href ? router.push(item.href as never) : onReady(item.readyMessage ?? `${item.label} 기능은 준비중입니다.`)}
-            className={`min-h-[60px] flex-row items-center ${index ? 'border-t border-line' : ''}`}
+            className={`${compact ? 'mx-5 h-14' : 'min-h-[62px]'} flex-row items-center ${index ? 'border-t border-line' : ''}`}
           >
-            <View className="h-10 w-10 items-center justify-center rounded-[14px] bg-blush">
+            <View className="h-9 w-9 items-center justify-center rounded-[13px] bg-blush">
               <Ionicons name={item.icon} size={18} color={colors.berry} />
             </View>
             <View className="ml-3 flex-1">
               <Text className="text-[16px] font-semibold leading-5 text-[#111827]">{item.label}</Text>
-              <Text className="mt-1 text-[13px] font-medium leading-[18px] text-[#8A8F98]" numberOfLines={1}>{item.description}</Text>
+              {!compact ? <Text className="mt-1 text-[13px] font-medium leading-[18px] text-[#8A8F98]" numberOfLines={1}>{item.description}</Text> : null}
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.subtle} />
           </AnimatedPressable>
         ))}
+        </View>
       </View>
     </FadeInView>
   );
@@ -214,29 +196,25 @@ function MenuSection({ title, icon, items, onReady }: { title: string; icon: Ico
 
 export default function MyPageScreen() {
   const [readyTitle, setReadyTitle] = useState('');
-  const currentUser = users[0];
   const profile = userProfile;
   const isBreeder = profile.userType !== 'normal';
   const breederProfileType = profile.userType === 'normal' ? undefined : profile.userType;
   const visibleBreederMenus = breederMenus.map((item) => item.label === '내 미니샵 보기' && breederProfileType ? { ...item, href: `/breeder/${breederIdByType[breederProfileType]}` } : item);
+  const primaryMenus: MenuItem[] = [
+    activityMenus[0],
+    activityMenus[1],
+    activityMenus[2],
+    activityMenus[3],
+    activityMenus[4],
+  ];
 
   return (
     <Page>
       <ProfileHero profile={profile} />
       <ActivitySummary items={getActivitySummary(profile)} />
 
-      <FadeInView delay={80}>
-        <View className="mx-5 mt-4">
-          <AnimatedPressable onPress={() => router.push('/levels')}>
-            <UserLevelCard user={currentUser} compact />
-          </AnimatedPressable>
-        </View>
-      </FadeInView>
-
-      <MenuSection title="내 거북이" icon="paw-outline" items={turtleMenus} onReady={setReadyTitle} />
-      <MenuSection title="내 활동" icon="chatbubbles-outline" items={activityMenus} onReady={setReadyTitle} />
-      {isBreeder ? <MenuSection title="브리더 관리" icon="storefront-outline" items={visibleBreederMenus} onReady={setReadyTitle} /> : null}
-      <MenuSection title="설정" icon="settings-outline" items={settingsMenus} onReady={setReadyTitle} />
+      <MenuSection items={[turtleMenus[0], ...primaryMenus]} onReady={setReadyTitle} compact />
+      {isBreeder ? <MenuSection title="브리더 관리" items={visibleBreederMenus.filter((item) => item.label !== '후기 관리')} onReady={setReadyTitle} /> : null}
 
       <ReadyModal visible={Boolean(readyTitle)} title={readyTitle} onClose={() => setReadyTitle('')} />
     </Page>
