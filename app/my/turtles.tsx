@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <FadeInView delay={60}>
       <View className="mx-5 mt-5 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-        <Text className="text-[18px] font-black leading-6 text-[#111827]">{title}</Text>
+        <Text className={title === '성장 기록' ? 'text-[24px] font-bold leading-8 text-[#111827]' : 'text-[18px] font-black leading-6 text-[#111827]'}>{title}</Text>
         <View className="mt-4">{children}</View>
       </View>
     </FadeInView>
@@ -45,8 +45,8 @@ function OwnedTurtleCard({ turtle }: { turtle: ManagedTurtle }) {
 function GrowthMetric({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-1 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
-      <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{label}</Text>
-      <Text className="mt-2 text-[34px] font-extrabold leading-10 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.68}>{value}</Text>
+      <Text className="text-[14px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{label}</Text>
+      <Text className="mt-2 text-[18px] font-bold leading-6 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.78}>{value}</Text>
     </View>
   );
 }
@@ -100,7 +100,7 @@ function GrowthLineChart({ title, records, unit }: { title: string; records: { d
   return (
     <View className="mt-4 overflow-hidden rounded-[20px] bg-[#FFF8FB] px-4 py-4">
       <View className="flex-row items-center justify-between">
-        <Text className="text-[20px] font-bold leading-7 text-[#111827]">{title}</Text>
+        <Text className="text-[18px] font-bold leading-6 text-[#111827]">{title}</Text>
         <Text className="text-[13px] font-semibold leading-5 text-[#FF4F8B]">단위 {unit}</Text>
       </View>
       <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
@@ -124,7 +124,7 @@ function GrowthLineChart({ title, records, unit }: { title: string; records: { d
         {gridValues.map((value) => {
           const y = chartTop + (1 - (value - yMin) / yRange) * plotHeight;
           return (
-            <SvgText key={`${title}-axis-${value}`} x={8} y={y + 4} fill="#9CA3AF" fontSize={11} fontWeight="500">
+            <SvgText key={`${title}-axis-${value}`} x={8} y={y + 4} fill="#9CA3AF" fontSize={11} fontWeight="400">
               {Math.round(value * 10) / 10}
             </SvgText>
           );
@@ -134,7 +134,7 @@ function GrowthLineChart({ title, records, unit }: { title: string; records: { d
           <Circle key={`${title}-point-${point.date}`} cx={point.x} cy={point.y} r={5} fill="#FFFFFF" stroke="#FF4F8B" strokeWidth={3} />
         ))}
         {points.map((point) => (
-          <SvgText key={`${title}-value-${point.date}`} x={point.x} y={point.y - 14} fill="#111827" fontSize={13} fontWeight="600" textAnchor="middle">
+          <SvgText key={`${title}-value-${point.date}`} x={point.x} y={point.y - 14} fill="#4B5563" fontSize={12} fontWeight="500" textAnchor="middle">
             {point.value}{unit}
           </SvgText>
         ))}
@@ -230,8 +230,8 @@ export default function MyTurtlesScreen() {
               <GrowthMetric label="최근 등갑 길이" value={`${mainTurtle.shellLength}cm`} />
             </View>
             <View className="mt-2 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
-              <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">최근 측정일</Text>
-              <Text className="mt-2 text-[34px] font-extrabold leading-10 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.62}>{mainTurtle.lastRecordDate}</Text>
+              <Text className="text-[14px] font-medium leading-5 text-[#8A8F98]">최근 측정일</Text>
+              <Text className="mt-2 text-[16px] font-semibold leading-6 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.78}>{mainTurtle.lastRecordDate}</Text>
             </View>
             <GrowthLineChart title="몸무게 변화" records={weightRecords} unit="g" />
             <GrowthLineChart title="등갑 길이 변화" records={shellRecords} unit="cm" />

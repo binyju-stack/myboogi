@@ -68,7 +68,7 @@ function getProfileRole(profile: UserProfile) {
 
 function getActivitySummary(profile: UserProfile): ActivitySummaryItem[] {
   return [
-    { label: '내거북이', value: `${managedTurtles.length}`, icon: 'paw-outline', href: '/my/turtles' },
+    { label: '내 거북이', value: `${managedTurtles.length}`, icon: 'paw-outline', href: '/my/turtles' },
     { label: '찜', value: '12', icon: 'heart-outline', href: '/mypage/favorites' },
     { label: '게시글', value: '18', icon: 'document-text-outline', href: '/mypage/posts' },
     { label: '댓글', value: '64', icon: 'chatbubble-ellipses-outline' },
@@ -149,15 +149,21 @@ function ProfileHero({ profile }: { profile: UserProfile }) {
 function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
   return (
     <View
-      className="mx-4 flex-row items-center justify-around bg-white shadow-sm"
+      className="mx-4 flex-row items-center justify-between bg-white"
       style={{
-        height: 92,
+        height: 76,
         marginTop: 16,
-        marginBottom: 24,
-        borderRadius: 20,
-        paddingVertical: 14,
+        marginBottom: 20,
+        borderRadius: 18,
+        paddingVertical: 10,
         paddingHorizontal: 8,
-        overflow: 'visible',
+        borderWidth: 1,
+        borderColor: '#F1F3F5',
+        shadowColor: '#111827',
+        shadowOpacity: 0.025,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 1 },
+        elevation: 1,
       }}
     >
       {items.map((item) => (
@@ -165,20 +171,17 @@ function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
           key={item.label}
           onPress={() => item.href ? router.push(item.href as never) : undefined}
           className="flex-1 items-center justify-center"
-          style={{
-            height: 64,
-          }}
         >
-          <Ionicons name={item.icon} size={22} color="#FF4F8B" style={{ marginBottom: 4 }} />
+          <Ionicons name={item.icon} size={18} color="#FF4F8B" style={{ marginBottom: 2 }} />
           <Text
-            className="text-center text-[22px] font-extrabold leading-[26px] text-[#111827]"
+            className="text-center text-[19px] font-bold leading-[23px] text-[#111827]"
             numberOfLines={1}
             style={{ includeFontPadding: false }}
           >
             {item.value}
           </Text>
           <Text
-            className="text-center text-[12px] font-semibold leading-4 text-[#8A8F98]"
+            className="text-center text-[11px] font-medium leading-[14px] text-[#8A8F98]"
             numberOfLines={1}
             style={{ includeFontPadding: false }}
           >

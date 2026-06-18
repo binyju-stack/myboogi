@@ -13,7 +13,7 @@ export interface BreedingEvent {
   id: string;
   date: string;
   type: BreedingEventType;
-  label: string;
+  title: string;
   description: string;
 }
 

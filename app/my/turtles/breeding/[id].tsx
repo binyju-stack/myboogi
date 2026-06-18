@@ -10,8 +10,8 @@ import type { BreedingClutch } from '@/types/breeding';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <View className="mx-5 mt-5 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-      <Text className="text-[18px] font-black leading-6 text-[#111827]">{title}</Text>
+    <View className="mx-5 mt-5 rounded-[22px] border border-[#ECECEC] bg-white p-5">
+      <Text className="text-[22px] font-bold leading-7 text-[#111827]">{title}</Text>
       <View className="mt-4">{children}</View>
     </View>
   );
@@ -20,8 +20,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row items-center justify-between border-b border-line py-3">
-      <Text className="text-[13px] font-semibold text-[#8A8F98]">{label}</Text>
-      <Text className="text-[14px] font-bold text-[#111827]" numberOfLines={1}>{value}</Text>
+      <Text className="text-[13px] font-medium text-[#8A8F98]">{label}</Text>
+      <Text className="ml-3 flex-1 text-right text-[14px] font-semibold text-[#111827]" numberOfLines={1}>{value}</Text>
     </View>
   );
 }
@@ -35,7 +35,7 @@ function StatusBadge({ clutch }: { clutch: BreedingClutch }) {
 
   return (
     <View className="self-start rounded-full px-3 py-1.5" style={{ backgroundColor: styleMap.bg }}>
-      <Text className="text-[12px] font-bold" style={{ color: styleMap.text }}>{breedingStatusLabels[clutch.status]}</Text>
+      <Text className="text-[12px] font-semibold" style={{ color: styleMap.text }}>{breedingStatusLabels[clutch.status]}</Text>
     </View>
   );
 }
@@ -48,9 +48,9 @@ export default function BreedingClutchDetailScreen() {
     <Page>
       <TopBar title={`클러치 #${clutch.clutchNumber}`} />
 
-      <View className="mx-5 mt-5 rounded-[24px] bg-[#FFF8FB] p-5">
-        <Text className="text-[11px] font-black leading-4 text-[#FF4F8B]">BREEDING CLUTCH</Text>
-        <Text className="mt-1 text-[24px] font-black leading-8 text-[#111827]">{clutch.turtleName}</Text>
+      <View className="mx-5 mt-5 rounded-[22px] bg-[#FFF8FB] p-5">
+        <Text className="text-[11px] font-semibold leading-4 text-[#FF4F8B]">BREEDING CLUTCH</Text>
+        <Text className="mt-1 text-[22px] font-bold leading-7 text-[#111827]">{clutch.turtleName}</Text>
         <Text className="mt-1 text-[13px] font-semibold leading-5 text-[#8A8F98]">{clutch.species} · {clutch.layDate} 산란</Text>
         <View className="mt-4">
           <StatusBadge clutch={clutch} />
@@ -81,8 +81,8 @@ export default function BreedingClutchDetailScreen() {
             <View className="h-9 w-9 items-center justify-center rounded-[13px] bg-blush">
               <Ionicons name="thermometer-outline" size={18} color={colors.berry} />
             </View>
-            <Text className="ml-3 flex-1 text-[14px] font-bold text-[#111827]">{log.date}</Text>
-            <Text className="text-[13px] font-semibold text-[#8A8F98]">{log.temperature.toFixed(1)}℃ / 습도 {log.humidity}%</Text>
+            <Text className="ml-3 flex-1 text-[14px] font-semibold text-[#111827]">{log.date}</Text>
+            <Text className="text-[13px] font-medium text-[#8A8F98]">{log.temperature.toFixed(1)}℃ / 습도 {log.humidity}%</Text>
           </View>
         ))}
       </Section>
@@ -95,7 +95,7 @@ export default function BreedingClutchDetailScreen() {
               {index < clutch.events.length - 1 ? <View className="h-12 w-px bg-[#FFD6E4]" /> : null}
             </View>
             <View className="ml-3 flex-1 pb-4">
-              <Text className="text-[14px] font-bold leading-5 text-[#111827]">{event.date} {event.label}</Text>
+              <Text className="text-[14px] font-semibold leading-5 text-[#111827]">{event.date} {event.title}</Text>
               <Text className="mt-1 text-[12px] font-medium leading-4 text-[#8A8F98]">{event.description}</Text>
             </View>
           </View>
