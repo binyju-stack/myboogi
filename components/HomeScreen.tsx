@@ -46,9 +46,42 @@ const promoBanners = [
 ];
 
 const hotPosts = [
-  { id: 'p1', badge: '베스트글', category: '사육상담', title: '헤르만 육지거북 온욕 주기 궁금합니다.', views: 3652, comments: 76, likes: 126 },
-  { id: 'p3', badge: '새글', category: '질병상담', title: '눈을 자꾸 감고 있는데 병원 가야 할까요?', views: 842, comments: 14, likes: 32 },
-  { id: 'p2', badge: '베스트글', category: '산란정보', title: '초산 테라핀 산란장 세팅 공유합니다.', views: 1208, comments: 33, likes: 91 },
+  {
+    id: 'p1',
+    badge: '베스트글',
+    category: '사육상담',
+    title: '헤르만 육지거북 온욕 주기 궁금합니다.',
+    content: '온욕을 주 2회 정도 하고 있는데 혹시 너무 자주 하는 건 아닌지 궁금합니다. 사육장 습도와 물 온도도 같이 봐야 할까요?',
+    author: '핑크셀브리더',
+    createdAt: '3시간 전',
+    views: 3652,
+    comments: 76,
+    likes: 126,
+  },
+  {
+    id: 'p3',
+    badge: '새글',
+    category: '질병상담',
+    title: '눈을 자꾸 감고 있는데 병원 가야 할까요?',
+    content: '오늘 아침부터 한쪽 눈을 평소보다 덜 뜨는 것 같아 걱정돼요. 먹이는 먹었고 움직임도 괜찮은데 조언 부탁드립니다.',
+    author: '부기맘',
+    createdAt: '1시간 전',
+    views: 842,
+    comments: 14,
+    likes: 32,
+  },
+  {
+    id: 'p2',
+    badge: '베스트글',
+    category: '산란정보',
+    title: '초산 테라핀 산란장 세팅 공유합니다.',
+    content: '처음 산란을 준비하면서 모래 깊이와 은신처 위치를 조금씩 바꿔봤습니다. 비슷한 상황인 분들께 도움이 되었으면 해요.',
+    author: '테라핀연구소',
+    createdAt: '5시간 전',
+    views: 1208,
+    comments: 33,
+    likes: 91,
+  },
 ];
 
 const breederSpecialties: Record<string, string> = {
@@ -143,7 +176,7 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
 
 function Meta({ icon, value }: { icon: IconName; value: number }) {
   return (
-    <View className="ml-2 flex-row items-center">
+    <View className="mr-3 flex-row items-center">
       <Ionicons name={icon} size={12} color="#A0A5AD" />
       <Text className="ml-1 text-[12px] font-medium text-[#A0A5AD]">{value.toLocaleString()}</Text>
     </View>
@@ -261,16 +294,19 @@ function CommunityHotSection() {
       <SectionHeader title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')} />
       <View className="bg-white px-5">
         {hotPosts.map((post, index) => (
-          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-4 ${index ? 'border-t border-[#E5E7EB]' : ''}`}>
+          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
             <View className="flex-row items-center">
               <Text className={`rounded-full px-2.5 py-1 text-[12px] font-semibold ${post.badge === '새글' ? 'bg-[#E8F1FF] text-[#4A8DFF]' : 'bg-[#FFE4EC] text-[#FF4F8B]'}`}>{post.badge}</Text>
               <Text className="ml-2 rounded-full bg-[#F5F6F8] px-2.5 py-1 text-[12px] font-semibold text-[#7D8592]">{post.category}</Text>
-              <View className="flex-1" />
+            </View>
+            <Text className="mt-3.5 text-[17px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
+            <Text className="mt-2.5 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2} ellipsizeMode="tail">{post.content}</Text>
+            <Text className="mt-3 text-[13px] font-medium text-[#9CA3AF]" numberOfLines={1}>{post.author} · {post.createdAt}</Text>
+            <View className="mt-2.5 flex-row items-center">
               <Meta icon="eye-outline" value={post.views} />
               <Meta icon="chatbubble-outline" value={post.comments} />
               <Meta icon="heart-outline" value={post.likes} />
             </View>
-            <Text className="mt-2.5 text-[17px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
           </AnimatedPressable>
         ))}
       </View>

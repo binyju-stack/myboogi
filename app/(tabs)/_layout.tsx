@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useEffect, useRef } from 'react';
-import { Animated, type ColorValue } from 'react-native';
+import { Animated, Text, View, type ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, shadows } from '@/constants/theme';
@@ -17,20 +17,28 @@ const tabs: { name: string; title: string; icon: IconName; activeIcon: IconName 
   { name: 'mypage', title: '마이', icon: 'person-outline', activeIcon: 'person' },
 ];
 
-function TabIcon({ focused, color, icon, activeIcon, badgeCount = 0 }: { focused: boolean; color: ColorValue; icon: IconName; activeIcon: IconName; badgeCount?: number }) {
+function TabItem({ focused, color, title, icon, activeIcon, badgeCount = 0 }: { focused: boolean; color: ColorValue; title: string; icon: IconName; activeIcon: IconName; badgeCount?: number }) {
   const scale = useRef(new Animated.Value(focused ? 1.08 : 1)).current;
   useEffect(() => {
-    Animated.spring(scale, { toValue: focused ? 1.1 : 1, useNativeDriver: true, speed: 26, bounciness: 3 }).start();
+    Animated.spring(scale, { toValue: focused ? 1.05 : 1, useNativeDriver: true, speed: 24, bounciness: 3 }).start();
   }, [focused, scale]);
   return (
-    <Animated.View className="h-7 w-7 items-center justify-center" style={{ transform: [{ scale }] }}>
-      <Ionicons name={focused ? activeIcon : icon} color={color} size={21} />
-      {badgeCount ? (
-        <Animated.View className="absolute -right-2 -top-2 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 py-0.5">
-          <Animated.Text className="text-[9px] font-black text-white">{badgeCount}</Animated.Text>
-        </Animated.View>
-      ) : null}
-    </Animated.View>
+    <View className="h-[58px] w-full items-center justify-center">
+      <Animated.View className="relative h-7 w-8 items-center justify-center" style={{ transform: [{ scale }] }}>
+        <Ionicons name={focused ? activeIcon : icon} color={color} size={23} />
+        {badgeCount ? (
+          <View
+            className="absolute items-center justify-center rounded-full"
+            style={{ top: -4, right: -8, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: '#FF4F8B' }}
+          >
+            <Text className="text-[10px] font-bold leading-[14px] text-white">{badgeCount}</Text>
+          </View>
+        ) : null}
+      </Animated.View>
+      <Text className="mt-1 text-center text-[11px] font-medium leading-[14px]" numberOfLines={1} style={{ color }}>
+        {title}
+      </Text>
+    </View>
   );
 }
 
@@ -39,8 +47,8 @@ export default function TabLayout() {
   const bottomInset = Math.max(insets.bottom, 8);
 
   return (
-    <Tabs screenOptions={{ headerShown: false, animation: 'fade', transitionSpec: { animation: 'timing', config: { duration: 160 } }, tabBarActiveTintColor: colors.berry, tabBarInactiveTintColor: colors.subtle, tabBarLabelPosition: 'below-icon', tabBarLabelStyle: { width: '100%', textAlign: 'center', fontSize: 12, fontWeight: '500', lineHeight: 16, marginTop: 2, includeFontPadding: false }, tabBarIconStyle: { marginTop: 0, alignItems: 'center', justifyContent: 'center' }, tabBarItemStyle: { height: 50, alignItems: 'center', justifyContent: 'center', paddingVertical: 3, borderRadius: 18 }, tabBarStyle: { height: 66 + bottomInset, paddingTop: 7, paddingBottom: bottomInset, borderTopWidth: 0, backgroundColor: colors.white, ...shadows.bar } }}>
-      {tabs.map((tab) => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title, tabBarIcon: ({ color, focused }) => <TabIcon focused={focused} color={color} icon={tab.icon} activeIcon={tab.activeIcon} badgeCount={tab.name === 'chat' ? unreadChatCount : 0} /> }} />)}
+    <Tabs screenOptions={{ headerShown: false, animation: 'fade', transitionSpec: { animation: 'timing', config: { duration: 160 } }, tabBarActiveTintColor: colors.berry, tabBarInactiveTintColor: colors.subtle, tabBarShowLabel: false, tabBarIconStyle: { width: '100%', height: 58, marginTop: 0, marginBottom: 0, alignItems: 'center', justifyContent: 'center' }, tabBarItemStyle: { flex: 1, height: 72, alignItems: 'center', justifyContent: 'center', paddingTop: 6, paddingBottom: 6, marginHorizontal: 0 }, tabBarStyle: { height: 76 + bottomInset, minHeight: 76 + bottomInset, paddingTop: 8, paddingBottom: bottomInset, paddingHorizontal: 0, borderTopWidth: 1, borderTopColor: '#F1F3F5', backgroundColor: colors.white, overflow: 'visible', ...shadows.bar } }}>
+      {tabs.map((tab) => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title, tabBarIcon: ({ color, focused }) => <TabItem focused={focused} color={color} title={tab.title} icon={tab.icon} activeIcon={tab.activeIcon} badgeCount={tab.name === 'chat' ? unreadChatCount : 0} /> }} />)}
       <Tabs.Screen name="ai" options={{ href: null }} />
     </Tabs>
   );
