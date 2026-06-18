@@ -36,6 +36,30 @@ function MetricTile({ label, value }: { label: string; value: string | number })
   );
 }
 
+function getStableCurrentViewers(listingId: string, views: number, currentViewers?: number) {
+  if (typeof currentViewers === 'number') return Math.min(10, Math.max(2, currentViewers));
+
+  const min = views >= 300 ? 6 : 2;
+  const max = views >= 300 ? 10 : 5;
+  let hash = 0;
+
+  for (let index = 0; index < listingId.length; index += 1) {
+    hash = (hash * 31 + listingId.charCodeAt(index)) >>> 0;
+  }
+
+  return min + (hash % (max - min + 1));
+}
+
+function CurrentViewersPill({ listingId, views, currentViewers }: { listingId: string; views: number; currentViewers?: number }) {
+  const viewerCount = getStableCurrentViewers(listingId, views, currentViewers);
+
+  return (
+    <View className="self-start rounded-full bg-[#FFF1E6] px-3 py-2">
+      <Text className="text-[13px] font-semibold text-[#FF9B4A]">👀 현재 {viewerCount}명이 보고 있어요</Text>
+    </View>
+  );
+}
+
 function ParentCard({ title, parent }: { title: string; parent?: ParentTurtleInfo }) {
   return (
     <View className="w-[48%] overflow-hidden rounded-[20px] border border-line bg-white">
@@ -156,6 +180,9 @@ export default function ListingDetailScreen() {
             </View>
           </View>
           <Text className="mt-4 text-[22px] font-bold leading-8 text-ink">{item.species}</Text>
+          <View className="mt-3">
+            <CurrentViewersPill listingId={item.id} views={item.views} currentViewers={item.currentViewers} />
+          </View>
           <Text className="mt-3 text-[28px] font-bold text-ink">{item.price.toLocaleString()}원</Text>
           <View className="mt-4 flex-row rounded-[20px] bg-soft px-3 py-3">
             <MetricTile label="지역" value={item.location} />

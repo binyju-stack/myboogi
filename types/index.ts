@@ -90,6 +90,7 @@ export interface Listing {
   motherInfo?: ParentTurtleInfo;
   relatedListingIds?: string[];
   views: number;
+  currentViewers?: number;
   likes: number;
   image: string;
   images: string[];
