@@ -1,0 +1,40 @@
+import type { ManagedTurtle } from '@/types/turtle';
+
+export const managedTurtles: ManagedTurtle[] = [
+  {
+    id: 'turtle-1',
+    name: '부기',
+    species: '헤르만 육지거북',
+    gender: '암컷',
+    age: '2살',
+    weight: 420,
+    shellLength: 12.8,
+    profileImage: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=80',
+    lastRecordDate: '2026.06.10',
+    createdAt: '2025.04.12',
+  },
+  {
+    id: 'turtle-2',
+    name: '모카',
+    species: '레오파드 육지거북',
+    gender: '수컷',
+    age: '1살',
+    weight: 260,
+    shellLength: 10.4,
+    profileImage: 'https://images.unsplash.com/photo-1452857297128-d9c29adba80b?auto=format&fit=crop&w=900&q=80',
+    lastRecordDate: '2026.06.08',
+    createdAt: '2025.11.03',
+  },
+  {
+    id: 'turtle-3',
+    name: '초코',
+    species: '호스필드 육지거북',
+    gender: '미구분',
+    age: '8개월',
+    weight: 138,
+    shellLength: 7.6,
+    profileImage: 'https://images.unsplash.com/photo-1547447134-cd3f5c716030?auto=format&fit=crop&w=900&q=80',
+    lastRecordDate: '2026.06.01',
+    createdAt: '2026.01.20',
+  },
+];

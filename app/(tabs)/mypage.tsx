@@ -25,6 +25,7 @@ const breederIdByType: Record<Exclude<UserProfile['userType'], 'normal'>, string
 const normalMenus: MenuItem[] = [
   { label: '찜한 개체', description: '관심 있는 분양 개체를 확인해요', icon: 'heart-outline', href: '/mypage/favorites' },
   { label: '최근 본 분양', description: '방금 확인한 분양 정보를 다시 봐요', icon: 'time-outline', readyMessage: '최근 본 분양 기능은 준비중입니다.' },
+  { label: '내 거북이 관리', description: '등록한 거북이와 성장기록을 관리해요', icon: 'paw-outline', href: '/my/turtles' },
   { label: '작성한 후기', description: '내가 작성한 후기를 관리해요', icon: 'star-outline', href: '/mypage/reviews' },
   { label: '성장 기록', description: '우리 거북이 성장 변화를 기록해요', icon: 'analytics-outline', href: '/growth' },
   { label: '내 커뮤니티 활동', description: '작성한 글과 댓글을 확인해요', icon: 'chatbubbles-outline', href: '/mypage/posts' },
