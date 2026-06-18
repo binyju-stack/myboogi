@@ -43,19 +43,45 @@ function OwnedTurtleCard({ turtle }: { turtle: ManagedTurtle }) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <View className="flex-1 rounded-[16px] bg-[#F7F8FA] px-3 py-3">
-      <Text className="text-[11px] font-semibold leading-4 text-[#8A8F98]">{label}</Text>
-      <Text className="mt-1 text-[17px] font-black leading-6 text-[#111827]" numberOfLines={1}>{value}</Text>
+    <View className="flex-1 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
+      <Text className="text-[12px] font-semibold leading-4 text-[#9CA3AF]">{label}</Text>
+      <Text className="mt-2 text-[22px] font-black leading-7 text-[#111827]" numberOfLines={1}>{value}</Text>
     </View>
   );
 }
 
-function GrowthMiniLine() {
+const weightRecords = [
+  { date: '5/01', value: 390 },
+  { date: '5/15', value: 405 },
+  { date: '6/01', value: 415 },
+  { date: '6/10', value: 420 },
+];
+
+const shellRecords = [
+  { date: '5/01', value: 11.8 },
+  { date: '5/15', value: 12.1 },
+  { date: '6/01', value: 12.5 },
+  { date: '6/10', value: 12.8 },
+];
+
+function GrowthBarChart({ title, records, unit }: { title: string; records: { date: string; value: number }[]; unit: string }) {
+  const max = Math.max(...records.map((record) => record.value));
+  const min = Math.min(...records.map((record) => record.value));
+  const range = Math.max(max - min, 1);
+
   return (
-    <View className="mt-4 h-16 justify-end rounded-[16px] bg-[#FFF8FB] px-4 pb-3">
-      <View className="flex-row items-end justify-between">
-        {[24, 30, 38, 44].map((height, index) => (
-          <View key={height} className="w-10 rounded-t-[10px] bg-[#FFB6CD]" style={{ height, opacity: 0.55 + index * 0.12 }} />
+    <View className="mt-4 rounded-[20px] bg-[#FFF8FB] px-4 py-4">
+      <Text className="text-[15px] font-black leading-5 text-[#111827]">{title}</Text>
+      <View className="mt-5 h-36 flex-row items-end justify-between">
+        {records.map((record, index) => (
+          <View key={`${title}-${record.date}`} className="items-center">
+            <Text className="mb-2 text-[11px] font-bold leading-4 text-[#111827]">{record.value}{unit}</Text>
+            <View
+              className="w-10 rounded-t-[12px] bg-[#FF8CB3]"
+              style={{ height: 52 + ((record.value - min) / range) * 46, opacity: 0.62 + index * 0.1 }}
+            />
+            <Text className="mt-2 text-[11px] font-semibold leading-4 text-[#8A8F98]">{record.date}</Text>
+          </View>
         ))}
       </View>
     </View>
@@ -135,11 +161,12 @@ export default function MyTurtlesScreen() {
               <Metric label="최근 몸무게" value={`${mainTurtle.weight}g`} />
               <Metric label="최근 등갑 길이" value={`${mainTurtle.shellLength}cm`} />
             </View>
-            <View className="mt-2 rounded-[16px] bg-[#F7F8FA] px-3 py-3">
-              <Text className="text-[11px] font-semibold leading-4 text-[#8A8F98]">최근 측정일</Text>
-              <Text className="mt-1 text-[17px] font-black leading-6 text-[#111827]">{mainTurtle.lastRecordDate}</Text>
+            <View className="mt-2 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
+              <Text className="text-[12px] font-semibold leading-4 text-[#9CA3AF]">최근 측정일</Text>
+              <Text className="mt-2 text-[22px] font-black leading-7 text-[#111827]">{mainTurtle.lastRecordDate}</Text>
             </View>
-            <GrowthMiniLine />
+            <GrowthBarChart title="몸무게 변화" records={weightRecords} unit="g" />
+            <GrowthBarChart title="등갑 길이 변화" records={shellRecords} unit="cm" />
           </Section>
 
           <Section title="산란 관리">

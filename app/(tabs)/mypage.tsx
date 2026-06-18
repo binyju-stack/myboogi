@@ -148,18 +148,19 @@ function ProfileHero({ profile }: { profile: UserProfile }) {
 
 function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
   return (
-    <View className="mt-4 flex-row gap-1.5 px-4">
+    <View className="mt-4 flex-row px-4" style={{ columnGap: 6 }}>
       {items.map((item) => (
         <Pressable
           key={item.label}
           onPress={() => item.href ? router.push(item.href as never) : undefined}
-          className="h-[88px] w-[82px] items-center justify-center rounded-[16px] border border-line bg-white px-1 shadow-sm"
+          className="h-[88px] flex-1 items-center justify-center rounded-[16px] border border-line bg-white shadow-sm"
+          style={{ flex: 1, gap: 5 }}
         >
-          <View className="h-7 w-7 items-center justify-center rounded-[11px] bg-blush">
-            <Ionicons name={item.icon} size={15} color={colors.berry} />
+          <View className="h-8 w-8 items-center justify-center rounded-[12px] bg-blush">
+            <Ionicons name={item.icon} size={16} color={colors.berry} />
           </View>
-          <Text className="mt-1 text-[18px] font-black leading-6 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{item.value}</Text>
-          <Text className="text-center text-[10px] font-semibold leading-4 text-[#8A8F98]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>{item.label}</Text>
+          <Text className="text-[22px] font-black leading-7 text-[#111827]" numberOfLines={1}>{item.value}</Text>
+          <Text className="text-center text-[12px] font-semibold leading-4 text-[#8A8F98]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{item.label}</Text>
         </Pressable>
       ))}
     </View>
