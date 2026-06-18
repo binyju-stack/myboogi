@@ -184,6 +184,22 @@ function CommunityFeedCard({ post, index }: { post: Post; index: number }) {
   );
 }
 
+function TurtlePaw() {
+  return (
+    <View className="h-14 w-14 items-center justify-center">
+      <View className="absolute bottom-1 h-9 w-10 rounded-[18px] bg-[#FFB6CD]">
+        <View className="absolute left-2 top-3 h-2 w-2 rounded-full bg-white/80" />
+        <View className="absolute right-2 top-3 h-2 w-2 rounded-full bg-white/80" />
+        <View className="absolute left-[15px] top-5 h-2 w-2 rounded-full bg-white/80" />
+      </View>
+      <View className="absolute left-1 top-1 h-4 w-4 rounded-full bg-[#FFB6CD]" />
+      <View className="absolute left-[15px] top-0 h-4 w-4 rounded-full bg-[#FFB6CD]" />
+      <View className="absolute right-[15px] top-0 h-4 w-4 rounded-full bg-[#FFB6CD]" />
+      <View className="absolute right-1 top-1 h-4 w-4 rounded-full bg-[#FFB6CD]" />
+    </View>
+  );
+}
+
 export default function CommunityScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<(typeof communityCategories)[number]>('전체');
@@ -223,15 +239,23 @@ export default function CommunityScreen() {
         </View>
       </ScrollView>
 
-      <View className="absolute left-5 right-5" style={{ bottom: 96 + insets.bottom }}>
-        <AnimatedPressable onPress={() => router.push('/community/create')} className="flex-row items-center justify-center rounded-full bg-[#FF4F8B] px-5 py-4 shadow-lg">
-          <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-white/20">
-            <Ionicons name="chatbubble-ellipses" size={18} color="white" />
-            <View className="absolute -bottom-1 -right-1 h-4 w-4 items-center justify-center rounded-full bg-white">
-              <Ionicons name="pencil" size={10} color="#FF4F8B" />
-            </View>
+      <View className="absolute items-end" style={{ right: 8, bottom: 96 + insets.bottom }}>
+        <AnimatedPressable
+          onPress={() => router.push('/community/create')}
+          className="flex-row items-center"
+          style={{
+            shadowColor: '#191F28',
+            shadowOpacity: 0.14,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 4,
+          }}
+        >
+          <View className="mr-[-6px] max-w-[218px] rounded-[10px] bg-[#FF4F8B] px-4 py-2.5">
+            <Text className="text-[14px] font-bold leading-5 text-white" numberOfLines={1}>클릭해서 같이 소통해보세요!</Text>
+            <View className="absolute -right-2 top-[14px] h-4 w-4 rotate-45 rounded-[2px] bg-[#FF4F8B]" />
           </View>
-          <Text className="text-[14px] font-bold leading-5 text-white" numberOfLines={1}>우리 부기 이야기 올리기</Text>
+          <TurtlePaw />
         </AnimatedPressable>
       </View>
     </SafeAreaView>
