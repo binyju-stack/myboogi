@@ -1,4 +1,4 @@
-import type { BreedingClutch, BreedingStatus, BreedingTargetSex } from '@/types/breeding';
+import type { BreedingClutch, BreedingClutchCreateInput, BreedingStatus, BreedingTargetSex } from '@/types/breeding';
 
 export const breedingClutches: BreedingClutch[] = [
   {
@@ -146,3 +146,88 @@ export const breedingTargetSexLabels: Record<BreedingTargetSex, string> = {
   female: '♀ 암컷',
   mixed: '혼합',
 };
+
+function parseDate(date: string) {
+  const [year, month, day] = date.split('.').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDate(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+
+function formatShortDate(date: Date) {
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${month}.${day}`;
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+export function calculateBreedingSchedule(layDate: string) {
+  const laid = parseDate(layDate);
+  const candlingDate = addDays(laid, 7);
+  const expectedHatchDate = addDays(laid, 90);
+  const temperatureCheckDates = Array.from({ length: 12 }, (_, index) => addDays(laid, (index + 1) * 7))
+    .filter((date) => date.getTime() < expectedHatchDate.getTime());
+
+  return {
+    candlingDate: formatDate(candlingDate),
+    expectedHatchDate: formatDate(expectedHatchDate),
+    temperatureCheckDates: temperatureCheckDates.map(formatDate),
+  };
+}
+
+export function createBreedingClutch(input: BreedingClutchCreateInput) {
+  const schedule = calculateBreedingSchedule(input.layDate);
+  const nextNumber = Math.max(...breedingClutches.map((clutch) => clutch.clutchNumber), 0) + 1;
+  const id = `clutch-${Date.now()}`;
+  const weeklyTemperatureEvents = schedule.temperatureCheckDates.map((date, index) => ({
+    id: `${id}-temperature-${index + 1}`,
+    date,
+    type: 'temperature' as const,
+    title: '온도 체크일',
+    description: `${input.currentTemperature.toFixed(1)}℃ / 습도 ${input.humidity}% 확인 예정`,
+  }));
+  const clutch: BreedingClutch = {
+    id,
+    turtleId: input.turtleId,
+    turtleName: input.turtleName,
+    species: input.species,
+    clutchNumber: nextNumber,
+    layDate: input.layDate,
+    eggCount: input.eggCount,
+    incubatorName: input.incubatorName,
+    targetTemperature: input.targetTemperature,
+    currentTemperature: input.currentTemperature,
+    humidity: input.humidity,
+    targetSex: input.targetSex,
+    expectedHatchDate: schedule.expectedHatchDate,
+    status: 'incubating',
+    memo: input.memo,
+    temperatureLogs: [
+      {
+        id: `${id}-log-1`,
+        date: formatShortDate(parseDate(input.layDate)),
+        temperature: input.currentTemperature,
+        humidity: input.humidity,
+      },
+    ],
+    events: [
+      { id: `${id}-laid`, date: input.layDate, type: 'laid', title: '산란일', description: `${input.eggCount}개 산란 기록` },
+      { id: `${id}-candling`, date: schedule.candlingDate, type: 'candling', title: '검란 예정일', description: '산란일 기준 7일 후 검란 예정' },
+      ...weeklyTemperatureEvents,
+      { id: `${id}-hatch`, date: schedule.expectedHatchDate, type: 'hatch', title: '부화 예정일', description: '산란일 기준 90일 후 부화 예정' },
+    ],
+  };
+
+  breedingClutches.unshift(clutch);
+  return clutch;
+}

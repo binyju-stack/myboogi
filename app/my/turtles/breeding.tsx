@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { TopBar } from '@/components/common';
@@ -279,7 +279,7 @@ export default function BreedingManagementScreen() {
 
   return (
     <Page>
-      <TopBar title="산란 관리" right="add" onRightPress={() => Alert.alert('산란 기록 추가 기능은 준비중입니다.')} />
+      <TopBar title="산란 관리" right="add" onRightPress={() => router.push('/my/turtles/breeding/new' as never)} />
       <SummaryCard />
       <TabBar activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === 'calendar' ? <CalendarTab selected={selectedEvent} onSelect={setSelectedEvent} /> : <RecordsTab />}

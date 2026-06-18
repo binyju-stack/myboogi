@@ -32,6 +32,21 @@ export interface BreedingClutch {
   targetSex: BreedingTargetSex;
   expectedHatchDate: string;
   status: BreedingStatus;
+  memo?: string;
   temperatureLogs: TemperatureLog[];
   events: BreedingEvent[];
+}
+
+export interface BreedingClutchCreateInput {
+  turtleId: string;
+  turtleName: string;
+  species: string;
+  layDate: string;
+  eggCount: number;
+  incubatorName: string;
+  targetTemperature: number;
+  currentTemperature: number;
+  humidity: number;
+  targetSex: BreedingTargetSex;
+  memo?: string;
 }
