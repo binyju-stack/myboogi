@@ -28,8 +28,8 @@ function isHotListing(item: Listing) {
 
 function ListingChip({ label }: { label: string }) {
   return (
-    <View className="mr-1.5 mt-1 rounded-full bg-soft px-2.5 py-1">
-      <Text className="text-[10px] font-medium text-muted" numberOfLines={1}>{label}</Text>
+    <View className="mr-1.5 mt-1.5 rounded-full bg-soft px-2.5 py-1">
+      <Text className="text-[10px] font-medium leading-[14px] text-muted" numberOfLines={1}>{label}</Text>
     </View>
   );
 }
@@ -116,22 +116,22 @@ export function ListingCard({
             </Pressable>
           </View>
 
-          <View className="px-1 pb-0.5 pt-2.5" style={{ minWidth: 0 }}>
-            <Text className="text-[14px] font-bold leading-5 text-ink" numberOfLines={1} ellipsizeMode="tail">{item.species}</Text>
-            <Text className="mt-1 text-[17px] font-bold text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
+          <View className="px-1 pb-1 pt-3" style={{ minWidth: 0 }}>
+            <Text className="text-[15px] font-bold leading-[22px] text-ink" numberOfLines={1} ellipsizeMode="tail">{item.species}</Text>
+            <Text className="mt-2 text-[17px] font-bold leading-[24px] text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
 
-            <View className="mt-0.5 flex-row flex-wrap">
+            <View className="mt-2 flex-row flex-wrap">
               <ListingChip label={item.sex} />
               <ListingChip label={item.stage} />
             </View>
 
-            <View className="mt-2" style={{ minWidth: 0 }}>
-              <Text className="text-[12px] font-semibold text-berry" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
+            <View className="mt-2.5" style={{ minWidth: 0 }}>
+              <Text className="text-[13px] font-medium leading-[18px] text-[#8A8F98]" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
             </View>
 
-            <View className="mt-1 flex-row items-center" style={{ minWidth: 0 }}>
+            <View className="mt-2 flex-row items-center" style={{ minWidth: 0 }}>
               <Ionicons name="star" size={12} color="#FFC83D" />
-              <Text className="ml-1 flex-1 text-[12px] font-semibold text-ink" numberOfLines={1} ellipsizeMode="tail">
+              <Text className="ml-1 flex-1 text-[13px] font-semibold leading-[18px] text-ink" numberOfLines={1} ellipsizeMode="tail">
                 {rating.toFixed(1)} · 후기 {reviewSummary.totalReviews.toLocaleString()}개
               </Text>
             </View>

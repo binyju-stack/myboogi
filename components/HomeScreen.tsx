@@ -159,7 +159,7 @@ function SectionIcon({ variant }: { variant: SectionIconVariant }) {
 
 function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionIconVariant; onPress?: () => void }) {
   return (
-    <View className="mb-3 flex-row items-center justify-between px-5">
+    <View className="mb-5 flex-row items-center justify-between px-5">
       <View className="flex-1 flex-row items-center">
         <SectionIcon variant={icon} />
         <Text className="flex-1 text-[20px] font-bold leading-7 text-[#222222]" numberOfLines={1}>{title}</Text>
@@ -294,12 +294,9 @@ function CommunityHotSection() {
       <SectionHeader title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')} />
       <View className="bg-white px-5">
         {hotPosts.map((post, index) => (
-          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
-            <View className="flex-row items-center">
-              <Text className={`rounded-full px-2.5 py-1 text-[12px] font-semibold ${post.badge === '새글' ? 'bg-[#E8F1FF] text-[#4A8DFF]' : 'bg-[#FFE4EC] text-[#FF4F8B]'}`}>{post.badge}</Text>
-              <Text className="ml-2 rounded-full bg-[#F5F6F8] px-2.5 py-1 text-[12px] font-semibold text-[#7D8592]">{post.category}</Text>
-            </View>
-            <Text className="mt-3.5 text-[17px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
+          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-6 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
+            <Text className="text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>{post.badge} · {post.category}</Text>
+            <Text className="mt-3 text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
             <Text className="mt-2.5 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2} ellipsizeMode="tail">{post.content}</Text>
             <Text className="mt-3 text-[13px] font-medium text-[#9CA3AF]" numberOfLines={1}>{post.author} · {post.createdAt}</Text>
             <View className="mt-2.5 flex-row items-center">
@@ -322,18 +319,16 @@ function PopularBreedersSection() {
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
-            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-4 ${index ? 'border-t border-[#E5E7EB]' : ''}`}>
+            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-6 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
               <Avatar uri={breeder.logo ?? breeder.avatar} size={72} />
               <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
-                <View className="flex-row items-center">
-                  <Text className="flex-1 text-[17px] font-bold leading-6 text-[#222222]" numberOfLines={1}>{breeder.name}</Text>
-                  <Text className="ml-2 rounded-full bg-blush px-2.5 py-1 text-[10px] font-semibold text-berry">✓ 인증 브리더</Text>
-                </View>
-                <View className="mt-1.5 flex-row items-center">
+                <Text className="text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{breeder.name}</Text>
+                <Text className="mt-2 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
+                <View className="mt-2.5 flex-row items-center">
                   <Ionicons name="star" size={16} color="#FFC83D" />
-                  <Text className="ml-1.5 text-[15px] font-semibold text-[#222222]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
+                  <Text className="ml-1.5 text-[13px] font-semibold leading-[18px] text-[#222222]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
+                  <Text className="ml-2 rounded-full bg-blush px-2.5 py-1 text-[10px] font-semibold text-berry">✓ 인증</Text>
                 </View>
-                <Text className="mt-1 text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
               </View>
             </AnimatedPressable>
           );
@@ -364,16 +359,19 @@ function RecentReviewsSection() {
           const breeder = breeders.find((item) => item.id === review.breederId);
           return (
             <FadeInView key={review.id} delay={index * 45}>
-              <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mr-3 w-[286px] rounded-[22px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
+              <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mr-4 w-[286px] rounded-[22px] border border-[#ECECEC] bg-white p-5 shadow-sm">
                 <View className="flex-row items-center">
                   <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={38} />
                   <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-                    <Text className="text-[15px] font-bold text-[#222222]" numberOfLines={1}>{breeder?.name ?? '브리더'}</Text>
-                    <Text className="mt-0.5 text-[12px] font-medium text-[#A0A5AD]" numberOfLines={1}>{review.species}</Text>
+                    <Text className="text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{breeder?.name ?? '브리더'}</Text>
+                    <Text className="mt-1 text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>{review.species}</Text>
                   </View>
-                  <StarRating rating={review.rating} size={14} showValue={false} />
                 </View>
-                <Text className="mt-3 text-[15px] font-medium leading-6 text-[#666666]" numberOfLines={3}>{review.content}</Text>
+                <Text className="mt-3 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2}>{review.content}</Text>
+                <View className="mt-3 flex-row items-center justify-between">
+                  <StarRating rating={review.rating} size={14} showValue={false} />
+                  <Text className="text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>{review.createdAt}</Text>
+                </View>
               </AnimatedPressable>
             </FadeInView>
           );
