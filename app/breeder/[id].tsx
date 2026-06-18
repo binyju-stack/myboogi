@@ -33,8 +33,8 @@ function SectionTitle({ eyebrow, title, action }: { eyebrow?: string; title: str
   return (
     <View className="mb-4 flex-row items-end justify-between">
       <View>
-        {eyebrow ? <Text className="text-[10px] font-black text-berry">{eyebrow}</Text> : null}
-        <Text className="mt-1 text-[20px] font-black text-[#111827]">{title}</Text>
+        {eyebrow ? <Text className="text-[10px] font-semibold text-berry">{eyebrow}</Text> : null}
+        <Text className="mt-1 text-[20px] font-bold leading-7 text-[#222222]">{title}</Text>
       </View>
       {action ? <Text className="text-[11px] font-bold text-[#9CA3AF]">{action}</Text> : null}
     </View>
@@ -44,8 +44,8 @@ function SectionTitle({ eyebrow, title, action }: { eyebrow?: string; title: str
 function MiniMetric({ value, label }: { value: string | number; label: string }) {
   return (
     <View className="flex-1 items-center justify-center">
-      <Text className="text-[18px] font-black text-[#111827]" numberOfLines={1}>{value}</Text>
-      <Text className="mt-1 text-[11px] font-semibold text-[#9CA3AF]">{label}</Text>
+      <Text className="text-[18px] font-bold text-[#222222]" numberOfLines={1}>{value}</Text>
+      <Text className="mt-1 text-[12px] font-medium text-[#A0A5AD]">{label}</Text>
     </View>
   );
 }
@@ -79,7 +79,7 @@ function BrandHero({
             </Pressable>
             <View className="flex-row">
               <AnimatedPressable onPress={onFollow} className={`mr-2 rounded-full px-4 py-2.5 ${following ? 'bg-white' : 'bg-berry'}`}>
-                <Text className={`text-[11px] font-black ${following ? 'text-berry' : 'text-white'}`}>{following ? '팔로잉' : '팔로우'}</Text>
+                <Text className={`text-[12px] font-semibold ${following ? 'text-berry' : 'text-white'}`}>{following ? '팔로잉' : '팔로우'}</Text>
               </AnimatedPressable>
               <Pressable onPress={onMenu} className="h-10 w-10 items-center justify-center rounded-full bg-white/90">
                 <Ionicons name="ellipsis-horizontal" size={20} color={colors.ink} />
@@ -87,8 +87,8 @@ function BrandHero({
             </View>
           </View>
           <View className="absolute bottom-5 left-5 right-5">
-            <Text className="text-[10px] font-black text-white/70">{breeder.breederType === 'business' ? 'BREEDER BRAND' : 'PERSONAL BREEDER'}</Text>
-            <Text className="mt-1 text-[24px] font-black leading-8 text-white" numberOfLines={2}>{breeder.name}</Text>
+            <Text className="text-[10px] font-semibold text-white/70">{breeder.breederType === 'business' ? 'BREEDER BRAND' : 'PERSONAL BREEDER'}</Text>
+            <Text className="mt-1 text-[24px] font-bold leading-8 text-white" numberOfLines={2}>{breeder.name}</Text>
           </View>
         </ImageBackground>
       </View>
@@ -98,7 +98,7 @@ function BrandHero({
           <Image source={{ uri: profileImage }} className="h-[88px] w-[88px] rounded-full border-4 border-white bg-shell shadow-sm" />
           <View className="ml-3 flex-1 pb-1">
             <View className="self-start rounded-full bg-blush px-3 py-1.5">
-              <Text className="text-[10px] font-black text-berry">✓ {badgeLabel}</Text>
+              <Text className="text-[10px] font-semibold text-berry">✓ {badgeLabel}</Text>
             </View>
             <View className="mt-2">
               <StarRating rating={summary.averageRating} size={15} />
@@ -106,7 +106,7 @@ function BrandHero({
           </View>
         </View>
 
-        <Text className="mt-4 text-[15px] font-medium leading-7 text-[#6B7280]">{breeder.shortBio ?? breeder.intro}</Text>
+        <Text className="mt-4 text-[14px] font-medium leading-6 text-[#666666]">{breeder.shortBio ?? breeder.intro}</Text>
 
         <View className="mt-5 flex-row rounded-[24px] border border-line bg-white py-4 shadow-sm">
           <MiniMetric value={summary.averageRating.toFixed(1)} label="평점" />
@@ -124,7 +124,7 @@ function SnsButton({ icon, label, onPress }: { icon: IconName; label: string; on
   return (
     <AnimatedPressable onPress={onPress} className="mr-2 flex-1 items-center rounded-[18px] bg-soft px-2 py-3">
       <Ionicons name={icon} size={19} color={colors.berry} />
-      <Text className="mt-1.5 text-[10px] font-black text-[#374151]" numberOfLines={1}>{label}</Text>
+      <Text className="mt-1.5 text-[11px] font-semibold text-[#666666]" numberOfLines={1}>{label}</Text>
     </AnimatedPressable>
   );
 }
@@ -161,11 +161,11 @@ function AboutSection({ breeder }: { breeder: Breeder }) {
     <FadeInView delay={80}>
       <View className="mx-5 mt-5 rounded-[26px] border border-line bg-white p-5 shadow-sm">
         <SectionTitle eyebrow="ABOUT" title="브리더 소개" />
-        <Text className="text-[14px] font-medium leading-7 text-[#374151]">{breeder.fullBio ?? breeder.intro}</Text>
+        <Text className="text-[15px] font-medium leading-7 text-[#666666]">{breeder.fullBio ?? breeder.intro}</Text>
         <View className="mt-4 flex-row flex-wrap">
           {chips.map((chip) => (
             <View key={chip} className="mb-2 mr-2 rounded-full bg-blush px-3 py-2">
-              <Text className="text-[10px] font-black text-berry">{chip}</Text>
+              <Text className="text-[12px] font-semibold text-berry">{chip}</Text>
             </View>
           ))}
         </View>
@@ -190,8 +190,8 @@ function TabBar({
           const active = activeTab === tab.key;
           return (
             <Pressable key={tab.key} onPress={() => onChange(tab.key)} className={`flex-1 items-center rounded-[18px] py-3 ${active ? 'bg-berry' : ''}`}>
-              <Text className={`text-[11px] font-black ${active ? 'text-white' : 'text-[#9CA3AF]'}`}>{tab.label}</Text>
-              <Text className={`mt-0.5 text-[9px] font-bold ${active ? 'text-white/80' : 'text-[#B0B8C1]'}`}>{counts[tab.key]}</Text>
+              <Text className={`text-[12px] font-semibold ${active ? 'text-white' : 'text-[#A0A5AD]'}`}>{tab.label}</Text>
+              <Text className={`mt-0.5 text-[10px] font-medium ${active ? 'text-white/80' : 'text-[#A0A5AD]'}`}>{counts[tab.key]}</Text>
             </Pressable>
           );
         })}
@@ -206,15 +206,15 @@ function ReviewCard({ review }: { review: BreederReview }) {
       <View className="flex-row items-center">
         <Avatar uri={review.avatar} size={40} />
         <View className="ml-3 flex-1">
-          <Text className="text-[13px] font-black text-[#111827]" numberOfLines={1}>{review.author}</Text>
-          <Text className="mt-1 text-[10px] font-semibold text-[#9CA3AF]">{review.species} · {review.createdAt}</Text>
+          <Text className="text-[13px] font-semibold text-[#222222]" numberOfLines={1}>{review.author}</Text>
+          <Text className="mt-1 text-[12px] font-medium text-[#A0A5AD]">{review.species} · {review.createdAt}</Text>
         </View>
         <StarRating rating={review.rating} size={13} showValue={false} />
       </View>
       <View className="mt-3">
         <ReviewTypeBadge type={review.reviewType} />
       </View>
-      <Text className="mt-3 text-[13px] font-medium leading-6 text-[#374151]">{review.content}</Text>
+      <Text className="mt-3 text-[14px] font-medium leading-6 text-[#666666]">{review.content}</Text>
     </View>
   );
 }
@@ -225,8 +225,8 @@ function EmptyState({ title }: { title: string }) {
       <View className="h-12 w-12 items-center justify-center rounded-full bg-soft">
         <Ionicons name="leaf-outline" size={22} color={colors.muted} />
       </View>
-      <Text className="mt-4 text-[14px] font-black text-[#111827]">{title}</Text>
-      <Text className="mt-2 text-[11px] font-medium text-[#9CA3AF]">새로운 소식이 올라오면 알려드릴게요.</Text>
+      <Text className="mt-4 text-[14px] font-semibold text-[#222222]">{title}</Text>
+      <Text className="mt-2 text-[12px] font-medium text-[#A0A5AD]">새로운 소식이 올라오면 알려드릴게요.</Text>
     </View>
   );
 }
@@ -239,14 +239,14 @@ function GrowthCard({ turtle, index }: { turtle: RepresentativeTurtle; index: nu
         <View className="p-4">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-[15px] font-black text-[#111827]">{turtle.name}</Text>
-              <Text className="mt-1 text-[11px] font-bold text-berry">{turtle.species}</Text>
+              <Text className="text-[15px] font-bold text-[#222222]">{turtle.name}</Text>
+              <Text className="mt-1 text-[12px] font-semibold text-berry">{turtle.species}</Text>
             </View>
             <View className="rounded-full bg-soft px-3 py-2">
-              <Text className="text-[10px] font-black text-[#6B7280]">{index + 1}세대 기록</Text>
+              <Text className="text-[11px] font-semibold text-[#666666]">{index + 1}세대 기록</Text>
             </View>
           </View>
-          <Text className="mt-3 text-[12px] font-medium leading-6 text-[#6B7280]">{turtle.feature}</Text>
+          <Text className="mt-3 text-[13px] font-medium leading-5 text-[#8A8F98]">{turtle.feature}</Text>
         </View>
       </View>
     </FadeInView>
@@ -330,7 +330,7 @@ export default function BreederShopScreen() {
       <View className="absolute bottom-0 left-0 right-0 border-t border-line bg-white/95 px-5 pb-4 pt-3">
         <AnimatedPressable onPress={openChatRoom} className="h-14 flex-row items-center justify-center rounded-[20px] bg-berry shadow-sm">
           <Ionicons name="chatbubbles-outline" size={18} color="white" />
-          <Text className="ml-2 text-[14px] font-black text-white">문의하기</Text>
+          <Text className="ml-2 text-[14px] font-semibold text-white">문의하기</Text>
         </AnimatedPressable>
       </View>
 

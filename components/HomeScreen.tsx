@@ -129,12 +129,12 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
     <View className="mb-3 flex-row items-center justify-between px-5">
       <View className="flex-1 flex-row items-center">
         <SectionIcon variant={icon} />
-        <Text className="flex-1 text-[20px] font-bold text-[#111827]" numberOfLines={1}>{title}</Text>
+        <Text className="flex-1 text-[20px] font-bold leading-7 text-[#222222]" numberOfLines={1}>{title}</Text>
       </View>
       {onPress ? (
         <Pressable onPress={onPress} className="flex-row items-center">
-          <Text className="text-[12px] font-bold text-[#9CA3AF]">더보기</Text>
-          <Ionicons name="chevron-forward" size={14} color="#9CA3AF" />
+          <Text className="text-[12px] font-medium text-[#A0A5AD]">더보기</Text>
+          <Ionicons name="chevron-forward" size={14} color="#A0A5AD" />
         </Pressable>
       ) : null}
     </View>
@@ -144,15 +144,15 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
 function Meta({ icon, value }: { icon: IconName; value: number }) {
   return (
     <View className="ml-2 flex-row items-center">
-      <Ionicons name={icon} size={12} color="#9CA3AF" />
-      <Text className="ml-1 text-[12px] font-normal text-[#9CA3AF]">{value.toLocaleString()}</Text>
+      <Ionicons name={icon} size={12} color="#A0A5AD" />
+      <Text className="ml-1 text-[12px] font-medium text-[#A0A5AD]">{value.toLocaleString()}</Text>
     </View>
   );
 }
 
 function NoticeBar() {
   return (
-    <View className="mx-5 mt-4 h-9 flex-row items-center rounded-[18px] bg-[#111827] px-4">
+    <View className="mx-5 mt-4 h-9 flex-row items-center rounded-[18px] bg-[#222222] px-4">
       <Ionicons name="megaphone-outline" size={15} color="white" />
       <Text className="ml-2 flex-1 text-[12px] font-medium text-white" numberOfLines={1}>공지사항  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
       <Ionicons name="close" size={14} color="white" />
@@ -164,7 +164,7 @@ function SearchBar() {
   return (
     <AnimatedPressable onPress={() => router.push('/search')} className="mx-5 mt-4 h-12 flex-row items-center rounded-full border border-[#E5E7EB] bg-white px-4 shadow-sm">
       <Ionicons name="search" size={18} color="#9CA3AF" />
-      <Text className="ml-2 flex-1 text-[15px] font-medium text-[#6B7280]">어떤 거북이를 찾고 계신가요?</Text>
+      <Text className="ml-2 flex-1 text-[15px] font-medium text-[#666666]">어떤 거북이를 찾고 계신가요?</Text>
       <Ionicons name="chevron-forward" size={16} color="#D1D5DB" />
     </AnimatedPressable>
   );
@@ -263,13 +263,14 @@ function CommunityHotSection() {
         {hotPosts.map((post, index) => (
           <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-4 ${index ? 'border-t border-[#E5E7EB]' : ''}`}>
             <View className="flex-row items-center">
-              <Text className={`text-[13px] font-bold ${post.badge === '새글' ? 'text-[#2563EB]' : 'text-berry'}`}>{post.badge}</Text>
-              <Text className="ml-2 flex-1 text-[12px] font-normal text-[#9CA3AF]">{post.category}</Text>
+              <Text className={`rounded-full px-2.5 py-1 text-[12px] font-semibold ${post.badge === '새글' ? 'bg-[#E8F1FF] text-[#4A8DFF]' : 'bg-[#FFE4EC] text-[#FF4F8B]'}`}>{post.badge}</Text>
+              <Text className="ml-2 rounded-full bg-[#F5F6F8] px-2.5 py-1 text-[12px] font-semibold text-[#7D8592]">{post.category}</Text>
+              <View className="flex-1" />
               <Meta icon="eye-outline" value={post.views} />
               <Meta icon="chatbubble-outline" value={post.comments} />
               <Meta icon="heart-outline" value={post.likes} />
             </View>
-            <Text className="mt-2 text-[18px] font-bold leading-6 text-[#111827]" numberOfLines={1}>{post.title}</Text>
+            <Text className="mt-2.5 text-[17px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
           </AnimatedPressable>
         ))}
       </View>
@@ -289,14 +290,14 @@ function PopularBreedersSection() {
               <Avatar uri={breeder.logo ?? breeder.avatar} size={72} />
               <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
                 <View className="flex-row items-center">
-                  <Text className="flex-1 text-[18px] font-bold text-[#111827]" numberOfLines={1}>{breeder.name}</Text>
-                  <Text className="ml-2 rounded-full bg-blush px-2.5 py-1.5 text-[10px] font-black text-berry">✓ 인증 브리더</Text>
+                  <Text className="flex-1 text-[17px] font-bold leading-6 text-[#222222]" numberOfLines={1}>{breeder.name}</Text>
+                  <Text className="ml-2 rounded-full bg-blush px-2.5 py-1 text-[10px] font-semibold text-berry">✓ 인증 브리더</Text>
                 </View>
                 <View className="mt-1.5 flex-row items-center">
                   <Ionicons name="star" size={16} color="#FFC83D" />
-                  <Text className="ml-1.5 text-[15px] font-semibold text-[#111827]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
+                  <Text className="ml-1.5 text-[15px] font-semibold text-[#222222]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
                 </View>
-                <Text className="mt-1.5 text-[13px] font-medium leading-5 text-[#9CA3AF]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
+                <Text className="mt-1 text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
               </View>
             </AnimatedPressable>
           );
@@ -331,12 +332,12 @@ function RecentReviewsSection() {
                 <View className="flex-row items-center">
                   <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={38} />
                   <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-                    <Text className="text-[15px] font-bold text-[#111827]" numberOfLines={1}>{breeder?.name ?? '브리더'}</Text>
-                    <Text className="mt-0.5 text-[12px] font-normal text-[#9CA3AF]" numberOfLines={1}>{review.species}</Text>
+                    <Text className="text-[15px] font-bold text-[#222222]" numberOfLines={1}>{breeder?.name ?? '브리더'}</Text>
+                    <Text className="mt-0.5 text-[12px] font-medium text-[#A0A5AD]" numberOfLines={1}>{review.species}</Text>
                   </View>
                   <StarRating rating={review.rating} size={14} showValue={false} />
                 </View>
-                <Text className="mt-3 text-[15px] font-medium leading-6 text-[#374151]" numberOfLines={3}>{review.content}</Text>
+                <Text className="mt-3 text-[15px] font-medium leading-6 text-[#666666]" numberOfLines={3}>{review.content}</Text>
               </AnimatedPressable>
             </FadeInView>
           );

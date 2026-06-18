@@ -22,7 +22,7 @@ function InfoTile({ label, value }: { label: string; value?: string }) {
   return (
     <View className="mb-2 w-[48%] rounded-[18px] bg-soft px-4 py-3.5">
       <Text className="text-[9px] font-bold text-muted">{label}</Text>
-      <Text className="mt-1 text-[12px] font-black leading-5 text-ink">{value || '-'}</Text>
+      <Text className="mt-1 text-[12px] font-semibold leading-5 text-ink">{value || '-'}</Text>
     </View>
   );
 }
@@ -30,7 +30,7 @@ function InfoTile({ label, value }: { label: string; value?: string }) {
 function MetricTile({ label, value }: { label: string; value: string | number }) {
   return (
     <View className="flex-1 items-center">
-      <Text className="text-[15px] font-black text-ink">{typeof value === 'number' ? value.toLocaleString() : value}</Text>
+      <Text className="text-[15px] font-bold text-ink">{typeof value === 'number' ? value.toLocaleString() : value}</Text>
       <Text className="mt-1 text-[9px] text-muted">{label}</Text>
     </View>
   );
@@ -41,8 +41,8 @@ function ParentCard({ title, parent }: { title: string; parent?: ParentTurtleInf
     <View className="w-[48%] overflow-hidden rounded-[20px] border border-line bg-white">
       <Image source={{ uri: parent?.image }} className="h-28 w-full bg-shell" resizeMode="cover" />
       <View className="p-3">
-        <Text className="text-[9px] font-black text-berry">{title}</Text>
-        <Text className="mt-1 text-[13px] font-black text-ink">{parent?.name ?? '-'}</Text>
+        <Text className="text-[10px] font-semibold text-berry">{title}</Text>
+        <Text className="mt-1 text-[13px] font-semibold text-ink">{parent?.name ?? '-'}</Text>
         <Text className="mt-1 text-[10px] leading-4 text-muted" numberOfLines={2}>{parent?.feature ?? '-'}</Text>
         <Text className="mt-2 rounded-full bg-soft px-2.5 py-1.5 text-[8px] font-bold text-muted" numberOfLines={1}>{parent?.lineage ?? '-'}</Text>
       </View>
@@ -58,7 +58,7 @@ function ListingReviewPreview({ review, divider = false }: { review: BreederRevi
       <View className="flex-row items-center">
         <Avatar uri={review.avatar} size={34} />
         <View className="ml-3 flex-1">
-          <Text className="text-[11px] font-black text-ink" numberOfLines={1}>{review.author}</Text>
+          <Text className="text-[12px] font-semibold text-ink" numberOfLines={1}>{review.author}</Text>
           <Text className="mt-1 text-[9px] text-muted">{review.species} · {review.createdAt}</Text>
         </View>
         <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={13} />
@@ -75,8 +75,8 @@ function SectionCard({ eyebrow, title, children }: { eyebrow?: string; title: st
   return (
     <FadeInView>
       <View className="mx-5 mt-4 rounded-[26px] border border-line bg-white p-5 shadow-sm">
-        {eyebrow ? <Text className="text-[9px] font-black text-berry">{eyebrow}</Text> : null}
-        <Text className={`${eyebrow ? 'mt-1' : ''} text-[18px] font-black text-ink`}>{title}</Text>
+        {eyebrow ? <Text className="text-[10px] font-semibold text-berry">{eyebrow}</Text> : null}
+        <Text className={`${eyebrow ? 'mt-1' : ''} text-[20px] font-bold leading-7 text-ink`}>{title}</Text>
         {children}
       </View>
     </FadeInView>
@@ -133,7 +133,7 @@ export default function ListingDetailScreen() {
           <View className="absolute bottom-0 left-0 right-0 h-32 bg-black/20" />
           <View className="absolute bottom-0 left-0 right-0 h-16 bg-black/25" />
           <View className={`absolute left-5 top-5 rounded-full px-3.5 py-2 ${statusMeta.badgeClass}`}>
-            <Text className={`text-[10px] font-black ${statusMeta.textClass}`}>{statusMeta.label}</Text>
+            <Text className={`text-[10px] font-semibold ${statusMeta.textClass}`}>{statusMeta.label}</Text>
           </View>
           <View className="absolute bottom-4 right-5 rounded-full bg-black/55 px-3 py-1.5">
             <Text className="text-[10px] font-bold text-white">{imageIndex + 1} / {item.images.length}</Text>
@@ -152,11 +152,11 @@ export default function ListingDetailScreen() {
           <View className="flex-row items-center">
             <VerifiedBadge />
             <View className={`ml-2 rounded-full px-3 py-1.5 ${statusMeta.softClass}`}>
-              <Text className="text-[9px] font-black text-ink">{statusMeta.label}</Text>
+              <Text className="text-[10px] font-semibold text-ink">{statusMeta.label}</Text>
             </View>
           </View>
-          <Text className="mt-4 text-[23px] font-black leading-8 text-ink">{item.species}</Text>
-          <Text className="mt-3 text-[30px] font-black text-ink">{item.price.toLocaleString()}원</Text>
+          <Text className="mt-4 text-[22px] font-bold leading-8 text-ink">{item.species}</Text>
+          <Text className="mt-3 text-[28px] font-bold text-ink">{item.price.toLocaleString()}원</Text>
           <View className="mt-4 flex-row rounded-[20px] bg-soft px-3 py-3">
             <MetricTile label="지역" value={item.location} />
             <View className="w-px bg-line" />
@@ -199,7 +199,7 @@ export default function ListingDetailScreen() {
             <Image source={{ uri: breeder.logo ?? breeder.avatar }} className="h-16 w-16 rounded-[20px] bg-shell" />
             <View className="ml-3 flex-1">
               <VerifiedBadge label={breeder.badge} />
-              <Text className="mt-2 text-[15px] font-black text-ink">{breeder.name}</Text>
+              <Text className="mt-2 text-[17px] font-bold text-ink">{breeder.name}</Text>
               <Text className="mt-1 text-[10px] font-bold text-muted">{breeder.breederType === 'business' ? '사업자 브리더' : '개인 브리더'} · {breeder.location}</Text>
             </View>
           </View>
@@ -218,12 +218,12 @@ export default function ListingDetailScreen() {
           <View className="mt-4 flex-row">
             <View className="mr-2 flex-1">
               <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="items-center rounded-[18px] bg-blush py-3.5">
-                <Text className="text-[11px] font-black text-berry">미니샵 가기</Text>
+                <Text className="text-[12px] font-semibold text-berry">미니샵 가기</Text>
               </AnimatedPressable>
             </View>
             <View className="flex-1">
               <AnimatedPressable onPress={() => showModal(isFollowing(breeder.id) ? '이미 팔로우 중인 브리더입니다.' : '팔로우 기능은 준비중입니다.')} className="items-center rounded-[18px] bg-ink py-3.5">
-                <Text className="text-[11px] font-black text-white">{isFollowing(breeder.id) ? '팔로잉' : '팔로우'}</Text>
+                <Text className="text-[12px] font-semibold text-white">{isFollowing(breeder.id) ? '팔로잉' : '팔로우'}</Text>
               </AnimatedPressable>
             </View>
           </View>
@@ -234,7 +234,7 @@ export default function ListingDetailScreen() {
             {reviews.map((review, index) => <ListingReviewPreview key={review.id} review={review} divider={Boolean(index)} />)}
           </View>
           <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className={`${completed ? 'bg-berry' : 'bg-soft'} mt-3 items-center rounded-[18px] py-3.5`}>
-            <Text className={`text-[11px] font-black ${completed ? 'text-white' : 'text-ink'}`}>전체 후기 보기</Text>
+            <Text className={`text-[12px] font-semibold ${completed ? 'text-white' : 'text-ink'}`}>전체 후기 보기</Text>
           </AnimatedPressable>
         </SectionCard>
 
@@ -248,8 +248,8 @@ export default function ListingDetailScreen() {
         {relatedListings.length ? (
           <View className="mt-4">
             <View className="mb-4 px-5">
-              <Text className="text-[9px] font-black text-berry">MORE FROM SHOP</Text>
-              <Text className="mt-1 text-[18px] font-black text-ink">같은 브리더의 다른 개체</Text>
+              <Text className="text-[10px] font-semibold text-berry">MORE FROM SHOP</Text>
+              <Text className="mt-1 text-[20px] font-bold leading-7 text-ink">같은 브리더의 다른 개체</Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
               {relatedListings.map((listing) => <ListingCard key={listing.id} item={listing} wide />)}
@@ -270,18 +270,18 @@ export default function ListingDetailScreen() {
       <View style={{ paddingBottom: Math.max(insets.bottom, 12) }} className="absolute bottom-0 left-0 right-0 w-full flex-row items-center border-t border-line bg-white px-5 pt-3 shadow-sm">
         <AnimatedPressable onPress={() => toggleFavorite(item.id)} className={`h-14 w-16 items-center justify-center rounded-[20px] ${favorite ? 'bg-blush' : 'bg-soft'}`}>
           <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={20} color={colors.berry} />
-          <Text className="mt-1 text-[9px] font-black text-berry">{favorite ? '찜완료' : '찜'}</Text>
+          <Text className="mt-1 text-[10px] font-semibold text-berry">{favorite ? '찜완료' : '찜'}</Text>
         </AnimatedPressable>
         {completed ? (
           <>
             <View className="ml-3 h-14 flex-1 flex-row items-center justify-center rounded-[20px] bg-soft">
               <Ionicons name="checkmark-circle-outline" size={17} color={colors.muted} />
-              <Text className="ml-2 text-[12px] font-black text-muted">분양완료</Text>
+              <Text className="ml-2 text-[12px] font-semibold text-muted">분양완료</Text>
             </View>
             <View className="ml-3 flex-1">
               <AnimatedPressable onPress={() => router.push(`/breeder/${breeder.id}`)} className="h-14 flex-row items-center justify-center rounded-[20px] bg-berry">
                 <Ionicons name="star" size={16} color={colors.white} />
-                <Text className="ml-2 text-[12px] font-black text-white">후기 보기</Text>
+                <Text className="ml-2 text-[12px] font-semibold text-white">후기 보기</Text>
               </AnimatedPressable>
             </View>
           </>
@@ -290,17 +290,17 @@ export default function ListingDetailScreen() {
             <View className="ml-3 flex-1">
               <AnimatedPressable onPress={openChatRoom} className="h-14 flex-row items-center justify-center rounded-[20px] bg-berry">
                 <Ionicons name="chatbubble-ellipses" size={17} color={colors.white} />
-                <Text className="ml-2 text-[12px] font-black text-white">문의하기</Text>
+                <Text className="ml-2 text-[12px] font-semibold text-white">문의하기</Text>
               </AnimatedPressable>
             </View>
             <View className="ml-2 w-20">
               <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-[#FEE500]">
-                <Text className="text-[11px] font-black text-ink">카카오</Text>
+                <Text className="text-[11px] font-semibold text-ink">카카오</Text>
               </AnimatedPressable>
             </View>
             <View className="ml-2 w-20">
               <AnimatedPressable onPress={showContactAlert} className="h-14 flex-row items-center justify-center rounded-[20px] bg-ink">
-                <Text className="text-[11px] font-black text-white">전화</Text>
+                <Text className="text-[11px] font-semibold text-white">전화</Text>
               </AnimatedPressable>
             </View>
           </>

@@ -27,8 +27,8 @@ function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => vo
         <View className="max-h-[86%] rounded-t-[30px] bg-white px-5 pt-5 shadow-lg" style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
           <View className="mb-5 flex-row items-center justify-between">
             <View>
-              <Text className="text-[10px] font-black text-berry">FILTER</Text>
-              <Text className="mt-1 text-[22px] font-black text-ink">분양 조건 찾기</Text>
+              <Text className="text-[10px] font-semibold text-berry">FILTER</Text>
+              <Text className="mt-1 text-[22px] font-bold leading-8 text-ink">분양 조건 찾기</Text>
             </View>
             <AnimatedPressable onPress={onClose} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
               <Ionicons name="close" size={20} color={colors.ink} />
@@ -38,11 +38,11 @@ function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => vo
           <ScrollView showsVerticalScrollIndicator={false} className="max-h-[520px]">
             {filterGroups.map((group) => (
               <View key={group.title} className="mb-5">
-                <Text className="mb-3 text-[13px] font-black text-ink">{group.title}</Text>
+                <Text className="mb-3 text-[13px] font-semibold text-ink">{group.title}</Text>
                 <View className="flex-row flex-wrap">
                   {group.options.map((option, index) => (
                     <AnimatedPressable key={option} className={`mb-2 mr-2 rounded-full px-3.5 py-2.5 ${index === 0 ? 'bg-berry' : 'bg-soft'}`}>
-                      <Text className={`text-[11px] font-black ${index === 0 ? 'text-white' : 'text-muted'}`}>{option}</Text>
+                      <Text className={`text-[12px] font-semibold ${index === 0 ? 'text-white' : 'text-muted'}`}>{option}</Text>
                     </AnimatedPressable>
                   ))}
                 </View>
@@ -51,7 +51,7 @@ function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => vo
 
             {['인증 브리더만 보기', '분양중만 보기'].map((label) => (
               <AnimatedPressable key={label} className="mb-3 flex-row items-center justify-between rounded-[18px] bg-soft px-4 py-4">
-                <Text className="text-[13px] font-black text-ink">{label}</Text>
+                <Text className="text-[13px] font-semibold text-ink">{label}</Text>
                 <View className="h-6 w-11 items-end justify-center rounded-full bg-berry px-1">
                   <View className="h-4 w-4 rounded-full bg-white" />
                 </View>
@@ -61,10 +61,10 @@ function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => vo
 
           <View className="mt-4 flex-row gap-3 border-t border-line pt-4">
             <AnimatedPressable className="flex-1 items-center rounded-[18px] bg-soft py-4">
-              <Text className="text-[13px] font-black text-muted">초기화</Text>
+              <Text className="text-[13px] font-semibold text-muted">초기화</Text>
             </AnimatedPressable>
             <AnimatedPressable onPress={() => Alert.alert('필터 적용 기능은 준비중입니다.')} className="flex-[1.5] items-center rounded-[18px] bg-berry py-4">
-              <Text className="text-[13px] font-black text-white">적용하기</Text>
+              <Text className="text-[13px] font-semibold text-white">적용하기</Text>
             </AnimatedPressable>
           </View>
         </View>
@@ -85,7 +85,7 @@ export default function MarketplaceScreen() {
     <View>
       <BrandHeader compact />
       <View className="bg-white px-5 pb-4">
-        <Text className="mb-4 text-[22px] font-black text-ink">건강한 새 가족을 만나보세요</Text>
+        <Text className="mb-4 text-[22px] font-bold leading-8 text-ink">건강한 새 가족을 만나보세요</Text>
         <View className="flex-row gap-2">
           <Pressable onPress={() => router.push('/search')} className="flex-1 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
             <Ionicons name="search" size={18} color={colors.muted} />
@@ -107,12 +107,12 @@ export default function MarketplaceScreen() {
 
       <View className="flex-row items-center justify-between px-5 pb-4 pt-1">
         <View>
-          <Text className="text-[10px] font-black text-berry">MARKETPLACE</Text>
-          <Text className="mt-1 text-[19px] font-black text-ink">분양중인 거북이</Text>
+          <Text className="text-[10px] font-semibold text-berry">MARKETPLACE</Text>
+          <Text className="mt-1 text-[20px] font-bold leading-7 text-ink">분양중인 거북이</Text>
         </View>
         <Pressable onPress={() => router.push('/listing/create')} className="flex-row items-center rounded-full bg-berry px-3.5 py-2.5">
           <Ionicons name="add" size={14} color="white" />
-          <Text className="ml-1 text-[10px] font-black text-white">분양글 등록</Text>
+          <Text className="ml-1 text-[11px] font-semibold text-white">분양글 등록</Text>
         </Pressable>
       </View>
     </View>

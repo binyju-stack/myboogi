@@ -47,20 +47,20 @@ export default function CommunityDetailScreen() {
           <FadeInView>
             <View className="bg-white px-5 pb-7 pt-5">
               <View className="flex-row items-center justify-between">
-                <Text className="self-start rounded-full bg-blush px-3 py-2 text-[10px] font-black text-berry">{post.category}</Text>
+                <Text className="self-start rounded-full bg-blush px-3 py-2 text-[12px] font-semibold text-berry">{post.category}</Text>
                 <AnimatedPressable onPress={() => router.push('/report')} className="flex-row items-center rounded-full bg-soft px-3 py-2">
                   <Ionicons name="flag-outline" size={13} color={colors.muted} />
-                  <Text className="ml-1 text-[10px] font-bold text-muted">신고하기</Text>
+                  <Text className="ml-1 text-[11px] font-medium text-muted">신고하기</Text>
                 </AnimatedPressable>
               </View>
 
-              <Text className="mt-4 text-[24px] font-black leading-9 text-ink">{post.title}</Text>
+              <Text className="mt-4 text-[22px] font-bold leading-8 text-ink">{post.title}</Text>
 
               <View className="mt-5 flex-row items-center">
                 <Avatar uri={post.authorAvatar ?? post.avatar} size={42} />
                 <View className="ml-3 flex-1">
-                  <Text className="text-[12px] font-black text-ink">{post.author}</Text>
-                  <Text className="mt-1 text-[9px] text-muted">{post.createdAt}</Text>
+                  <Text className="text-[13px] font-semibold text-ink">{post.author}</Text>
+                  <Text className="mt-1 text-[12px] font-medium text-subtle">{post.createdAt}</Text>
                 </View>
               </View>
 
@@ -71,7 +71,7 @@ export default function CommunityDetailScreen() {
               </View>
 
               <View className="mt-7 h-px bg-line" />
-              <Text className="mt-7 text-[14px] leading-8 text-ink">{post.content}</Text>
+              <Text className="mt-7 text-[15px] font-medium leading-7 text-ink">{post.content}</Text>
 
               <View className="mt-6">
                 {images.length ? (
@@ -96,14 +96,14 @@ export default function CommunityDetailScreen() {
                 className={`mt-6 flex-row items-center justify-center rounded-[18px] py-4 ${liked ? 'bg-berry' : 'bg-blush'}`}
               >
                 <Ionicons name={liked ? 'heart' : 'heart-outline'} size={18} color={liked ? colors.white : colors.berry} />
-                <Text className={`ml-2 text-[12px] font-black ${liked ? 'text-white' : 'text-berry'}`}>좋아요 {likeCount}</Text>
+                <Text className={`ml-2 text-[13px] font-semibold ${liked ? 'text-white' : 'text-berry'}`}>좋아요 {likeCount}</Text>
               </AnimatedPressable>
             </View>
           </FadeInView>
 
           <View className="px-5 pb-3 pt-8">
-            <Text className="text-[10px] font-black text-berry">COMMENTS</Text>
-            <Text className="mt-1 text-[20px] font-black text-ink">댓글 {commentCount}</Text>
+            <Text className="text-[10px] font-semibold text-berry">COMMENTS</Text>
+            <Text className="mt-1 text-[20px] font-bold leading-7 text-ink">댓글 {commentCount}</Text>
           </View>
 
           <View className="px-5 pt-3">
@@ -116,25 +116,25 @@ export default function CommunityDetailScreen() {
                 <View className="mb-3 rounded-[24px] border border-line bg-white p-4 shadow-sm">
                   {isBest ? (
                     <View className="mb-3 flex-row items-center justify-between rounded-[16px] bg-blush px-3 py-2">
-                      <Text className="text-[11px] font-black text-berry">{bestLabels[bestIndex]}</Text>
-                      <Text className="text-[10px] font-black text-berry">좋아요 {comment.likes}</Text>
+                      <Text className="text-[12px] font-semibold text-berry">{bestLabels[bestIndex]}</Text>
+                      <Text className="text-[12px] font-semibold text-berry">좋아요 {comment.likes}</Text>
                     </View>
                   ) : null}
                   <View className="flex-row items-center">
                     <Avatar uri={comment.avatar} size={34} />
                     <View className="ml-3 flex-1">
-                      <Text className="text-[11px] font-black text-ink">{comment.author}</Text>
-                      <Text className="mt-1 text-[9px] text-muted">{comment.createdAt} · 답글 {replyCount}</Text>
+                      <Text className="text-[13px] font-semibold text-ink">{comment.author}</Text>
+                      <Text className="mt-1 text-[12px] font-medium text-subtle">{comment.createdAt} · 답글 {replyCount}</Text>
                     </View>
                     <AnimatedPressable onPress={showBlockDone} className="mr-3 rounded-full bg-soft px-2.5 py-1.5">
-                      <Text className="text-[9px] font-black text-muted">차단</Text>
+                      <Text className="text-[10px] font-semibold text-muted">차단</Text>
                     </AnimatedPressable>
                     <AnimatedPressable onPress={() => undefined} className="flex-row items-center rounded-full bg-blush px-3 py-2">
                       <Ionicons name="heart" size={18} color={colors.berry} />
-                      <Text className="ml-1.5 text-[13px] font-black text-berry">{comment.likes}</Text>
+                      <Text className="ml-1.5 text-[13px] font-semibold text-berry">{comment.likes}</Text>
                     </AnimatedPressable>
                   </View>
-                  <Text className="mt-4 text-[13px] leading-6 text-ink">{comment.content}</Text>
+                  <Text className="mt-4 text-[14px] font-medium leading-6 text-ink">{comment.content}</Text>
                 </View>
               </FadeInView>
               );
@@ -146,7 +146,7 @@ export default function CommunityDetailScreen() {
           <TextInput placeholder="댓글을 입력해주세요" placeholderTextColor={colors.subtle} className="mr-2 flex-1 rounded-[18px] bg-soft px-4 py-3.5 text-[12px] text-ink" />
           <View className="w-[64px]">
             <AnimatedPressable onPress={showCommentReady} className="items-center rounded-[16px] bg-berry py-3.5">
-              <Text className="text-[11px] font-black text-white">등록</Text>
+              <Text className="text-[12px] font-semibold text-white">등록</Text>
             </AnimatedPressable>
           </View>
         </View>

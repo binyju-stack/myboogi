@@ -15,8 +15,8 @@ export default function CommunityScreen() {
       <View className="border-b border-line bg-white px-5 pb-5 pt-5">
         <View className="flex-row items-center justify-between">
           <View className="flex-1 pr-4">
-            <Text className="text-[10px] font-black text-berry">MYBOOGI COMMUNITY</Text>
-            <Text className="mt-1 text-[24px] font-black text-ink">거북이 집사들의 이야기</Text>
+            <Text className="text-[10px] font-semibold text-berry">MYBOOGI COMMUNITY</Text>
+            <Text className="mt-1 text-[22px] font-bold leading-8 text-ink">거북이 집사들의 이야기</Text>
           </View>
           <View className="h-11 w-11">
             <AnimatedPressable onPress={() => router.push('/community/create')} className="h-11 w-11 items-center justify-center rounded-full bg-blush">
@@ -24,7 +24,7 @@ export default function CommunityScreen() {
             </AnimatedPressable>
           </View>
         </View>
-        <Text className="mt-3 text-[12px] leading-6 text-muted">사육 정보부터 오늘의 일상까지 편하게 나눠보세요.</Text>
+        <Text className="mt-3 text-[14px] font-medium leading-6 text-muted">사육 정보부터 오늘의 일상까지 편하게 나눠보세요.</Text>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}>
@@ -38,14 +38,14 @@ export default function CommunityScreen() {
       <FadeInView>
         <View className="mb-4 flex-row items-end justify-between px-5">
           <View>
-            <Text className="text-[10px] font-black text-berry">COMMUNITY FEED</Text>
-            <Text className="mt-1 text-[20px] font-black text-ink">새로운 이야기</Text>
+            <Text className="text-[10px] font-semibold text-berry">COMMUNITY FEED</Text>
+            <Text className="mt-1 text-[20px] font-bold leading-7 text-ink">새로운 이야기</Text>
           </View>
-          <Text className="rounded-full bg-white px-3 py-2 text-[10px] font-bold text-muted">최신순</Text>
+          <Text className="rounded-full bg-white px-3 py-2 text-[12px] font-medium text-muted">최신순</Text>
         </View>
       </FadeInView>
 
-      <View className="mx-5">{posts.map((post, index) => <PostCard key={post.id} item={post} index={index} />)}</View>
+      <View className="mx-5 rounded-[20px] bg-white px-4">{posts.map((post, index) => <PostCard key={post.id} item={post} index={index} />)}</View>
 
       <View className="absolute bottom-24 right-5">
         <AnimatedPressable onPress={() => router.push('/community/create')} className="h-14 w-14 items-center justify-center rounded-full bg-berry shadow-lg">

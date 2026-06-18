@@ -29,7 +29,7 @@ function isHotListing(item: Listing) {
 function ListingChip({ label }: { label: string }) {
   return (
     <View className="mr-1.5 mt-1 rounded-full bg-soft px-2.5 py-1">
-      <Text className="text-[8px] font-black text-muted" numberOfLines={1}>{label}</Text>
+      <Text className="text-[10px] font-medium text-muted" numberOfLines={1}>{label}</Text>
     </View>
   );
 }
@@ -59,7 +59,7 @@ export function ListingCard({
   const rating = breeder?.rating ?? reviewSummary.averageRating;
   const hot = isHotListing(item);
   const fresh = isNewListing(item.listedAt);
-  const statusBadge = <Text className={`rounded-full px-2.5 py-1.5 text-[9px] font-black ${statusMeta.badgeClass} ${statusMeta.textClass}`}>{statusMeta.label}</Text>;
+  const statusBadge = <Text className={`rounded-full px-2.5 py-1.5 text-[10px] font-semibold ${statusMeta.badgeClass} ${statusMeta.textClass}`}>{statusMeta.label}</Text>;
 
   const heart = (compact = false) => (
     <Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className={`${compact ? 'h-8 w-8' : 'h-9 w-9'} items-center justify-center rounded-full bg-blush`}>
@@ -76,19 +76,19 @@ export function ListingCard({
             <View className="absolute left-2 top-2">{statusBadge}</View>
           </View>
           <View className="ml-4 flex-1 py-1" style={{ minWidth: 0 }}>
-            <Text className="text-[9px] font-bold text-berry" numberOfLines={1}>{item.verified ? '✓ 인증 브리더' : '일반 브리더'}</Text>
-            <Text className="mt-2 text-[14px] font-black leading-5 text-ink" numberOfLines={2}>{item.species}</Text>
-            <Text className="mt-1 text-[17px] font-black text-ink" numberOfLines={1}>{item.price.toLocaleString()}원</Text>
+            <Text className="text-[10px] font-semibold text-berry" numberOfLines={1}>{item.verified ? '✓ 인증 브리더' : '일반 브리더'}</Text>
+            <Text className="mt-2 text-[15px] font-bold leading-6 text-ink" numberOfLines={2}>{item.species}</Text>
+            <Text className="mt-1 text-[17px] font-bold text-ink" numberOfLines={1}>{item.price.toLocaleString()}원</Text>
             <View className="mt-auto flex-row items-center justify-between">
               <Text className="text-[10px] text-muted" numberOfLines={1}>{item.location}</Text>
               <View className="flex-row items-center">
-                <Text className="mr-2 text-[9px] text-subtle" numberOfLines={1}>조회 {item.views} · 찜 {likes}</Text>
+                <Text className="mr-2 text-[12px] font-medium text-subtle" numberOfLines={1}>조회 {item.views} · 찜 {likes}</Text>
                 {heart(true)}
               </View>
             </View>
             {onStatusPress ? (
               <Pressable onPress={(event) => { event.stopPropagation(); onStatusPress(item); }} className="mt-3 items-center rounded-[16px] bg-soft py-2.5">
-                <Text className="text-[10px] font-black text-ink">상태 변경</Text>
+                <Text className="text-[11px] font-semibold text-ink">상태 변경</Text>
               </Pressable>
             ) : null}
           </View>
@@ -107,18 +107,18 @@ export function ListingCard({
             <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
             <View className="absolute left-2 top-2 flex-row flex-wrap">
               {statusBadge}
-              {hot ? <Text className="ml-1 rounded-full bg-ink px-2.5 py-1.5 text-[9px] font-black text-white">HOT</Text> : null}
-              {fresh ? <Text className="ml-1 rounded-full bg-white px-2.5 py-1.5 text-[9px] font-black text-berry">NEW</Text> : null}
+              {hot ? <Text className="ml-1 rounded-full bg-ink px-2.5 py-1.5 text-[10px] font-semibold text-white">HOT</Text> : null}
+              {fresh ? <Text className="ml-1 rounded-full bg-white px-2.5 py-1.5 text-[10px] font-semibold text-berry">NEW</Text> : null}
             </View>
             <Pressable onPress={(event) => { event.stopPropagation(); toggleFavorite(item.id); }} className="absolute right-2 top-2 flex-row items-center rounded-full bg-white/95 px-2.5 py-1.5">
               <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={13} color={colors.berry} />
-              <Text className="ml-1 text-[9px] font-black text-berry" numberOfLines={1}>{likes}</Text>
+              <Text className="ml-1 text-[10px] font-semibold text-berry" numberOfLines={1}>{likes}</Text>
             </Pressable>
           </View>
 
           <View className="px-1 pb-0.5 pt-2.5" style={{ minWidth: 0 }}>
-            <Text className="text-[13px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">{item.species}</Text>
-            <Text className="mt-1 text-[17px] font-black text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
+            <Text className="text-[14px] font-bold leading-5 text-ink" numberOfLines={1} ellipsizeMode="tail">{item.species}</Text>
+            <Text className="mt-1 text-[17px] font-bold text-ink" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>{item.price.toLocaleString()}원</Text>
 
             <View className="mt-0.5 flex-row flex-wrap">
               <ListingChip label={item.sex} />
@@ -126,12 +126,12 @@ export function ListingCard({
             </View>
 
             <View className="mt-2" style={{ minWidth: 0 }}>
-              <Text className="text-[11px] font-black text-berry" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
+              <Text className="text-[12px] font-semibold text-berry" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
             </View>
 
             <View className="mt-1 flex-row items-center" style={{ minWidth: 0 }}>
               <Ionicons name="star" size={12} color="#FFC83D" />
-              <Text className="ml-1 flex-1 text-[10px] font-black text-ink" numberOfLines={1} ellipsizeMode="tail">
+              <Text className="ml-1 flex-1 text-[12px] font-semibold text-ink" numberOfLines={1} ellipsizeMode="tail">
                 {rating.toFixed(1)} · 후기 {reviewSummary.totalReviews.toLocaleString()}개
               </Text>
             </View>

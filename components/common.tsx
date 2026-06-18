@@ -26,14 +26,14 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
     <View className={`border-b border-line bg-white px-5 ${compact ? 'pb-4 pt-4' : 'pb-5 pt-4'}`}>
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[22px] font-black text-ink">마이부기</Text>
-          {!compact ? <Text className="mt-1 text-[11px] font-semibold text-muted">거북이와 집사를 위한 믿을 수 있는 플랫폼</Text> : null}
+          <Text className="text-[22px] font-bold leading-8 text-ink">마이부기</Text>
+          {!compact ? <Text className="mt-1 text-[11px] font-medium leading-4 text-muted">거북이와 집사를 위한 믿을 수 있는 플랫폼</Text> : null}
         </View>
         <Pressable onPress={() => router.push('/notifications')} className="h-11 w-11 items-center justify-center rounded-full bg-soft">
           <Ionicons name="notifications-outline" color={colors.ink} size={20} />
           {unreadNotificationCount ? (
             <View className="absolute -right-1 -top-1 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 py-0.5">
-              <Text className="text-[9px] font-black text-white">{unreadNotificationCount}</Text>
+              <Text className="text-[9px] font-bold text-white">{unreadNotificationCount}</Text>
             </View>
           ) : null}
         </Pressable>
@@ -54,7 +54,7 @@ export function TopBar({ title, right, onRightPress }: { title: string; right?: 
       <Pressable onPress={() => router.back()} className="h-11 w-11 items-center justify-center rounded-full bg-soft">
         <Ionicons name="chevron-back" size={23} color={colors.ink} />
       </Pressable>
-      <Text className="flex-1 text-center text-[16px] font-black text-ink">{title}</Text>
+      <Text className="flex-1 text-center text-[16px] font-bold text-ink">{title}</Text>
       <Pressable onPress={onRightPress} disabled={!onRightPress} className="h-11 w-11 items-center justify-center rounded-full bg-soft">
         {right ? <Ionicons name={right} size={21} color={colors.ink} /> : null}
       </Pressable>
@@ -65,7 +65,7 @@ export function TopBar({ title, right, onRightPress }: { title: string; right?: 
 export function SectionHeader({ title, action = '전체보기', onPress }: { title: string; action?: string; onPress?: () => void }) {
   return (
     <View className="mb-4 mt-7 flex-row items-center justify-between px-5">
-      <Text className="text-[19px] font-black text-ink">{title}</Text>
+      <Text className="text-[20px] font-bold leading-7 text-ink">{title}</Text>
       <Pressable onPress={onPress} style={shadows.card} className="rounded-full bg-white px-3.5 py-2.5">
         <Text className="text-[10px] font-bold text-muted">{action}</Text>
       </Pressable>
@@ -77,7 +77,7 @@ export function Chip({ label, selected = false, icon }: { label: string; selecte
   return (
     <View className={`mr-2 flex-row items-center rounded-full px-3.5 py-2.5 ${selected ? 'bg-ink' : 'border border-line bg-white'}`}>
       {icon ? <Ionicons name={icon} size={13} color={selected ? 'white' : colors.berry} /> : null}
-      <Text className={`text-xs font-bold ${icon ? 'ml-1' : ''} ${selected ? 'text-white' : 'text-muted'}`}>{label}</Text>
+      <Text className={`text-[12px] font-semibold ${icon ? 'ml-1' : ''} ${selected ? 'text-white' : 'text-muted'}`}>{label}</Text>
     </View>
   );
 }
@@ -87,7 +87,7 @@ export function HorizontalRow({ children }: { children: ReactNode }) {
 }
 
 export function VerifiedBadge({ label = '인증 브리더' }: { label?: string }) {
-  return <View className="self-start rounded-full bg-blush px-2.5 py-1"><Text className="text-[9px] font-black text-berry">✓ {label}</Text></View>;
+  return <View className="self-start rounded-full bg-blush px-2.5 py-1"><Text className="text-[10px] font-semibold text-berry">✓ {label}</Text></View>;
 }
 
 export function EmptyImage({ icon = 'image-outline' }: { icon?: IconName }) {
@@ -95,7 +95,7 @@ export function EmptyImage({ icon = 'image-outline' }: { icon?: IconName }) {
 }
 
 export function Stat({ icon, value }: { icon: IconName; value: number | string }) {
-  return <View className="mr-3 flex-row items-center"><Ionicons name={icon} size={13} color={colors.muted} /><Text className="ml-1 text-[10px] text-muted">{value}</Text></View>;
+  return <View className="mr-3 flex-row items-center"><Ionicons name={icon} size={13} color={colors.subtle} /><Text className="ml-1 text-[12px] font-medium text-subtle">{value}</Text></View>;
 }
 
 export function Avatar({ uri, size = 38 }: { uri: string; size?: number }) {
