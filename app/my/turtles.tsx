@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Alert, Image, ScrollView, Text, View } from 'react-native';
+import Svg, { Circle, Line, Polyline, Text as SvgText } from 'react-native-svg';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { TopBar } from '@/components/common';
@@ -41,11 +42,20 @@ function OwnedTurtleCard({ turtle }: { turtle: ManagedTurtle }) {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function GrowthMetric({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-1 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
-      <Text className="text-[12px] font-semibold leading-4 text-[#9CA3AF]">{label}</Text>
-      <Text className="mt-2 text-[22px] font-black leading-7 text-[#111827]" numberOfLines={1}>{value}</Text>
+      <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{label}</Text>
+      <Text className="mt-2 text-[34px] font-extrabold leading-10 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.68}>{value}</Text>
+    </View>
+  );
+}
+
+function BreedingMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <View className="flex-1 rounded-[16px] bg-white px-3 py-3">
+      <Text className="text-[20px] font-bold leading-7 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.72}>{value}</Text>
+      <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#8A8F98]" numberOfLines={1}>{label}</Text>
     </View>
   );
 }
@@ -64,28 +74,85 @@ const shellRecords = [
   { date: '6/10', value: 12.8 },
 ];
 
-function GrowthBarChart({ title, records, unit }: { title: string; records: { date: string; value: number }[]; unit: string }) {
+function GrowthLineChart({ title, records, unit }: { title: string; records: { date: string; value: number }[]; unit: string }) {
+  const width = 320;
+  const height = 194;
+  const chartLeft = 42;
+  const chartRight = 16;
+  const chartTop = 38;
+  const chartBottom = 42;
+  const plotWidth = width - chartLeft - chartRight;
+  const plotHeight = height - chartTop - chartBottom;
   const max = Math.max(...records.map((record) => record.value));
   const min = Math.min(...records.map((record) => record.value));
-  const range = Math.max(max - min, 1);
+  const range = Math.max(max - min, unit === 'g' ? 10 : 0.5);
+  const yMin = min - range * 0.18;
+  const yMax = max + range * 0.18;
+  const yRange = yMax - yMin;
+  const points = records.map((record, index) => {
+    const x = chartLeft + (plotWidth / Math.max(records.length - 1, 1)) * index;
+    const y = chartTop + (1 - (record.value - yMin) / yRange) * plotHeight;
+    return { ...record, x, y };
+  });
+  const gridValues = [max, (max + min) / 2, min];
+  const polylinePoints = points.map((point) => `${point.x},${point.y}`).join(' ');
 
   return (
-    <View className="mt-4 rounded-[20px] bg-[#FFF8FB] px-4 py-4">
-      <Text className="text-[15px] font-black leading-5 text-[#111827]">{title}</Text>
-      <View className="mt-5 h-36 flex-row items-end justify-between">
-        {records.map((record, index) => (
-          <View key={`${title}-${record.date}`} className="items-center">
-            <Text className="mb-2 text-[11px] font-bold leading-4 text-[#111827]">{record.value}{unit}</Text>
-            <View
-              className="w-10 rounded-t-[12px] bg-[#FF8CB3]"
-              style={{ height: 52 + ((record.value - min) / range) * 46, opacity: 0.62 + index * 0.1 }}
-            />
-            <Text className="mt-2 text-[11px] font-semibold leading-4 text-[#8A8F98]">{record.date}</Text>
-          </View>
-        ))}
+    <View className="mt-4 overflow-hidden rounded-[20px] bg-[#FFF8FB] px-4 py-4">
+      <View className="flex-row items-center justify-between">
+        <Text className="text-[20px] font-bold leading-7 text-[#111827]">{title}</Text>
+        <Text className="text-[13px] font-semibold leading-5 text-[#FF4F8B]">단위 {unit}</Text>
       </View>
+      <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+        {gridValues.map((value) => {
+          const y = chartTop + (1 - (value - yMin) / yRange) * plotHeight;
+          return (
+            <Line
+              key={`${title}-grid-${value}`}
+              x1={chartLeft}
+              x2={width - chartRight}
+              y1={y}
+              y2={y}
+              stroke="#F1DDE6"
+              strokeWidth={1}
+              strokeDasharray="4 5"
+            />
+          );
+        })}
+        <Line x1={chartLeft} x2={chartLeft} y1={chartTop - 6} y2={height - chartBottom} stroke="#E9D5DD" strokeWidth={1} />
+        <Line x1={chartLeft} x2={width - chartRight} y1={height - chartBottom} y2={height - chartBottom} stroke="#E9D5DD" strokeWidth={1} />
+        {gridValues.map((value) => {
+          const y = chartTop + (1 - (value - yMin) / yRange) * plotHeight;
+          return (
+            <SvgText key={`${title}-axis-${value}`} x={8} y={y + 4} fill="#9CA3AF" fontSize={11} fontWeight="500">
+              {Math.round(value * 10) / 10}
+            </SvgText>
+          );
+        })}
+        <Polyline points={polylinePoints} fill="none" stroke="#FF4F8B" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
+        {points.map((point) => (
+          <Circle key={`${title}-point-${point.date}`} cx={point.x} cy={point.y} r={5} fill="#FFFFFF" stroke="#FF4F8B" strokeWidth={3} />
+        ))}
+        {points.map((point) => (
+          <SvgText key={`${title}-value-${point.date}`} x={point.x} y={point.y - 14} fill="#111827" fontSize={13} fontWeight="600" textAnchor="middle">
+            {point.value}{unit}
+          </SvgText>
+        ))}
+        {points.map((point) => (
+          <SvgText key={`${title}-date-${point.date}`} x={point.x} y={height - 14} fill="#9CA3AF" fontSize={11} fontWeight="500" textAnchor="middle">
+            {point.date}
+          </SvgText>
+        ))}
+      </Svg>
     </View>
   );
+}
+
+function daysUntil(dateText: string) {
+  const target = new Date(`${dateText.replace(/\./g, '-')}T00:00:00+09:00`);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.max(0, Math.ceil((target.getTime() - today.getTime()) / 86400000));
 }
 
 function AlbumStrip({ turtles }: { turtles: ManagedTurtle[] }) {
@@ -105,7 +172,8 @@ function AlbumStrip({ turtles }: { turtles: ManagedTurtle[] }) {
 function BreedingEntry() {
   const activeClutches = breedingClutches.filter((clutch) => clutch.status === 'incubating');
   const totalEggs = breedingClutches.reduce((total, clutch) => total + clutch.eggCount, 0);
-  const nextHatchDate = activeClutches.map((clutch) => clutch.expectedHatchDate).sort()[0] ?? '-';
+  const nextHatchDate = activeClutches.map((clutch) => clutch.expectedHatchDate).sort()[0];
+  const hatchDday = nextHatchDate ? `D-${daysUntil(nextHatchDate)}` : '-';
 
   return (
     <AnimatedPressable onPress={() => router.push('/my/turtles/breeding' as never)} className="rounded-[20px] bg-[#FFF8FB] p-4">
@@ -119,9 +187,9 @@ function BreedingEntry() {
         </View>
       </View>
       <View className="mt-4 flex-row gap-2">
-        <Metric label="인큐베이팅" value={`${activeClutches.length}건`} />
-        <Metric label="총 알" value={`${totalEggs}개`} />
-        <Metric label="부화 예정" value={nextHatchDate} />
+        <BreedingMetric label="인큐베이팅" value={`${activeClutches.length}건`} />
+        <BreedingMetric label="총 알" value={`${totalEggs}개`} />
+        <BreedingMetric label="부화 예정" value={hatchDday} />
       </View>
     </AnimatedPressable>
   );
@@ -158,15 +226,15 @@ export default function MyTurtlesScreen() {
 
           <Section title="성장 기록">
             <View className="flex-row gap-2">
-              <Metric label="최근 몸무게" value={`${mainTurtle.weight}g`} />
-              <Metric label="최근 등갑 길이" value={`${mainTurtle.shellLength}cm`} />
+              <GrowthMetric label="최근 몸무게" value={`${mainTurtle.weight}g`} />
+              <GrowthMetric label="최근 등갑 길이" value={`${mainTurtle.shellLength}cm`} />
             </View>
             <View className="mt-2 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
-              <Text className="text-[12px] font-semibold leading-4 text-[#9CA3AF]">최근 측정일</Text>
-              <Text className="mt-2 text-[22px] font-black leading-7 text-[#111827]">{mainTurtle.lastRecordDate}</Text>
+              <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">최근 측정일</Text>
+              <Text className="mt-2 text-[34px] font-extrabold leading-10 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.62}>{mainTurtle.lastRecordDate}</Text>
             </View>
-            <GrowthBarChart title="몸무게 변화" records={weightRecords} unit="g" />
-            <GrowthBarChart title="등갑 길이 변화" records={shellRecords} unit="cm" />
+            <GrowthLineChart title="몸무게 변화" records={weightRecords} unit="g" />
+            <GrowthLineChart title="등갑 길이 변화" records={shellRecords} unit="cm" />
           </Section>
 
           <Section title="산란 관리">

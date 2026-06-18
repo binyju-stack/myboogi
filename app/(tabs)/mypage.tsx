@@ -148,19 +148,45 @@ function ProfileHero({ profile }: { profile: UserProfile }) {
 
 function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
   return (
-    <View className="mt-4 flex-row px-4" style={{ columnGap: 6 }}>
+    <View
+      className="flex-row px-4"
+      style={{ columnGap: 8, marginTop: 16, marginBottom: 24, overflow: 'visible' }}
+    >
       {items.map((item) => (
         <Pressable
           key={item.label}
           onPress={() => item.href ? router.push(item.href as never) : undefined}
-          className="h-[88px] flex-1 items-center justify-center rounded-[16px] border border-line bg-white shadow-sm"
-          style={{ flex: 1, gap: 5 }}
+          className="flex-1 items-center justify-center border border-line bg-white shadow-sm"
+          style={{
+            height: 104,
+            minWidth: 0,
+            borderRadius: 20,
+            paddingVertical: 12,
+            overflow: 'visible',
+          }}
         >
-          <View className="h-8 w-8 items-center justify-center rounded-[12px] bg-blush">
-            <Ionicons name={item.icon} size={16} color={colors.berry} />
+          <View
+            className="items-center justify-center rounded-full bg-blush"
+            style={{ width: 40, height: 40, marginBottom: 8 }}
+          >
+            <Ionicons name={item.icon} size={23} color={colors.berry} />
           </View>
-          <Text className="text-[22px] font-black leading-7 text-[#111827]" numberOfLines={1}>{item.value}</Text>
-          <Text className="text-center text-[12px] font-semibold leading-4 text-[#8A8F98]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{item.label}</Text>
+          <Text
+            className="text-center text-[24px] font-extrabold leading-[30px] text-[#111827]"
+            numberOfLines={1}
+            style={{ marginBottom: 4, includeFontPadding: false }}
+          >
+            {item.value}
+          </Text>
+          <Text
+            className="text-center text-[13px] font-semibold leading-[18px] text-[#8A8F98]"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.82}
+            style={{ includeFontPadding: false }}
+          >
+            {item.label}
+          </Text>
         </Pressable>
       ))}
     </View>
