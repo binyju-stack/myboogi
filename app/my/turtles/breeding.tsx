@@ -9,6 +9,7 @@ import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
 import { breedingClutches, breedingStatusLabels, breedingTargetSexLabels } from '@/mockData/breeding';
 import type { BreedingClutch, BreedingEvent, BreedingEventType, BreedingStatus } from '@/types/breeding';
+import { getCalendarDayMeta } from '@/utils/holiday';
 
 type TabKey = 'calendar' | 'records';
 type FilterKey = 'all' | BreedingStatus;
@@ -33,6 +34,10 @@ function getDday(date: string) {
   return diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
 }
 
+function getDdayRange(startDate: string, endDate: string) {
+  return `${getDday(startDate)} ~ ${getDday(endDate)}`;
+}
+
 function getStatusStyle(status: BreedingStatus) {
   return {
     incubating: { bg: '#FFF1E6', text: '#FF9B4A' },
@@ -44,7 +49,7 @@ function getStatusStyle(status: BreedingStatus) {
 function SummaryCard() {
   const active = breedingClutches.filter((clutch) => clutch.status === 'incubating');
   const totalEggs = breedingClutches.reduce((total, clutch) => total + clutch.eggCount, 0);
-  const nearest = active.map((clutch) => clutch.expectedHatchDate).sort()[0];
+  const nearest = active.map((clutch) => clutch.expectedHatchStartDate).sort()[0];
   const items = [
     { label: '현재 인큐베이팅', value: `${active.length}건` },
     { label: '총 알 개수', value: `${totalEggs}개` },
@@ -141,6 +146,8 @@ function CalendarTab({ selected, onSelect }: { selected?: CalendarItem; onSelect
             const date = day ? `${year}.${`${month + 1}`.padStart(2, '0')}.${`${day}`.padStart(2, '0')}` : '';
             const events = date ? eventsByDate[date] ?? [] : [];
             const isSelected = Boolean(selected && selected.date === date);
+            const meta = day ? getCalendarDayMeta(new Date(year, month, day)) : undefined;
+            const isRedDay = Boolean(meta?.isSunday || meta?.isHoliday);
             return (
               <Pressable
                 key={`${date}-${index}`}
@@ -149,7 +156,12 @@ function CalendarTab({ selected, onSelect }: { selected?: CalendarItem; onSelect
                 className={`h-[58px] items-center justify-start border-b border-r border-[#ECECEC] pt-1.5 ${isSelected ? 'bg-[#FFF0F6]' : events.length ? 'bg-[#FFF8FB]' : 'bg-white'}`}
                 style={{ width: '14.2857%' }}
               >
-                {day ? <Text className="text-[12px] font-semibold leading-4 text-[#111827]">{day}</Text> : null}
+                {day ? (
+                  <>
+                    <Text className={`text-[12px] font-semibold leading-4 ${isRedDay ? 'text-[#EF4444]' : 'text-[#111827]'}`}>{day}</Text>
+                    {meta?.isHoliday ? <View className="mt-0.5 h-1 w-1 rounded-full bg-[#EF4444]" /> : null}
+                  </>
+                ) : null}
                 {events.length ? <Text className="mt-1 text-[14px] leading-4">{events.slice(0, 2).map((event) => event.icon).join('')}</Text> : null}
               </Pressable>
             );
@@ -178,6 +190,9 @@ function SelectedDateCard({ item }: { item: CalendarItem }) {
   return (
     <View className="mx-5 mt-4 rounded-[22px] border border-[#ECECEC] bg-white p-4">
       <Text className="text-[18px] font-bold leading-6 text-[#111827]">{item.date}</Text>
+      {getCalendarDayMeta(parseDate(item.date)).holidayName ? (
+        <Text className="mt-1 text-[12px] font-semibold leading-4 text-[#EF4444]">{getCalendarDayMeta(parseDate(item.date)).holidayName}</Text>
+      ) : null}
       <Text className="mt-1 text-[14px] font-semibold leading-5 text-[#FF4F8B]">클러치 #{clutch.clutchNumber}</Text>
       <View className="mt-3">
         <InfoRow label="산란일" value={clutch.layDate} />
@@ -187,7 +202,7 @@ function SelectedDateCard({ item }: { item: CalendarItem }) {
         <InfoRow label="현재온도" value={`${clutch.currentTemperature.toFixed(1)}℃`} />
         <InfoRow label="습도" value={`${clutch.humidity}%`} />
         <InfoRow label="목표 성별" value={breedingTargetSexLabels[clutch.targetSex]} />
-        <InfoRow label="예상 부화일" value={clutch.expectedHatchDate} />
+        <InfoRow label="예상 부화 범위" value={`${clutch.expectedHatchStartDate} ~ ${clutch.expectedHatchEndDate}`} />
         <View className="flex-row items-center justify-between border-b border-[#ECECEC] py-2.5">
           <Text className="text-[13px] font-medium text-[#8A8F98]">상태</Text>
           <View className="rounded-full px-3 py-1" style={{ backgroundColor: statusStyle.bg }}>
@@ -231,7 +246,7 @@ function RecordCard({ clutch }: { clutch: BreedingClutch }) {
         <View className="rounded-full px-3 py-1" style={{ backgroundColor: statusStyle.bg }}>
           <Text className="text-[12px] font-semibold" style={{ color: statusStyle.text }}>상태: {breedingStatusLabels[clutch.status]}</Text>
         </View>
-        <Text className="text-[12px] font-semibold text-[#FF4F8B]">예상 부화: {getDday(clutch.expectedHatchDate)}</Text>
+        <Text className="text-[12px] font-semibold text-[#FF4F8B]">부화 예상: {getDdayRange(clutch.expectedHatchStartDate, clutch.expectedHatchEndDate)}</Text>
       </View>
     </AnimatedPressable>
   );

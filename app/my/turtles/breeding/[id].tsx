@@ -60,7 +60,9 @@ export default function BreedingClutchDetailScreen() {
       <Section title="산란 정보">
         <DetailRow label="산란일" value={clutch.layDate} />
         <DetailRow label="알 개수" value={`${clutch.eggCount}개`} />
-        <DetailRow label="예상 부화일" value={clutch.expectedHatchDate} />
+        <DetailRow label="검란 예정일" value={clutch.candlingDate} />
+        <DetailRow label="예상 부화 범위" value={`${clutch.expectedHatchStartDate} ~ ${clutch.expectedHatchEndDate}`} />
+        {clutch.temperatureWarning ? <DetailRow label="온도 경고" value={clutch.temperatureWarning} /> : null}
       </Section>
 
       <Section title="알 정보">

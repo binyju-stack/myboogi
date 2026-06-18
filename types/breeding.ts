@@ -31,6 +31,12 @@ export interface BreedingClutch {
   humidity: number;
   targetSex: BreedingTargetSex;
   expectedHatchDate: string;
+  expectedHatchStartDate: string;
+  expectedHatchEndDate: string;
+  candlingDate: string;
+  temperatureCheckDates: string[];
+  temperatureWarning?: string;
+  holidayName?: string;
   status: BreedingStatus;
   memo?: string;
   temperatureLogs: TemperatureLog[];

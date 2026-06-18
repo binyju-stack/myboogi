@@ -1,6 +1,8 @@
 import type { BreedingClutch, BreedingClutchCreateInput, BreedingStatus, BreedingTargetSex } from '@/types/breeding';
+import { calculateBreedingSchedule } from '@/utils/breedingCalculator';
+import { formatDate, parseDate } from '@/utils/holiday';
 
-export const breedingClutches: BreedingClutch[] = [
+const initialBreedingClutches: Array<Omit<BreedingClutch, 'expectedHatchStartDate' | 'expectedHatchEndDate' | 'candlingDate' | 'temperatureCheckDates' | 'temperatureWarning'>> = [
   {
     id: 'clutch-4',
     turtleId: 'turtle-1',
@@ -147,46 +149,48 @@ export const breedingTargetSexLabels: Record<BreedingTargetSex, string> = {
   mixed: '혼합',
 };
 
-function parseDate(date: string) {
-  const [year, month, day] = date.split('.').map(Number);
-  return new Date(year, month - 1, day);
-}
-
-function formatDate(date: Date) {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
-
 function formatShortDate(date: Date) {
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
   return `${month}.${day}`;
 }
 
-function addDays(date: Date, days: number) {
-  const next = new Date(date);
-  next.setDate(next.getDate() + days);
-  return next;
-}
-
-export function calculateBreedingSchedule(layDate: string) {
-  const laid = parseDate(layDate);
-  const candlingDate = addDays(laid, 7);
-  const expectedHatchDate = addDays(laid, 90);
-  const temperatureCheckDates = Array.from({ length: 12 }, (_, index) => addDays(laid, (index + 1) * 7))
-    .filter((date) => date.getTime() < expectedHatchDate.getTime());
+export const breedingClutches: BreedingClutch[] = initialBreedingClutches.map((clutch) => {
+  const schedule = calculateBreedingSchedule({
+    layDate: clutch.layDate,
+    targetSex: clutch.targetSex,
+    targetTemperature: clutch.targetTemperature,
+  });
 
   return {
-    candlingDate: formatDate(candlingDate),
-    expectedHatchDate: formatDate(expectedHatchDate),
-    temperatureCheckDates: temperatureCheckDates.map(formatDate),
+    ...clutch,
+    expectedHatchDate: schedule.expectedHatchEndDate,
+    expectedHatchStartDate: schedule.expectedHatchStartDate,
+    expectedHatchEndDate: schedule.expectedHatchEndDate,
+    candlingDate: schedule.candlingDate,
+    temperatureCheckDates: schedule.temperatureCheckDates,
+    temperatureWarning: schedule.warningMessage,
+    events: [
+      ...clutch.events.filter((event) => event.type !== 'hatch' && event.type !== 'temperature'),
+      ...schedule.temperatureCheckDates.slice(0, 4).map((date, index) => ({
+        id: `${clutch.id}-auto-temp-${index + 1}`,
+        date,
+        type: 'temperature' as const,
+        title: '온도 체크일',
+        description: `${clutch.currentTemperature.toFixed(1)}℃ / 습도 ${clutch.humidity}% 확인 예정`,
+      })),
+      { id: `${clutch.id}-hatch-start`, date: schedule.expectedHatchStartDate, type: 'hatch' as const, title: '예상 부화 시작일', description: '목표 성별 기준 예상값입니다.' },
+      { id: `${clutch.id}-hatch-end`, date: schedule.expectedHatchEndDate, type: 'hatch' as const, title: '예상 부화 종료일', description: '실제 부화일은 종, 습도, 온도 편차에 따라 달라질 수 있습니다.' },
+    ],
   };
-}
+});
 
 export function createBreedingClutch(input: BreedingClutchCreateInput) {
-  const schedule = calculateBreedingSchedule(input.layDate);
+  const schedule = calculateBreedingSchedule({
+    layDate: input.layDate,
+    targetSex: input.targetSex,
+    targetTemperature: input.targetTemperature,
+  });
   const nextNumber = Math.max(...breedingClutches.map((clutch) => clutch.clutchNumber), 0) + 1;
   const id = `clutch-${Date.now()}`;
   const weeklyTemperatureEvents = schedule.temperatureCheckDates.map((date, index) => ({
@@ -209,7 +213,12 @@ export function createBreedingClutch(input: BreedingClutchCreateInput) {
     currentTemperature: input.currentTemperature,
     humidity: input.humidity,
     targetSex: input.targetSex,
-    expectedHatchDate: schedule.expectedHatchDate,
+    expectedHatchDate: schedule.expectedHatchEndDate,
+    expectedHatchStartDate: schedule.expectedHatchStartDate,
+    expectedHatchEndDate: schedule.expectedHatchEndDate,
+    candlingDate: schedule.candlingDate,
+    temperatureCheckDates: schedule.temperatureCheckDates,
+    temperatureWarning: schedule.warningMessage,
     status: 'incubating',
     memo: input.memo,
     temperatureLogs: [
@@ -224,7 +233,8 @@ export function createBreedingClutch(input: BreedingClutchCreateInput) {
       { id: `${id}-laid`, date: input.layDate, type: 'laid', title: '산란일', description: `${input.eggCount}개 산란 기록` },
       { id: `${id}-candling`, date: schedule.candlingDate, type: 'candling', title: '검란 예정일', description: '산란일 기준 7일 후 검란 예정' },
       ...weeklyTemperatureEvents,
-      { id: `${id}-hatch`, date: schedule.expectedHatchDate, type: 'hatch', title: '부화 예정일', description: '산란일 기준 90일 후 부화 예정' },
+      { id: `${id}-hatch-start`, date: schedule.expectedHatchStartDate, type: 'hatch', title: '예상 부화 시작일', description: '목표 성별 기준 예상값입니다.' },
+      { id: `${id}-hatch-end`, date: schedule.expectedHatchEndDate, type: 'hatch', title: '예상 부화 종료일', description: '실제 부화일은 종, 습도, 온도 편차에 따라 달라질 수 있습니다.' },
     ],
   };
 

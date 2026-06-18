@@ -5,9 +5,11 @@ import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'reac
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TopBar } from '@/components/common';
-import { calculateBreedingSchedule, createBreedingClutch } from '@/mockData/breeding';
+import { createBreedingClutch } from '@/mockData/breeding';
 import { managedTurtles } from '@/mockData/turtles';
 import type { BreedingTargetSex } from '@/types/breeding';
+import { calculateBreedingSchedule } from '@/utils/breedingCalculator';
+import { getCalendarDayMeta } from '@/utils/holiday';
 
 type FieldKey = 'layDate' | 'eggCount' | 'incubatorName' | 'targetTemperature' | 'currentTemperature' | 'humidity' | 'memo';
 
@@ -100,6 +102,7 @@ function DatePickerModal({
   const month = viewDate.getMonth();
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const selectedHoliday = getCalendarDayMeta(draftDate).holidayName;
   const cells = [
     ...Array.from({ length: firstDay }, () => 0),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
@@ -134,6 +137,8 @@ function DatePickerModal({
               const date = day ? new Date(year, month, day) : undefined;
               const selected = Boolean(date && sameDate(date, draftDate));
               const isToday = Boolean(date && sameDate(date, today));
+              const meta = date ? getCalendarDayMeta(date) : undefined;
+              const isRedDay = Boolean(meta?.isSunday || meta?.isHoliday);
               return (
                 <Pressable
                   key={`${year}-${month}-${day}-${index}`}
@@ -144,13 +149,19 @@ function DatePickerModal({
                 >
                   {date ? (
                     <View className={`h-9 w-9 items-center justify-center rounded-full ${selected ? 'bg-[#FF4F8B]' : isToday ? 'border border-[#FF4F8B] bg-white' : ''}`}>
-                      <Text className={`text-[13px] font-semibold ${selected ? 'text-white' : isToday ? 'text-[#FF4F8B]' : 'text-[#111827]'}`}>{day}</Text>
+                      <Text className={`text-[13px] font-semibold ${selected ? 'text-white' : isRedDay ? 'text-[#EF4444]' : isToday ? 'text-[#FF4F8B]' : 'text-[#111827]'}`}>{day}</Text>
+                      {meta?.isHoliday ? <View className={`mt-0.5 h-1 w-1 rounded-full ${selected ? 'bg-white' : 'bg-[#EF4444]'}`} /> : null}
                     </View>
                   ) : null}
                 </Pressable>
               );
             })}
           </View>
+          {selectedHoliday ? (
+            <View className="mt-3 rounded-[12px] bg-[#FEF2F2] px-3 py-2">
+              <Text className="text-[12px] font-semibold text-[#EF4444]">{formatDate(draftDate)} {selectedHoliday}</Text>
+            </View>
+          ) : null}
 
           <View className="mt-5 flex-row">
             <Pressable onPress={onCancel} className="mr-2 h-12 flex-1 items-center justify-center rounded-[16px] bg-[#F5F6F8]">
@@ -184,7 +195,11 @@ export default function BreedingCreateScreen() {
     () => managedTurtles.find((turtle) => turtle.id === selectedTurtleId) ?? managedTurtles[0],
     [selectedTurtleId],
   );
-  const schedule = useMemo(() => calculateBreedingSchedule(form.layDate), [form.layDate]);
+  const schedule = useMemo(() => calculateBreedingSchedule({
+    layDate: form.layDate,
+    targetSex,
+    targetTemperature: toNumber(form.targetTemperature),
+  }), [form.layDate, form.targetTemperature, targetSex]);
 
   const update = (key: FieldKey) => (value: string) => setForm((prev) => ({ ...prev, [key]: value }));
 
@@ -251,8 +266,14 @@ export default function BreedingCreateScreen() {
           <View className="mt-3 rounded-[16px] bg-[#FFF8FB] px-4 py-3">
             <Text className="text-[12px] font-medium leading-4 text-[#8A8F98]">자동 계산</Text>
             <Text className="mt-1 text-[13px] font-semibold leading-5 text-[#111827]">검란 예정일 {schedule.candlingDate}</Text>
-            <Text className="mt-0.5 text-[13px] font-semibold leading-5 text-[#111827]">부화 예정일 {schedule.expectedHatchDate}</Text>
+            <Text className="mt-0.5 text-[13px] font-semibold leading-5 text-[#111827]">예상 부화 범위 {schedule.expectedHatchStartDate} ~ {schedule.expectedHatchEndDate}</Text>
             <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#8A8F98]">온도 체크 일정은 산란일 기준 주 1회 생성돼요.</Text>
+            <Text className="mt-1 text-[12px] font-medium leading-4 text-[#8A8F98]">목표 성별 기준 예상값입니다. 실제 부화일은 종, 습도, 온도 편차에 따라 달라질 수 있습니다.</Text>
+            {schedule.warningMessage ? (
+              <View className="mt-2 rounded-[12px] bg-[#FFF1E6] px-3 py-2">
+                <Text className="text-[12px] font-semibold leading-4 text-[#FF9B4A]">{schedule.warningMessage}</Text>
+              </View>
+            ) : null}
           </View>
           <Field label="알 개수" value={form.eggCount} onChangeText={update('eggCount')} placeholder="6" keyboardType="numeric" />
           <Field label="인큐베이터명" value={form.incubatorName} onChangeText={update('incubatorName')} placeholder="부기룸 1호" />
