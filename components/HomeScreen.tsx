@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
@@ -16,7 +16,7 @@ import { Page } from './screen';
 import { StarRating } from './StarRating';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-type SectionIconVariant = 'flame' | 'community' | 'trophy' | 'review';
+type SectionIconVariant = 'flame' | 'community' | 'trophy' | 'review' | 'listing';
 
 const promoBanners = [
   {
@@ -95,6 +95,7 @@ const sectionIcons: Record<SectionIconVariant, { name: IconName; color: string; 
   community: { name: 'chatbubble-ellipses', color: '#4593D6', backgroundColor: '#EAF5FF' },
   trophy: { name: 'trophy', color: '#E9A008', backgroundColor: '#FFF7D6' },
   review: { name: 'star', color: '#FFC83D', backgroundColor: '#FFF7D6' },
+  listing: { name: 'storefront', color: '#FF4F8B', backgroundColor: '#FFF0F6' },
 };
 
 function SectionIcon({ variant }: { variant: SectionIconVariant }) {
@@ -395,6 +396,82 @@ function RecentReviewsSection() {
   );
 }
 
+function CompactListingRow({ listing, index }: { listing: (typeof listings)[number]; index: number }) {
+  const breeder = breeders.find((item) => item.id === listing.breederId);
+  const summary = getReviewSummary(listing.breederId);
+
+  return (
+    <AnimatedPressable
+      onPress={() => router.push(`/listing/${listing.id}` as never)}
+      className={`flex-row bg-white py-4 ${index ? 'border-t border-[#ECECEC]' : ''}`}
+    >
+      <View className="h-[96px] w-[96px] overflow-hidden rounded-[14px] bg-shell">
+        <Image source={{ uri: listing.image }} className="h-full w-full" resizeMode="cover" />
+        <View className="absolute left-2 top-2 rounded-full bg-[#FFF0F6] px-2 py-1">
+          <Text className="text-[10px] font-semibold text-[#FF4F8B]">{listing.status}</Text>
+        </View>
+      </View>
+      <View className="ml-3 flex-1 py-0.5" style={{ minWidth: 0 }}>
+        <Text className="text-[16px] font-semibold leading-5 text-[#222222]" numberOfLines={1}>{listing.species}</Text>
+        <Text className="mt-1 text-[15px] font-bold leading-5 text-[#111827]" numberOfLines={1}>{listing.price.toLocaleString()}원</Text>
+        <Text className="mt-1.5 text-[12px] font-medium leading-4 text-[#8A8F98]" numberOfLines={1}>
+          {breeder?.name ?? '브리더'} · {listing.location}
+        </Text>
+        <View className="mt-2 flex-row items-center">
+          <Ionicons name="star" size={13} color="#FFC83D" />
+          <Text className="ml-1 text-[12px] font-medium leading-4 text-[#666666]" numberOfLines={1}>
+            {summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개
+          </Text>
+        </View>
+        <View className="mt-1 flex-row items-center">
+          <Ionicons name="heart-outline" size={13} color="#A0A5AD" />
+          <Text className="ml-1 text-[12px] font-medium leading-4 text-[#9CA3AF]">찜 {listing.likes.toLocaleString()}</Text>
+        </View>
+      </View>
+    </AnimatedPressable>
+  );
+}
+
+function HomeFeedSection({
+  title,
+  icon,
+  children,
+  onMorePress,
+  moreLabel,
+}: {
+  title: string;
+  icon: SectionIconVariant;
+  children: ReactNode;
+  onMorePress: () => void;
+  moreLabel: string;
+}) {
+  return (
+    <View className="mt-7">
+      <SectionHeader title={title} icon={icon} />
+      <View className="mx-5 rounded-[20px] border border-[#ECECEC] bg-white px-4">
+        {children}
+      </View>
+      <Pressable onPress={onMorePress} className="mx-5 mt-3 h-12 items-center justify-center rounded-[14px] border border-[#ECECEC] bg-white">
+        <Text className="text-[15px] font-semibold text-[#222222]">{moreLabel}</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+function NewListingsSection() {
+  const recentListings = [...listings]
+    .sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? ''))
+    .slice(0, 5);
+
+  return (
+    <HomeFeedSection title="새로 올라온 분양" icon="listing" moreLabel="분양글 더보기" onMorePress={() => router.push('/marketplace')}>
+      {recentListings.map((listing, index) => (
+        <CompactListingRow key={listing.id} listing={listing} index={index} />
+      ))}
+    </HomeFeedSection>
+  );
+}
+
 export function HomeScreen() {
   return (
     <Page>
@@ -406,6 +483,7 @@ export function HomeScreen() {
       <CommunityHotSection />
       <PopularBreedersSection />
       <RecentReviewsSection />
+      <NewListingsSection />
     </Page>
   );
 }
