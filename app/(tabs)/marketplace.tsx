@@ -1,136 +1,116 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Alert, FlatList, Modal, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
+import { Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AnimatedPressable } from '@/components/AnimatedPressable';
-import { BrandHeader, Chip } from '@/components/common';
-import { ListingCard } from '@/components/ListingCard';
+import { BrandHeader } from '@/components/common';
+import { ListingGridCard } from '@/components/ListingGridCard';
 import { colors } from '@/constants/theme';
 import { listings } from '@/data/mockData';
 
-const filterGroups = [
-  { title: '품종', options: ['레오파드', '머스크터틀', '레드풋', '설가타'] },
-  { title: '지역', options: ['서울', '경기', '인천', '전국 상담'] },
-  { title: '가격대', options: ['30만원 이하', '30-50만원', '50만원 이상'] },
-  { title: '성별', options: ['수컷', '암컷', '미구분'] },
-  { title: '성장 단계', options: ['유체', '아성체', '성체'] },
-];
+const filterPills = ['전체', '모프', '성별', '크기', '가격', '지역'];
+const checkOptions = ['네고', '분양완료', '신규개체'];
 
-function FilterSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const insets = useSafeAreaInsets();
+function FilterPill({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 justify-end bg-black/35">
-        <Pressable className="absolute inset-0" onPress={onClose} />
-        <View className="max-h-[86%] rounded-t-[30px] bg-white px-5 pt-5 shadow-lg" style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
-          <View className="mb-5 flex-row items-center justify-between">
-            <View>
-              <Text className="text-[10px] font-semibold text-berry">FILTER</Text>
-              <Text className="mt-1 text-[22px] font-bold leading-8 text-ink">분양 조건 찾기</Text>
-            </View>
-            <AnimatedPressable onPress={onClose} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
-              <Ionicons name="close" size={20} color={colors.ink} />
-            </AnimatedPressable>
-          </View>
+    <Pressable
+      onPress={onPress}
+      className="mr-2 h-9 items-center justify-center rounded-full border px-3.5"
+      style={{
+        borderColor: selected ? colors.berry : '#E5E7EB',
+        backgroundColor: selected ? '#FFF0F6' : '#FFFFFF',
+      }}
+    >
+      <Text className="text-[13px] font-medium leading-[18px]" style={{ color: selected ? colors.berry : '#4B5563' }}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
 
-          <ScrollView showsVerticalScrollIndicator={false} className="max-h-[520px]">
-            {filterGroups.map((group) => (
-              <View key={group.title} className="mb-5">
-                <Text className="mb-3 text-[13px] font-semibold text-ink">{group.title}</Text>
-                <View className="flex-row flex-wrap">
-                  {group.options.map((option, index) => (
-                    <AnimatedPressable key={option} className={`mb-2 mr-2 rounded-full px-3.5 py-2.5 ${index === 0 ? 'bg-berry' : 'bg-soft'}`}>
-                      <Text className={`text-[12px] font-semibold ${index === 0 ? 'text-white' : 'text-muted'}`}>{option}</Text>
-                    </AnimatedPressable>
-                  ))}
-                </View>
-              </View>
-            ))}
-
-            {['인증 브리더만 보기', '분양중만 보기'].map((label) => (
-              <AnimatedPressable key={label} className="mb-3 flex-row items-center justify-between rounded-[18px] bg-soft px-4 py-4">
-                <Text className="text-[13px] font-semibold text-ink">{label}</Text>
-                <View className="h-6 w-11 items-end justify-center rounded-full bg-berry px-1">
-                  <View className="h-4 w-4 rounded-full bg-white" />
-                </View>
-              </AnimatedPressable>
-            ))}
-          </ScrollView>
-
-          <View className="mt-4 flex-row gap-3 border-t border-line pt-4">
-            <AnimatedPressable className="flex-1 items-center rounded-[18px] bg-soft py-4">
-              <Text className="text-[13px] font-semibold text-muted">초기화</Text>
-            </AnimatedPressable>
-            <AnimatedPressable onPress={() => Alert.alert('필터 적용 기능은 준비중입니다.')} className="flex-[1.5] items-center rounded-[18px] bg-berry py-4">
-              <Text className="text-[13px] font-semibold text-white">적용하기</Text>
-            </AnimatedPressable>
-          </View>
-        </View>
+function CheckOption({ label, checked, onPress }: { label: string; checked: boolean; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} className="mr-4 flex-row items-center">
+      <View
+        className="h-[18px] w-[18px] items-center justify-center rounded-[5px] border"
+        style={{
+          borderColor: checked ? colors.berry : '#D1D5DB',
+          backgroundColor: checked ? colors.berry : '#FFFFFF',
+        }}
+      >
+        {checked ? <Ionicons name="checkmark" size={13} color="#FFFFFF" /> : null}
       </View>
-    </Modal>
+      <Text className="ml-1.5 text-[13px] font-medium leading-[18px] text-[#4B5563]">{label}</Text>
+    </Pressable>
   );
 }
 
 export default function MarketplaceScreen() {
-  const [filterVisible, setFilterVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const horizontalPadding = 40;
-  const columnGap = 12;
-  const cardWidth = useMemo(() => Math.min(240, Math.max(156, Math.floor((width - horizontalPadding - columnGap) / 2))), [width]);
-
-  const header = (
-    <View>
-      <BrandHeader compact />
-      <View className="bg-white px-5 pb-4">
-        <Text className="mb-4 text-[22px] font-bold leading-8 text-ink">건강한 새 가족을 만나보세요</Text>
-        <View className="flex-row gap-2">
-          <Pressable onPress={() => router.push('/search')} className="flex-1 flex-row items-center rounded-[18px] bg-soft px-4 py-3.5">
-            <Ionicons name="search" size={18} color={colors.muted} />
-            <Text className="ml-2 text-[13px] text-muted" numberOfLines={1}>어떤 거북이를 찾고 계신가요?</Text>
-          </Pressable>
-          <AnimatedPressable onPress={() => setFilterVisible(true)} className="h-[50px] w-[50px] items-center justify-center rounded-[18px] bg-blush">
-            <Ionicons name="options-outline" size={20} color={colors.berry} />
-          </AnimatedPressable>
-        </View>
-      </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 py-4">
-        <AnimatedPressable onPress={() => setFilterVisible(true)}><Chip label="전체" selected /></AnimatedPressable>
-        <AnimatedPressable onPress={() => setFilterVisible(true)}><Chip label="품종" icon="chevron-down" /></AnimatedPressable>
-        <AnimatedPressable onPress={() => setFilterVisible(true)}><Chip label="가격" icon="chevron-down" /></AnimatedPressable>
-        <AnimatedPressable onPress={() => setFilterVisible(true)}><Chip label="지역" icon="chevron-down" /></AnimatedPressable>
-        <AnimatedPressable onPress={() => setFilterVisible(true)}><Chip label="유체/성체" icon="chevron-down" /></AnimatedPressable>
-      </ScrollView>
-
-      <View className="flex-row items-center justify-between px-5 pb-4 pt-1">
-        <View>
-          <Text className="text-[10px] font-semibold text-berry">MARKETPLACE</Text>
-          <Text className="mt-1 text-[20px] font-bold leading-7 text-ink">분양중인 거북이</Text>
-        </View>
-        <Pressable onPress={() => router.push('/listing/create')} className="flex-row items-center rounded-full bg-berry px-3.5 py-2.5">
-          <Ionicons name="add" size={14} color="white" />
-          <Text className="ml-1 text-[11px] font-semibold text-white">분양글 등록</Text>
-        </Pressable>
-      </View>
-    </View>
+  const [selectedFilter, setSelectedFilter] = useState('전체');
+  const [checkedOptions, setCheckedOptions] = useState<string[]>(['신규개체']);
+  const cardWidth = useMemo(() => Math.floor((width - 40 - 12) / 2), [width]);
+  const sortedListings = useMemo(
+    () => [...listings].sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? '')),
+    [],
   );
 
+  const toggleOption = (label: string) => {
+    setCheckedOptions((current) => (current.includes(label) ? current.filter((item) => item !== label) : [...current, label]));
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-page" edges={['top']}>
-      <FlatList
-        data={listings}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        ListHeaderComponent={header}
-        renderItem={({ item, index }) => <ListingCard item={item} index={index} cardWidth={cardWidth} />}
-        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 20 }}
-        contentContainerStyle={{ paddingBottom: 32 + insets.bottom }}
-        showsVerticalScrollIndicator={false}
-      />
-      <FilterSheet visible={filterVisible} onClose={() => setFilterVisible(false)} />
+    <SafeAreaView edges={['top']} className="flex-1 bg-[#FAFAFA]">
+      <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 118 }} showsVerticalScrollIndicator={false}>
+        <View className="pb-4">
+          <BrandHeader compact />
+          <View className="px-5 pt-3">
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-[24px] font-bold leading-8 text-[#111827]">분양</Text>
+                <Text className="mt-1 text-[13px] font-medium leading-[18px] text-[#8A8F98]">믿을 수 있는 브리더의 새 개체를 만나보세요</Text>
+              </View>
+              <Pressable onPress={() => router.push('/search')} className="h-10 w-10 items-center justify-center rounded-full bg-white">
+                <Ionicons name="search" size={20} color="#111827" />
+              </Pressable>
+            </View>
+          </View>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pt-5">
+            {filterPills.map((label) => (
+              <FilterPill key={label} label={label} selected={selectedFilter === label} onPress={() => setSelectedFilter(label)} />
+            ))}
+          </ScrollView>
+
+          <View className="mt-3 flex-row items-center justify-between px-5">
+            <View className="flex-row items-center">
+              {checkOptions.map((label) => (
+                <CheckOption key={label} label={label} checked={checkedOptions.includes(label)} onPress={() => toggleOption(label)} />
+              ))}
+            </View>
+            <Pressable className="flex-row items-center">
+              <Text className="text-[13px] font-semibold leading-[18px] text-[#4B5563]">최신순</Text>
+              <Ionicons name="chevron-down" size={15} color="#6B7280" />
+            </Pressable>
+          </View>
+        </View>
+
+        <View className="flex-row flex-wrap justify-between px-5">
+          {sortedListings.map((item, index) => (
+            <ListingGridCard key={item.id} item={item} index={index} width={cardWidth} />
+          ))}
+        </View>
+      </ScrollView>
+
+      <Pressable
+        onPress={() => router.push('/listing/create')}
+        className="absolute right-5 h-[60px] w-[60px] items-center justify-center rounded-full shadow-lg"
+        style={{ bottom: insets.bottom + 92, backgroundColor: colors.berry }}
+      >
+        <Ionicons name="add" size={30} color="#FFFFFF" />
+      </Pressable>
     </SafeAreaView>
   );
 }

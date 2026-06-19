@@ -1,94 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, FlatList, Image, Pressable, ScrollView, Text, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
 import { homeBanners } from '@/data/homeScreenData';
-import { breederReviews, breeders, listings } from '@/data/mockData';
+import { breederReviews, breeders, listings, posts } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
-
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
-import { BrandHeader, Avatar } from './common';
+import { Avatar, BrandHeader } from './common';
 import { ListingCard } from './ListingCard';
+import { ListingGridCard } from './ListingGridCard';
 import { Page } from './screen';
 import { StarRating } from './StarRating';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 type SectionIconVariant = 'flame' | 'community' | 'trophy' | 'review' | 'listing';
-
-const promoBanners = [
-  {
-    id: 'home-promo-1',
-    title: '건강한 거북이 분양은\n신뢰할 수 있는 브리더부터',
-    description: '인증 브리더의 분양 개체를 확인해보세요.',
-    actionLabel: '바로가기 >',
-    image: homeBanners[0]?.image,
-    href: '/marketplace',
-  },
-  {
-    id: 'home-promo-2',
-    title: '처음 키우는 거북이\n무엇부터 준비해야 할까요?',
-    description: '커뮤니티에서 사육 정보를 확인해보세요.',
-    actionLabel: '바로가기 >',
-    image: homeBanners[1]?.image ?? homeBanners[0]?.image,
-    href: '/community',
-  },
-  {
-    id: 'home-promo-3',
-    title: '마이부기 브리더 인증\n지금 신청할 수 있어요.',
-    description: '분양 신뢰도를 높이는 첫 단계입니다.',
-    actionLabel: '신청하기 >',
-    image: homeBanners[2]?.image ?? homeBanners[0]?.image,
-    href: '/breeder/verification/apply',
-  },
-];
-
-const hotPosts = [
-  {
-    id: 'p1',
-    badge: '베스트글',
-    category: '사육상담',
-    title: '헤르만 육지거북 온욕 주기 궁금합니다.',
-    content: '온욕을 주 2회 정도 하고 있는데 혹시 너무 자주 하는 건 아닌지 궁금합니다. 사육장 습도와 물 온도도 같이 봐야 할까요?',
-    author: '핑크셀브리더',
-    createdAt: '3시간 전',
-    views: 3652,
-    comments: 76,
-    likes: 126,
-  },
-  {
-    id: 'p3',
-    badge: '새글',
-    category: '질병상담',
-    title: '눈을 자꾸 감고 있는데 병원 가야 할까요?',
-    content: '오늘 아침부터 한쪽 눈을 평소보다 덜 뜨는 것 같아 걱정돼요. 먹이는 먹었고 움직임도 괜찮은데 조언 부탁드립니다.',
-    author: '부기맘',
-    createdAt: '1시간 전',
-    views: 842,
-    comments: 14,
-    likes: 32,
-  },
-  {
-    id: 'p2',
-    badge: '베스트글',
-    category: '산란정보',
-    title: '초산 테라핀 산란장 세팅 공유합니다.',
-    content: '처음 산란을 준비하면서 모래 깊이와 은신처 위치를 조금씩 바꿔봤습니다. 비슷한 상황인 분들께 도움이 되었으면 해요.',
-    author: '테라핀연구소',
-    createdAt: '5시간 전',
-    views: 1208,
-    comments: 33,
-    likes: 91,
-  },
-];
-
-const breederSpecialties: Record<string, string> = {
-  b1: '레오파드 육지거북 · 별거북',
-  b2: '설가타 · 헤르만 · 육지거북',
-  b3: '테라핀 · 뉴블러드 · 하이퀄리티',
-};
 
 const sectionIcons: Record<SectionIconVariant, { name: IconName; color: string; backgroundColor: string }> = {
   flame: { name: 'flame', color: '#FF7A1A', backgroundColor: '#FFF3E8' },
@@ -98,72 +24,18 @@ const sectionIcons: Record<SectionIconVariant, { name: IconName; color: string; 
   listing: { name: 'storefront', color: '#FF4F8B', backgroundColor: '#FFF0F6' },
 };
 
-function SectionIcon({ variant }: { variant: SectionIconVariant }) {
-  const progress = useRef(new Animated.Value(0)).current;
-  const meta = sectionIcons[variant];
-
-  useEffect(() => {
-    if (variant === 'review') return;
-
-    const duration = variant === 'flame' ? 1000 : variant === 'community' ? 2000 : 3000;
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(progress, {
-          toValue: 1,
-          duration: duration / 2,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(progress, {
-          toValue: 0,
-          duration: duration / 2,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    animation.start();
-    return () => animation.stop();
-  }, [progress, variant]);
-
-  const animatedStyle =
-    variant === 'flame'
-      ? {
-          opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }),
-          transform: [
-            { scale: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] }) },
-            { rotate: progress.interpolate({ inputRange: [0, 0.5, 1], outputRange: ['-3deg', '3deg', '-2deg'] }) },
-          ],
-        }
-      : variant === 'community'
-        ? {
-            opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }),
-            transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [0, -2] }) }],
-          }
-        : variant === 'trophy'
-          ? {
-              opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] }),
-              transform: [{ scale: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 1.02] }) }],
-            }
-          : {};
-
-  return (
-    <Animated.View
-      className="mr-2 h-8 w-8 items-center justify-center rounded-full"
-      style={[animatedStyle, { backgroundColor: meta.backgroundColor }]}
-    >
-      <Ionicons name={meta.name} size={17} color={meta.color} />
-    </Animated.View>
-  );
-}
-
 function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionIconVariant; onPress?: () => void }) {
+  const meta = sectionIcons[icon];
+
   return (
     <View className="mb-5 flex-row items-center justify-between px-5">
       <View className="flex-1 flex-row items-center">
-        <SectionIcon variant={icon} />
-        <Text className="flex-1 text-[20px] font-bold leading-7 text-[#222222]" numberOfLines={1}>{title}</Text>
+        <View className="mr-2 h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: meta.backgroundColor }}>
+          <Ionicons name={meta.name} size={17} color={meta.color} />
+        </View>
+        <Text className="flex-1 text-[20px] font-bold leading-7 text-[#222222]" numberOfLines={1}>
+          {title}
+        </Text>
       </View>
       {onPress ? (
         <Pressable onPress={onPress} className="flex-row items-center">
@@ -175,29 +47,22 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
   );
 }
 
-function Meta({ icon, value }: { icon: IconName; value: number }) {
+function Section({ title, icon, onPress, children }: { title: string; icon: SectionIconVariant; onPress?: () => void; children: ReactNode }) {
   return (
-    <View className="mr-2 flex-row items-center rounded-full bg-[#F5F6F8] px-2 py-1">
-      <Ionicons name={icon} size={12} color="#A0A5AD" />
-      <Text className="ml-1 text-[12px] font-medium text-[#A0A5AD]">{value.toLocaleString()}</Text>
+    <View className="mt-7">
+      <SectionHeader title={title} icon={icon} onPress={onPress} />
+      {children}
     </View>
-  );
-}
-
-function PostBadge({ label }: { label: string }) {
-  return (
-    <Text className="overflow-hidden rounded-full bg-[#FFF1E6] px-2.5 py-1 text-[12px] font-semibold leading-[18px] text-[#FF9B4A]">
-      {label}
-    </Text>
   );
 }
 
 function NoticeBar() {
   return (
     <View className="mx-5 mt-4 h-9 flex-row items-center rounded-[18px] bg-[#222222] px-4">
-      <Ionicons name="megaphone-outline" size={15} color="white" />
-      <Text className="ml-2 flex-1 text-[12px] font-medium text-white" numberOfLines={1}>공지사항  마이부기 브리더 인증 기능이 추가되었습니다.</Text>
-      <Ionicons name="close" size={14} color="white" />
+      <Ionicons name="megaphone-outline" size={15} color="#FFFFFF" />
+      <Text className="ml-2 flex-1 text-[12px] font-medium text-white" numberOfLines={1}>
+        마이부기 신규 분양글과 커뮤니티 소식을 확인해보세요.
+      </Text>
     </View>
   );
 }
@@ -212,163 +77,109 @@ function SearchBar() {
   );
 }
 
-function BannerIndicator({ active }: { active: boolean }) {
-  const progress = useRef(new Animated.Value(active ? 1 : 0)).current;
-
-  useEffect(() => {
-    Animated.spring(progress, { toValue: active ? 1 : 0, useNativeDriver: false, speed: 18, bounciness: 5 }).start();
-  }, [active, progress]);
-
-  const width = progress.interpolate({ inputRange: [0, 1], outputRange: [6, 22] });
-  const backgroundColor = progress.interpolate({ inputRange: [0, 1], outputRange: ['#E5E7EB', colors.berry] });
-
-  return <Animated.View style={{ width, backgroundColor }} className="h-1.5 rounded-full" />;
-}
-
-function PromotionBannerCarousel() {
-  const listRef = useRef<FlatList<(typeof promoBanners)[number]>>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { width } = useWindowDimensions();
-  const bannerWidth = Math.max(280, width - 40);
-  const bannerGap = 12;
-  const snapInterval = bannerWidth + bannerGap;
-
-  const goToIndex = useCallback((index: number) => {
-    listRef.current?.scrollToIndex({ index, animated: true });
-    setActiveIndex(index);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex((current) => {
-        const next = (current + 1) % promoBanners.length;
-        listRef.current?.scrollToIndex({ index: next, animated: true });
-        return next;
-      });
-    }, 3800);
-    return () => clearInterval(timer);
-  }, []);
-
-  const syncActiveIndex = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / snapInterval);
-    setActiveIndex(Math.min(promoBanners.length - 1, Math.max(0, nextIndex)));
-  };
+function PromotionBanner() {
+  const banner = homeBanners[0];
 
   return (
-    <View className="mt-4">
-      <FlatList
-        ref={listRef}
-        data={promoBanners}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={snapInterval}
-        snapToAlignment="start"
-        decelerationRate="fast"
-        onScroll={syncActiveIndex}
-        scrollEventThrottle={16}
-        onMomentumScrollEnd={syncActiveIndex}
-        contentContainerClassName="px-5"
-        ItemSeparatorComponent={() => <View style={{ width: bannerGap }} />}
-        getItemLayout={(_, index) => ({ length: snapInterval, offset: snapInterval * index, index })}
-        onScrollToIndexFailed={({ index }) => listRef.current?.scrollToOffset({ offset: snapInterval * index, animated: true })}
-        renderItem={({ item }) => (
-          <AnimatedPressable onPress={() => router.push(item.href as never)} style={{ width: bannerWidth }} className="h-[188px] overflow-hidden rounded-[26px] bg-ink shadow-sm">
-            <Image source={{ uri: item.image }} className="absolute h-full w-full" resizeMode="cover" />
-            <View className="absolute inset-0 bg-black/45" />
-            <View className="absolute right-4 top-4">
-              <Text className="text-[12px] font-bold text-white">{item.actionLabel}</Text>
-            </View>
-            <View className="absolute bottom-5 left-5 right-5">
-              <Text className="text-[21px] font-bold leading-7 text-white" numberOfLines={2}>{item.title}</Text>
-              <Text className="mt-2 text-[14px] font-medium leading-5 text-white/85" numberOfLines={2}>{item.description}</Text>
-            </View>
-          </AnimatedPressable>
-        )}
-      />
-      <View className="mt-3 flex-row justify-center">
-        {promoBanners.map((banner, index) => (
-          <Pressable key={banner.id} onPress={() => goToIndex(index)} className="px-1 py-1">
-            <BannerIndicator active={index === activeIndex} />
-          </Pressable>
-        ))}
+    <AnimatedPressable onPress={() => router.push('/marketplace')} className="mx-5 mt-4 h-[188px] overflow-hidden rounded-[26px] bg-ink shadow-sm">
+      <Image source={{ uri: banner?.image }} className="absolute h-full w-full" resizeMode="cover" />
+      <View className="absolute inset-0 bg-black/45" />
+      <View className="absolute bottom-5 left-5 right-5">
+        <Text className="text-[21px] font-bold leading-7 text-white" numberOfLines={2}>
+          건강한 거북이 분양을 한눈에
+        </Text>
+        <Text className="mt-2 text-[14px] font-medium leading-5 text-white/85" numberOfLines={2}>
+          인증 브리더의 새 분양 개체를 빠르게 확인해보세요.
+        </Text>
       </View>
-    </View>
+    </AnimatedPressable>
   );
 }
 
-function CommunityHotSection() {
+function HotListingsSection() {
+  const hotListings = [...listings].sort((a, b) => b.views + b.likes - (a.views + a.likes)).slice(0, 5);
+
   return (
-    <View className="mt-7">
-      <SectionHeader title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')} />
+    <Section title="오늘 핫한 분양 개체" icon="flame" onPress={() => router.push('/marketplace')}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
+        {hotListings.map((listing, index) => (
+          <ListingCard key={listing.id} item={listing} wide index={index} />
+        ))}
+      </ScrollView>
+    </Section>
+  );
+}
+
+function CommunitySection() {
+  return (
+    <Section title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')}>
       <View className="bg-white px-5">
-        {hotPosts.map((post, index) => (
-          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-6 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
+        {posts.slice(0, 4).map((post, index) => (
+          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
             <View className="flex-row items-center">
-              <PostBadge label={post.badge} />
-              <Text className="ml-2 text-[13px] font-medium leading-[18px] text-[#6B7280]" numberOfLines={1}>{post.category}</Text>
+              <Text className="rounded-full bg-[#FFF0F6] px-2.5 py-1 text-[12px] font-semibold leading-[18px] text-[#FF4F8B]">
+                {post.category}
+              </Text>
+              <Text className="ml-2 text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>
+                {post.createdAt}
+              </Text>
             </View>
-            <Text className="mt-3 text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{post.title}</Text>
-            <Text className="mt-2.5 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2} ellipsizeMode="tail">{post.content}</Text>
+            <Text className="mt-3 text-[17px] font-bold leading-6 text-[#222222]" numberOfLines={1}>
+              {post.title}
+            </Text>
+            <Text className="mt-2 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2}>
+              {post.content}
+            </Text>
             <View className="mt-3 flex-row items-center">
-              <Text className="text-[13px] font-semibold leading-[18px] text-[#FF4F8B]" numberOfLines={1}>{post.author}</Text>
-              <Text className="text-[13px] font-normal leading-[18px] text-[#9CA3AF]"> · {post.createdAt}</Text>
-            </View>
-            <View className="mt-2.5 flex-row items-center">
-              <Meta icon="eye-outline" value={post.views} />
-              <Meta icon="chatbubble-outline" value={post.comments} />
-              <Meta icon="heart-outline" value={post.likes} />
+              <Text className="text-[13px] font-semibold leading-[18px] text-[#FF4F8B]" numberOfLines={1}>
+                {post.author}
+              </Text>
+              <Text className="ml-2 text-[12px] font-medium leading-[18px] text-[#9CA3AF]">
+                댓글 {post.comments.toLocaleString()} · 좋아요 {post.likes.toLocaleString()}
+              </Text>
             </View>
           </AnimatedPressable>
         ))}
       </View>
-    </View>
+    </Section>
   );
 }
 
 function PopularBreedersSection() {
   return (
-    <View className="mt-7">
-      <SectionHeader title="많이 찾는 브리더" icon="trophy" onPress={() => router.push('/marketplace')} />
+    <Section title="오늘의 인기 브리더" icon="trophy" onPress={() => router.push('/marketplace')}>
       <View className="bg-white px-5">
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
-            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-6 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
-              <Avatar uri={breeder.logo ?? breeder.avatar} size={72} />
+            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
+              <Avatar uri={breeder.logo ?? breeder.avatar} size={64} />
               <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
-                <Text className="text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{breeder.name}</Text>
-                <Text className="mt-2 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={1}>{breederSpecialties[breeder.id] ?? breeder.specialty}</Text>
-                <View className="mt-2.5 flex-row items-center">
-                  <Ionicons name="star" size={16} color="#FFC83D" />
-                  <Text className="ml-1.5 text-[13px] font-semibold leading-[18px] text-[#222222]">{summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개</Text>
-                  <Text className="ml-2 rounded-full bg-blush px-2.5 py-1 text-[10px] font-semibold text-berry">✓ 인증</Text>
+                <Text className="text-[17px] font-bold leading-6 text-[#222222]" numberOfLines={1}>
+                  {breeder.name}
+                </Text>
+                <Text className="mt-1.5 text-[13px] font-medium leading-[18px] text-[#8A8F98]" numberOfLines={1}>
+                  {breeder.specialty ?? breeder.location}
+                </Text>
+                <View className="mt-2 flex-row items-center">
+                  <Ionicons name="star" size={15} color="#FFC83D" />
+                  <Text className="ml-1 text-[12px] font-semibold leading-[18px] text-[#222222]">
+                    {summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개
+                  </Text>
+                  <Text className="ml-2 rounded-full bg-[#FFF0F6] px-2 py-0.5 text-[10px] font-semibold text-[#FF4F8B]">인증</Text>
                 </View>
               </View>
             </AnimatedPressable>
           );
         })}
       </View>
-    </View>
-  );
-}
-
-function HotListingsSection() {
-  const hotListings = [...listings].sort((a, b) => b.views + b.likes - (a.views + a.likes)).slice(0, 5);
-  return (
-    <View className="mt-7">
-      <SectionHeader title="오늘 핫한 분양 개체" icon="flame" onPress={() => router.push('/marketplace')} />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-        {hotListings.map((listing, index) => <ListingCard key={listing.id} item={listing} wide index={index} />)}
-      </ScrollView>
-    </View>
+    </Section>
   );
 }
 
 function RecentReviewsSection() {
   return (
-    <View className="mt-7">
-      <SectionHeader title="최근 후기" icon="review" />
+    <Section title="최근 후기" icon="review">
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
         {breederReviews.slice(0, 4).map((review, index) => {
           const breeder = breeders.find((item) => item.id === review.breederId);
@@ -378,97 +189,50 @@ function RecentReviewsSection() {
                 <View className="flex-row items-center">
                   <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={38} />
                   <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-                    <Text className="text-[18px] font-bold leading-[26px] text-[#222222]" numberOfLines={1}>{breeder?.name ?? '브리더'}</Text>
-                    <Text className="mt-1 text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>{review.species}</Text>
+                    <Text className="text-[17px] font-bold leading-6 text-[#222222]" numberOfLines={1}>
+                      {breeder?.name ?? '브리더'}
+                    </Text>
+                    <Text className="mt-1 text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>
+                      {review.species}
+                    </Text>
                   </View>
                 </View>
-                <Text className="mt-3 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2}>{review.content}</Text>
+                <Text className="mt-3 text-[14px] font-medium leading-[22px] text-[#8A8F98]" numberOfLines={2}>
+                  {review.content}
+                </Text>
                 <View className="mt-3 flex-row items-center justify-between">
                   <StarRating rating={review.rating} size={14} showValue={false} />
-                  <Text className="text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>{review.createdAt}</Text>
+                  <Text className="text-[12px] font-medium leading-[18px] text-[#9CA3AF]" numberOfLines={1}>
+                    {review.createdAt}
+                  </Text>
                 </View>
               </AnimatedPressable>
             </FadeInView>
           );
         })}
       </ScrollView>
-    </View>
-  );
-}
-
-function CompactListingRow({ listing, index }: { listing: (typeof listings)[number]; index: number }) {
-  const breeder = breeders.find((item) => item.id === listing.breederId);
-  const summary = getReviewSummary(listing.breederId);
-
-  return (
-    <AnimatedPressable
-      onPress={() => router.push(`/listing/${listing.id}` as never)}
-      className={`flex-row bg-white py-4 ${index ? 'border-t border-[#ECECEC]' : ''}`}
-    >
-      <View className="h-[96px] w-[96px] overflow-hidden rounded-[14px] bg-shell">
-        <Image source={{ uri: listing.image }} className="h-full w-full" resizeMode="cover" />
-        <View className="absolute left-2 top-2 rounded-full bg-[#FFF0F6] px-2 py-1">
-          <Text className="text-[10px] font-semibold text-[#FF4F8B]">{listing.status}</Text>
-        </View>
-      </View>
-      <View className="ml-3 flex-1 py-0.5" style={{ minWidth: 0 }}>
-        <Text className="text-[16px] font-semibold leading-5 text-[#222222]" numberOfLines={1}>{listing.species}</Text>
-        <Text className="mt-1 text-[15px] font-bold leading-5 text-[#111827]" numberOfLines={1}>{listing.price.toLocaleString()}원</Text>
-        <Text className="mt-1.5 text-[12px] font-medium leading-4 text-[#8A8F98]" numberOfLines={1}>
-          {breeder?.name ?? '브리더'} · {listing.location}
-        </Text>
-        <View className="mt-2 flex-row items-center">
-          <Ionicons name="star" size={13} color="#FFC83D" />
-          <Text className="ml-1 text-[12px] font-medium leading-4 text-[#666666]" numberOfLines={1}>
-            {summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개
-          </Text>
-        </View>
-        <View className="mt-1 flex-row items-center">
-          <Ionicons name="heart-outline" size={13} color="#A0A5AD" />
-          <Text className="ml-1 text-[12px] font-medium leading-4 text-[#9CA3AF]">찜 {listing.likes.toLocaleString()}</Text>
-        </View>
-      </View>
-    </AnimatedPressable>
-  );
-}
-
-function HomeFeedSection({
-  title,
-  icon,
-  children,
-  onMorePress,
-  moreLabel,
-}: {
-  title: string;
-  icon: SectionIconVariant;
-  children: ReactNode;
-  onMorePress: () => void;
-  moreLabel: string;
-}) {
-  return (
-    <View className="mt-7">
-      <SectionHeader title={title} icon={icon} />
-      <View className="mx-5 rounded-[20px] border border-[#ECECEC] bg-white px-4">
-        {children}
-      </View>
-      <Pressable onPress={onMorePress} className="mx-5 mt-3 h-12 items-center justify-center rounded-[14px] border border-[#ECECEC] bg-white">
-        <Text className="text-[15px] font-semibold text-[#222222]">{moreLabel}</Text>
-      </Pressable>
-    </View>
+    </Section>
   );
 }
 
 function NewListingsSection() {
+  const { width } = useWindowDimensions();
+  const cardWidth = Math.floor((width - 40 - 12) / 2);
   const recentListings = [...listings]
     .sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? ''))
-    .slice(0, 5);
+    .slice(0, 4);
 
   return (
-    <HomeFeedSection title="새로 올라온 분양" icon="listing" moreLabel="분양글 더보기" onMorePress={() => router.push('/marketplace')}>
-      {recentListings.map((listing, index) => (
-        <CompactListingRow key={listing.id} listing={listing} index={index} />
-      ))}
-    </HomeFeedSection>
+    <Section title="새로 올라온 분양" icon="listing">
+      <View className="mx-5 flex-row flex-wrap justify-between">
+        {recentListings.map((listing, index) => (
+          <ListingGridCard key={listing.id} item={listing} index={index} width={cardWidth} />
+        ))}
+      </View>
+      <Pressable onPress={() => router.push('/marketplace')} className="mx-5 mt-1 h-12 items-center justify-center rounded-[14px] border border-[#ECECEC] bg-white">
+        <Text className="text-[15px] font-semibold text-[#222222]">분양글 더보기</Text>
+      </Pressable>
+    </Section>
   );
 }
 
@@ -477,10 +241,10 @@ export function HomeScreen() {
     <Page>
       <BrandHeader compact />
       <NoticeBar />
-      <PromotionBannerCarousel />
+      <PromotionBanner />
       <SearchBar />
       <HotListingsSection />
-      <CommunityHotSection />
+      <CommunitySection />
       <PopularBreedersSection />
       <RecentReviewsSection />
       <NewListingsSection />
