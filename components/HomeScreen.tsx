@@ -6,6 +6,7 @@ import { Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'r
 import { homeBanners } from '@/data/homeScreenData';
 import { breederReviews, breeders, listings, posts } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
+import { careTips } from '@/mockData/tips';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Avatar, BrandHeader } from './common';
 import { ListingCard } from './ListingCard';
@@ -14,11 +15,12 @@ import { Page } from './screen';
 import { StarRating } from './StarRating';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-type SectionIconVariant = 'flame' | 'community' | 'trophy' | 'review' | 'listing';
+type SectionIconVariant = 'flame' | 'community' | 'tips' | 'trophy' | 'review' | 'listing';
 
 const sectionIcons: Record<SectionIconVariant, { name: IconName; color: string; backgroundColor: string }> = {
   flame: { name: 'flame', color: '#FF7A1A', backgroundColor: '#FFF3E8' },
   community: { name: 'chatbubble-ellipses', color: '#4593D6', backgroundColor: '#EAF5FF' },
+  tips: { name: 'bulb', color: '#D99A00', backgroundColor: '#FFF7D6' },
   trophy: { name: 'trophy', color: '#E9A008', backgroundColor: '#FFF7D6' },
   review: { name: 'star', color: '#FFC83D', backgroundColor: '#FFF7D6' },
   listing: { name: 'storefront', color: '#FF4F8B', backgroundColor: '#FFF0F6' },
@@ -145,6 +147,52 @@ function CommunitySection() {
   );
 }
 
+const tipBadgeTones = [
+  { backgroundColor: '#EAF8EE', color: '#228B5A' },
+  { backgroundColor: '#EAF5FF', color: '#2F80ED' },
+  { backgroundColor: '#FFF1E6', color: '#E56B00' },
+  { backgroundColor: '#F3E8FF', color: '#7C3AED' },
+];
+
+function CareTipsSection() {
+  return (
+    <Section title="사육 꿀팁" icon="tips" onPress={() => router.push('/tips')}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
+        {careTips.map((tip, index) => {
+          const tone = tipBadgeTones[index % tipBadgeTones.length];
+          return (
+            <View key={tip.id} className="mr-3 w-[268px] overflow-hidden rounded-[18px] border border-[#ECECEC] bg-white">
+              <Pressable onPress={() => router.push('/tips')}>
+                <Image source={{ uri: tip.thumbnail }} className="h-[132px] w-full bg-shell" resizeMode="cover" />
+                <View className="p-4">
+                  <View className="self-start rounded-full px-2.5 py-1" style={{ backgroundColor: tone.backgroundColor }}>
+                    <Text className="text-[11px] font-semibold leading-[15px]" style={{ color: tone.color }}>
+                      {tip.category}
+                    </Text>
+                  </View>
+                  <Text className="mt-2.5 text-[16px] font-bold leading-[22px] text-[#222222]" numberOfLines={2}>
+                    {tip.title}
+                  </Text>
+                  <Text className="mt-2 text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={2}>
+                    {tip.description}
+                  </Text>
+                </View>
+              </Pressable>
+              <Pressable
+                onPress={() => router.push(tip.relatedProductUrl as never)}
+                className="mx-4 mb-4 flex-row items-center border-t border-[#F1F3F5] pt-3"
+              >
+                <Text className="text-[13px] font-semibold leading-[18px] text-[#FF4F8B]">{tip.relatedProductText}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#FF4F8B" />
+              </Pressable>
+            </View>
+          );
+        })}
+      </ScrollView>
+    </Section>
+  );
+}
+
 function PopularBreedersSection() {
   return (
     <Section title="오늘의 인기 브리더" icon="trophy" onPress={() => router.push('/marketplace')}>
@@ -217,7 +265,7 @@ function RecentReviewsSection() {
 
 function NewListingsSection() {
   const { width } = useWindowDimensions();
-  const cardWidth = Math.floor((width - 40 - 12) / 2);
+  const cardWidth = Math.floor((width - 40 - 10) / 2);
   const recentListings = [...listings]
     .sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? ''))
     .slice(0, 4);
@@ -245,6 +293,7 @@ export function HomeScreen() {
       <SearchBar />
       <HotListingsSection />
       <CommunitySection />
+      <CareTipsSection />
       <PopularBreedersSection />
       <RecentReviewsSection />
       <NewListingsSection />

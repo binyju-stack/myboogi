@@ -2,9 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useState } from 'react';
-import { Image, ImageBackground, Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
-import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { ReadyModal } from '@/components/ReadyModal';
 import { Page } from '@/components/screen';
 import { colors } from '@/constants/theme';
@@ -14,177 +13,137 @@ import { managedTurtles } from '@/mockData/turtles';
 import type { UserProfile } from '@/types';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-type MenuItem = { label: string; description: string; icon: IconName; href?: string; readyMessage?: string };
-type ActivitySummaryItem = { label: string; value: string; icon: IconName; href?: string };
 
-const breederIdByType: Record<Exclude<UserProfile['userType'], 'normal'>, string> = {
-  personal_breeder: 'b2',
-  business_breeder: 'b3',
+type MenuItem = {
+  label: string;
+  icon: IconName;
+  href?: string;
+  readyMessage?: string;
 };
 
-const turtleMenus: MenuItem[] = [
-  { label: '내 거북이 관리', description: '등록한 거북이와 성장기록을 관리해요', icon: 'paw-outline', href: '/my/turtles' },
-];
+type MenuSection = {
+  title: string;
+  items: MenuItem[];
+  breederOnly?: boolean;
+};
 
-const activityMenus: MenuItem[] = [
-  { label: '찜한 분양', description: '관심 있는 분양 개체를 확인해요', icon: 'heart-outline', href: '/mypage/favorites' },
-  { label: '최근 본 분양', description: '방금 확인한 분양 정보를 다시 봐요', icon: 'time-outline', readyMessage: '최근 본 분양 기능은 준비중입니다.' },
-  { label: '내가 작성한 글', description: '내가 작성한 커뮤니티 글을 확인해요', icon: 'document-text-outline', href: '/mypage/posts' },
-  { label: '내가 작성한 댓글', description: '댓글과 답글 활동을 확인해요', icon: 'chatbubble-ellipses-outline', readyMessage: '내가 작성한 댓글 기능은 준비중입니다.' },
-  { label: '내가 작성한 후기', description: '내가 작성한 후기를 관리해요', icon: 'star-outline', href: '/mypage/reviews' },
-];
-
-const breederMenus: MenuItem[] = [
-  { label: '내 미니샵 보기', description: '브리더 소개와 등록 개체를 확인해요', icon: 'storefront-outline' },
-  { label: '분양 등록 관리', description: '등록한 분양글을 관리해요', icon: 'albums-outline', href: '/mypage/listings' },
-  { label: '브리더 인증 관리', description: '인증 상태와 신청 정보를 확인해요', icon: 'shield-checkmark-outline', href: '/breeder/verification/apply' },
-  { label: '후기 관리', description: '구매자 후기를 확인하고 답변해요', icon: 'star-outline', href: '/mypage/reviews' },
-  { label: '문의 관리', description: '전화와 카카오 문의 이력을 확인해요', icon: 'call-outline', readyMessage: '문의 관리 기능은 준비중입니다.' },
-];
-
-function getProfileRole(profile: UserProfile) {
+function getProfileBadge(profile: UserProfile) {
   if (profile.userType === 'business_breeder') {
-    return {
-      badge: profile.isVerified ? '✓ 사업자 인증' : '사업자 브리더',
-      eyebrow: 'BUSINESS BREEDER',
-      coverFallback: colors.ink,
-    };
+    return { label: profile.isVerified ? '사업자 인증' : '사업자 브리더', color: '#7C3AED', backgroundColor: '#F3E8FF' };
   }
 
   if (profile.userType === 'personal_breeder') {
-    return {
-      badge: profile.isVerified ? '✓ 인증 브리더' : '개인 브리더',
-      eyebrow: 'PERSONAL BREEDER',
-      coverFallback: colors.berry,
-    };
+    return { label: profile.isVerified ? '인증 브리더' : '브리더', color: '#2F80ED', backgroundColor: '#EEF7FF' };
   }
 
-  return {
-    badge: '일반 회원',
-    eyebrow: 'MY PROFILE',
-    coverFallback: colors.berry,
-  };
+  return { label: '일반 회원', color: '#8A8F98', backgroundColor: '#F5F6F8' };
 }
 
-function getActivitySummary(profile: UserProfile): ActivitySummaryItem[] {
-  return [
-    { label: '내 거북이', value: `${managedTurtles.length}`, icon: 'paw-outline', href: '/my/turtles' },
-    { label: '찜', value: '12', icon: 'heart-outline', href: '/mypage/favorites' },
-    { label: '게시글', value: '18', icon: 'document-text-outline', href: '/mypage/posts' },
-    { label: '댓글', value: '64', icon: 'chatbubble-ellipses-outline' },
-  ];
-}
+const stats = [
+  { label: '내 거북이', value: `${managedTurtles.length}`, icon: 'paw-outline' as IconName, href: '/my/turtles' },
+  { label: '찜', value: '12', icon: 'heart-outline' as IconName, href: '/mypage/favorites' },
+  { label: '게시글', value: `${userProfile.postCount}`, icon: 'document-text-outline' as IconName, href: '/mypage/posts' },
+  { label: '댓글', value: `${userProfile.commentCount}`, icon: 'chatbubble-ellipses-outline' as IconName },
+];
 
-function CoverFallback({ color }: { color: string }) {
+const sections: MenuSection[] = [
+  {
+    title: '내 거북이',
+    items: [
+      { label: '내 거북이 관리', icon: 'paw-outline', href: '/my/turtles' },
+      { label: '성장 기록', icon: 'trending-up-outline', href: '/growth' },
+      { label: '산란 관리', icon: 'egg-outline', href: '/my/turtles/breeding' },
+      { label: '성장 앨범', icon: 'images-outline', readyMessage: '성장 앨범 기능은 준비중입니다.' },
+    ],
+  },
+  {
+    title: '내 활동',
+    items: [
+      { label: '찜한 분양', icon: 'heart-outline', href: '/mypage/favorites' },
+      { label: '최근 본 분양', icon: 'time-outline', readyMessage: '최근 본 분양 기능은 준비중입니다.' },
+      { label: '내가 작성한 글', icon: 'document-text-outline', href: '/mypage/posts' },
+      { label: '내가 작성한 댓글', icon: 'chatbubble-ellipses-outline', readyMessage: '내가 작성한 댓글 기능은 준비중입니다.' },
+      { label: '알림 관리', icon: 'notifications-outline', href: '/settings/notifications' },
+    ],
+  },
+  {
+    title: '브리더',
+    breederOnly: true,
+    items: [
+      { label: '내 분양글', icon: 'albums-outline', href: '/mypage/listings' },
+      { label: '분양 등록', icon: 'add-circle-outline', href: '/listing/create' },
+      { label: '분양 통계', icon: 'bar-chart-outline', readyMessage: '분양 통계 기능은 준비중입니다.' },
+      { label: '문의 관리', icon: 'call-outline', readyMessage: '문의 관리 기능은 준비중입니다.' },
+    ],
+  },
+  {
+    title: '쇼핑',
+    items: [
+      { label: '주문 내역', icon: 'receipt-outline', readyMessage: '주문 내역 기능은 준비중입니다.' },
+      { label: '배송 조회', icon: 'car-outline', readyMessage: '배송 조회 기능은 준비중입니다.' },
+      { label: '리뷰 관리', icon: 'star-outline', href: '/mypage/reviews' },
+      { label: '배송지 관리', icon: 'location-outline', readyMessage: '배송지 관리 기능은 준비중입니다.' },
+    ],
+  },
+  {
+    title: '도움말',
+    items: [
+      { label: '공지사항', icon: 'megaphone-outline', href: '/notices' },
+      { label: '1:1 문의', icon: 'help-circle-outline', href: '/settings/contact' },
+      { label: '자주 묻는 질문', icon: 'chatbox-ellipses-outline', readyMessage: '자주 묻는 질문 기능은 준비중입니다.' },
+      { label: '앱 설정', icon: 'settings-outline', href: '/settings' },
+    ],
+  },
+];
+
+function ProfileHeader({ profile }: { profile: UserProfile }) {
+  const badge = getProfileBadge(profile);
+
   return (
-    <View className="h-full w-full overflow-hidden" style={{ backgroundColor: color }}>
-      <View className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/20" />
-      <View className="absolute -bottom-16 left-6 h-52 w-52 rounded-full bg-white/10" />
-      <View className="absolute bottom-0 left-0 right-0 h-24 bg-black/10" />
-    </View>
-  );
-}
-
-function ProfileHero({ profile }: { profile: UserProfile }) {
-  const role = getProfileRole(profile);
-  const coverImage = profile.coverImage;
-
-  return (
-    <View className="bg-white pb-6 shadow-sm">
-      <View className="h-[206px] overflow-hidden rounded-b-[28px]">
-        {coverImage ? (
-          <ImageBackground source={{ uri: coverImage }} className="h-full w-full" resizeMode="cover">
-            <View className="absolute inset-0 bg-black/20" />
-          </ImageBackground>
-        ) : (
-          <CoverFallback color={role.coverFallback} />
-        )}
-
-        <View className="absolute left-5 right-5 top-4 flex-row items-center justify-between">
-          <View>
-            <Text className="text-[10px] font-black text-white/70">{role.eyebrow}</Text>
-            <Text className="mt-1 text-[22px] font-black text-white">마이페이지</Text>
-          </View>
-          <View className="flex-row">
-            <AnimatedPressable onPress={() => router.push('/notifications')} className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-white/90">
-              <Ionicons name="notifications-outline" size={19} color={colors.ink} />
-              {unreadNotificationCount ? (
-                <View className="absolute -right-1 -top-1 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 py-0.5">
-                  <Text className="text-[9px] font-black text-white">{unreadNotificationCount}</Text>
-                </View>
-              ) : null}
-            </AnimatedPressable>
-            <AnimatedPressable onPress={() => router.push('/settings')} className="h-10 w-10 items-center justify-center rounded-full bg-white/90">
-              <Ionicons name="settings-outline" size={19} color={colors.ink} />
-            </AnimatedPressable>
-          </View>
-        </View>
-      </View>
-
-      <View className="-mt-11 px-5">
-        <Image source={{ uri: profile.profileImage }} className="h-[86px] w-[86px] rounded-full border-4 border-white bg-shell shadow-sm" />
-        <View className="mt-3 flex-row items-start">
-          <View className="flex-1">
-            <View className="flex-row flex-wrap items-center">
-              <Text className="mr-2 text-[24px] font-black text-[#111827]" numberOfLines={1}>{profile.nickname}</Text>
-              <View className="rounded-full bg-blush px-2.5 py-1.5">
-                <Text className="text-[9px] font-black text-berry">{role.badge}</Text>
+    <View className="bg-white px-5 pb-5 pt-4">
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center">
+          <Image source={{ uri: profile.profileImage }} className="h-[72px] w-[72px] rounded-full bg-shell" />
+          <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
+            <View className="flex-row items-center">
+              <Text className="text-[22px] font-bold leading-7 text-[#111827]" numberOfLines={1}>
+                {profile.nickname}
+              </Text>
+              <View className="ml-2 rounded-full px-2 py-1" style={{ backgroundColor: badge.backgroundColor }}>
+                <Text className="text-[10px] font-bold leading-[14px]" style={{ color: badge.color }}>
+                  {badge.label}
+                </Text>
               </View>
             </View>
-            <Text className="mt-2 text-[14px] font-medium leading-6 text-[#6B7280]">{profile.bio}</Text>
-            <View className="mt-2 flex-row items-center">
-              <Ionicons name="location-outline" size={14} color={colors.muted} />
-              <Text className="ml-1 text-[12px] font-semibold text-[#9CA3AF]">{profile.region}</Text>
+            <Text className="mt-1.5 text-[13px] font-medium leading-[19px] text-[#6B7280]" numberOfLines={1}>
+              {profile.bio}
+            </Text>
+            <View className="mt-1.5 flex-row items-center">
+              <Ionicons name="location-outline" size={13} color="#9CA3AF" />
+              <Text className="ml-1 text-[12px] font-medium leading-4 text-[#9CA3AF]">{profile.region}</Text>
             </View>
           </View>
-          <AnimatedPressable onPress={() => router.push('/mypage/edit')} className="ml-3 h-11 w-11 items-center justify-center rounded-full bg-soft">
-            <Ionicons name="create-outline" size={19} color={colors.ink} />
-          </AnimatedPressable>
         </View>
+        <Pressable onPress={() => router.push('/mypage/edit')} className="h-9 w-9 items-center justify-center rounded-full bg-[#F5F6F8]">
+          <Ionicons name="create-outline" size={17} color="#111827" />
+        </Pressable>
       </View>
     </View>
   );
 }
 
-function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
+function StatBar() {
   return (
-    <View
-      className="mx-4 flex-row items-center justify-between bg-white"
-      style={{
-        height: 76,
-        marginTop: 16,
-        marginBottom: 20,
-        borderRadius: 18,
-        paddingVertical: 10,
-        paddingHorizontal: 8,
-        borderWidth: 1,
-        borderColor: '#F1F3F5',
-        shadowColor: '#111827',
-        shadowOpacity: 0.025,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 1 },
-        elevation: 1,
-      }}
-    >
-      {items.map((item) => (
+    <View className="mx-5 mt-3 h-[66px] flex-row items-center border-y border-[#ECECEC] bg-white">
+      {stats.map((item) => (
         <Pressable
           key={item.label}
-          onPress={() => item.href ? router.push(item.href as never) : undefined}
+          onPress={() => (item.href ? router.push(item.href as never) : undefined)}
           className="flex-1 items-center justify-center"
         >
-          <Ionicons name={item.icon} size={18} color="#FF4F8B" style={{ marginBottom: 2 }} />
-          <Text
-            className="text-center text-[19px] font-bold leading-[23px] text-[#111827]"
-            numberOfLines={1}
-            style={{ includeFontPadding: false }}
-          >
-            {item.value}
-          </Text>
-          <Text
-            className="text-center text-[11px] font-medium leading-[14px] text-[#8A8F98]"
-            numberOfLines={1}
-            style={{ includeFontPadding: false }}
-          >
+          <Ionicons name={item.icon} size={17} color="#FF4F8B" />
+          <Text className="mt-0.5 text-[17px] font-bold leading-[21px] text-[#111827]">{item.value}</Text>
+          <Text className="text-[11px] font-medium leading-[15px] text-[#8A8F98]" numberOfLines={1}>
             {item.label}
           </Text>
         </Pressable>
@@ -193,31 +152,26 @@ function ActivitySummary({ items }: { items: ActivitySummaryItem[] }) {
   );
 }
 
-function MenuSection({ title, items, onReady, compact = false }: { title?: string; items: MenuItem[]; onReady: (message: string) => void; compact?: boolean }) {
+function SectionList({ section, onReady }: { section: MenuSection; onReady: (message: string) => void }) {
   return (
-    <FadeInView delay={80}>
-      <View className={compact ? 'mt-5' : 'mx-5 mt-6 rounded-[22px] border border-line bg-white px-4 py-3 shadow-sm'}>
-        {title ? <Text className={compact ? 'mx-5 mb-2 text-[13px] font-bold leading-5 text-[#8A8F98]' : 'mb-2 px-1 text-[18px] font-bold leading-6 text-[#111827]'}>{title}</Text> : null}
-        <View className={compact ? 'border-y border-line bg-white' : ''}>
-        {items.map((item, index) => (
-          <AnimatedPressable
+    <View className="mt-6">
+      <Text className="mx-5 mb-2 text-[15px] font-bold leading-5 text-[#111827]">{section.title}</Text>
+      <View className="border-y border-[#ECECEC] bg-white">
+        {section.items.map((item, index) => (
+          <Pressable
             key={item.label}
-            onPress={() => item.href ? router.push(item.href as never) : onReady(item.readyMessage ?? `${item.label} 기능은 준비중입니다.`)}
-            className={`${compact ? 'mx-5 h-14' : 'min-h-[62px]'} flex-row items-center ${index ? 'border-t border-line' : ''}`}
+            onPress={() => (item.href ? router.push(item.href as never) : onReady(item.readyMessage ?? `${item.label} 기능은 준비중입니다.`))}
+            className={`mx-5 h-[54px] flex-row items-center ${index ? 'border-t border-[#F1F3F5]' : ''}`}
           >
-            <View className="h-9 w-9 items-center justify-center rounded-[13px] bg-blush">
-              <Ionicons name={item.icon} size={18} color={colors.berry} />
+            <View className="h-8 w-8 items-center justify-center">
+              <Ionicons name={item.icon} size={19} color="#FF4F8B" />
             </View>
-            <View className="ml-3 flex-1">
-              <Text className="text-[16px] font-semibold leading-5 text-[#111827]">{item.label}</Text>
-              {!compact ? <Text className="mt-1 text-[13px] font-medium leading-[18px] text-[#8A8F98]" numberOfLines={1}>{item.description}</Text> : null}
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.subtle} />
-          </AnimatedPressable>
+            <Text className="ml-3 flex-1 text-[15px] font-medium leading-5 text-[#222222]">{item.label}</Text>
+            <Ionicons name="chevron-forward" size={17} color="#C4C8CF" />
+          </Pressable>
         ))}
-        </View>
       </View>
-    </FadeInView>
+    </View>
   );
 }
 
@@ -225,23 +179,17 @@ export default function MyPageScreen() {
   const [readyTitle, setReadyTitle] = useState('');
   const profile = userProfile;
   const isBreeder = profile.userType !== 'normal';
-  const breederProfileType = profile.userType === 'normal' ? undefined : profile.userType;
-  const visibleBreederMenus = breederMenus.map((item) => item.label === '내 미니샵 보기' && breederProfileType ? { ...item, href: `/breeder/${breederIdByType[breederProfileType]}` } : item);
-  const primaryMenus: MenuItem[] = [
-    activityMenus[0],
-    activityMenus[1],
-    activityMenus[2],
-    activityMenus[3],
-    activityMenus[4],
-  ];
+  const visibleSections = sections.filter((section) => !section.breederOnly || isBreeder);
 
   return (
     <Page>
-      <ProfileHero profile={profile} />
-      <ActivitySummary items={getActivitySummary(profile)} />
-
-      <MenuSection items={[turtleMenus[0], ...primaryMenus]} onReady={setReadyTitle} compact />
-      {isBreeder ? <MenuSection title="브리더 관리" items={visibleBreederMenus.filter((item) => item.label !== '후기 관리')} onReady={setReadyTitle} /> : null}
+      <View className="bg-[#FAFAFA] pb-4">
+        <ProfileHeader profile={profile} />
+        <StatBar />
+        {visibleSections.map((section) => (
+          <SectionList key={section.title} section={section} onReady={setReadyTitle} />
+        ))}
+      </View>
 
       <ReadyModal visible={Boolean(readyTitle)} title={readyTitle} onClose={() => setReadyTitle('')} />
     </Page>

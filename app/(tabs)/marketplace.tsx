@@ -51,7 +51,7 @@ export default function MarketplaceScreen() {
   const { width } = useWindowDimensions();
   const [selectedFilter, setSelectedFilter] = useState('전체');
   const [checkedOptions, setCheckedOptions] = useState<string[]>(['신규개체']);
-  const cardWidth = useMemo(() => Math.floor((width - 40 - 12) / 2), [width]);
+  const cardWidth = useMemo(() => Math.floor((width - 40 - 10) / 2), [width]);
   const sortedListings = useMemo(
     () => [...listings].sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? '')),
     [],
