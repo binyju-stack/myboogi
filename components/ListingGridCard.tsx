@@ -57,10 +57,12 @@ function getBreederNameTone(item: Listing, breeder?: Breeder): Tone {
 export function ListingGridCard({
   item,
   width,
+  imageRadius = 8,
 }: {
   item: Listing;
   index?: number;
   width?: number;
+  imageRadius?: number;
 }) {
   const [favorite, setFavorite] = useState(false);
   const likes = item.likes + (favorite ? 1 : 0);
@@ -73,7 +75,7 @@ export function ListingGridCard({
   return (
     <View style={width ? { width } : undefined} className="mb-7 bg-white">
       <Pressable onPress={() => router.push(`/listing/${item.id}` as never)} className="w-full">
-        <View className="aspect-square overflow-hidden rounded-[2px] bg-shell">
+        <View className="aspect-square overflow-hidden bg-shell" style={{ borderRadius: imageRadius }}>
           <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
           <View
             className="absolute left-2 top-2 rounded-full"

@@ -6,7 +6,6 @@ import { Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'r
 import { homeBanners } from '@/data/homeScreenData';
 import { breederReviews, breeders, listings, posts } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
-import { careTips } from '@/mockData/tips';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Avatar, BrandHeader } from './common';
 import { ListingCard } from './ListingCard';
@@ -15,12 +14,11 @@ import { Page } from './screen';
 import { StarRating } from './StarRating';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-type SectionIconVariant = 'flame' | 'community' | 'tips' | 'trophy' | 'review' | 'listing';
+type SectionIconVariant = 'flame' | 'community' | 'trophy' | 'review' | 'listing';
 
 const sectionIcons: Record<SectionIconVariant, { name: IconName; color: string; backgroundColor: string }> = {
   flame: { name: 'flame', color: '#FF7A1A', backgroundColor: '#FFF3E8' },
   community: { name: 'chatbubble-ellipses', color: '#4593D6', backgroundColor: '#EAF5FF' },
-  tips: { name: 'bulb', color: '#D99A00', backgroundColor: '#FFF7D6' },
   trophy: { name: 'trophy', color: '#E9A008', backgroundColor: '#FFF7D6' },
   review: { name: 'star', color: '#FFC83D', backgroundColor: '#FFF7D6' },
   listing: { name: 'storefront', color: '#FF4F8B', backgroundColor: '#FFF0F6' },
@@ -40,7 +38,7 @@ function SectionHeader({ title, icon, onPress }: { title: string; icon: SectionI
         </Text>
       </View>
       {onPress ? (
-        <Pressable onPress={onPress} className="flex-row items-center">
+        <Pressable onPress={onPress} className="flex-row items-center py-2">
           <Text className="text-[12px] font-medium text-[#A0A5AD]">더보기</Text>
           <Ionicons name="chevron-forward" size={14} color="#A0A5AD" />
         </Pressable>
@@ -69,17 +67,7 @@ function NoticeBar() {
   );
 }
 
-function SearchBar() {
-  return (
-    <AnimatedPressable onPress={() => router.push('/search')} className="mx-5 mt-4 h-12 flex-row items-center rounded-full border border-[#E5E7EB] bg-white px-4 shadow-sm">
-      <Ionicons name="search" size={18} color="#9CA3AF" />
-      <Text className="ml-2 flex-1 text-[15px] font-medium text-[#666666]">어떤 거북이를 찾고 계신가요?</Text>
-      <Ionicons name="chevron-forward" size={16} color="#D1D5DB" />
-    </AnimatedPressable>
-  );
-}
-
-function PromotionBanner() {
+function MainBanner() {
   const banner = homeBanners[0];
 
   return (
@@ -117,7 +105,11 @@ function CommunitySection() {
     <Section title="오늘의 커뮤니티" icon="community" onPress={() => router.push('/community')}>
       <View className="bg-white px-5">
         {posts.slice(0, 4).map((post, index) => (
-          <AnimatedPressable key={post.id} onPress={() => router.push(`/community/${post.id}` as never)} className={`py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
+          <AnimatedPressable
+            key={post.id}
+            onPress={() => router.push(`/community/${post.id}` as never)}
+            className={`py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}
+          >
             <View className="flex-row items-center">
               <Text className="rounded-full bg-[#FFF0F6] px-2.5 py-1 text-[12px] font-semibold leading-[18px] text-[#FF4F8B]">
                 {post.category}
@@ -147,52 +139,6 @@ function CommunitySection() {
   );
 }
 
-const tipBadgeTones = [
-  { backgroundColor: '#EAF8EE', color: '#228B5A' },
-  { backgroundColor: '#EAF5FF', color: '#2F80ED' },
-  { backgroundColor: '#FFF1E6', color: '#E56B00' },
-  { backgroundColor: '#F3E8FF', color: '#7C3AED' },
-];
-
-function CareTipsSection() {
-  return (
-    <Section title="사육 꿀팁" icon="tips" onPress={() => router.push('/tips')}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-2">
-        {careTips.map((tip, index) => {
-          const tone = tipBadgeTones[index % tipBadgeTones.length];
-          return (
-            <View key={tip.id} className="mr-3 w-[268px] overflow-hidden rounded-[18px] border border-[#ECECEC] bg-white">
-              <Pressable onPress={() => router.push('/tips')}>
-                <Image source={{ uri: tip.thumbnail }} className="h-[132px] w-full bg-shell" resizeMode="cover" />
-                <View className="p-4">
-                  <View className="self-start rounded-full px-2.5 py-1" style={{ backgroundColor: tone.backgroundColor }}>
-                    <Text className="text-[11px] font-semibold leading-[15px]" style={{ color: tone.color }}>
-                      {tip.category}
-                    </Text>
-                  </View>
-                  <Text className="mt-2.5 text-[16px] font-bold leading-[22px] text-[#222222]" numberOfLines={2}>
-                    {tip.title}
-                  </Text>
-                  <Text className="mt-2 text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={2}>
-                    {tip.description}
-                  </Text>
-                </View>
-              </Pressable>
-              <Pressable
-                onPress={() => router.push(tip.relatedProductUrl as never)}
-                className="mx-4 mb-4 flex-row items-center border-t border-[#F1F3F5] pt-3"
-              >
-                <Text className="text-[13px] font-semibold leading-[18px] text-[#FF4F8B]">{tip.relatedProductText}</Text>
-                <Ionicons name="chevron-forward" size={14} color="#FF4F8B" />
-              </Pressable>
-            </View>
-          );
-        })}
-      </ScrollView>
-    </Section>
-  );
-}
-
 function PopularBreedersSection() {
   return (
     <Section title="오늘의 인기 브리더" icon="trophy" onPress={() => router.push('/marketplace')}>
@@ -200,7 +146,11 @@ function PopularBreedersSection() {
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
-            <AnimatedPressable key={breeder.id} onPress={() => router.push(`/breeder/${breeder.id}` as never)} className={`flex-row items-center py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}>
+            <AnimatedPressable
+              key={breeder.id}
+              onPress={() => router.push(`/breeder/${breeder.id}` as never)}
+              className={`flex-row items-center py-5 ${index ? 'border-t border-[#ECECEC]' : ''}`}
+            >
               <Avatar uri={breeder.logo ?? breeder.avatar} size={64} />
               <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
                 <Text className="text-[17px] font-bold leading-6 text-[#222222]" numberOfLines={1}>
@@ -233,7 +183,10 @@ function RecentReviewsSection() {
           const breeder = breeders.find((item) => item.id === review.breederId);
           return (
             <FadeInView key={review.id} delay={index * 45}>
-              <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mr-4 w-[286px] rounded-[22px] border border-[#ECECEC] bg-white p-5 shadow-sm">
+              <AnimatedPressable
+                onPress={() => router.push(`/breeder/${review.breederId}` as never)}
+                className="mr-4 w-[286px] rounded-[22px] border border-[#ECECEC] bg-white p-5 shadow-sm"
+              >
                 <View className="flex-row items-center">
                   <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={38} />
                   <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
@@ -289,11 +242,9 @@ export function HomeScreen() {
     <Page>
       <BrandHeader compact />
       <NoticeBar />
-      <PromotionBanner />
-      <SearchBar />
+      <MainBanner />
       <HotListingsSection />
       <CommunitySection />
-      <CareTipsSection />
       <PopularBreedersSection />
       <RecentReviewsSection />
       <NewListingsSection />
