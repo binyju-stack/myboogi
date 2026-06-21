@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
-import { useEffect, useRef } from 'react';
-import { Animated, Text, View, type ColorValue } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Text, View, type ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, shadows } from '@/constants/theme';
@@ -23,23 +23,64 @@ function TabIcon({
   color,
   icon,
   activeIcon,
+  pressTrigger,
   badgeCount = 0,
 }: {
   focused: boolean;
   color: ColorValue;
   icon: IconName;
   activeIcon: IconName;
+  pressTrigger: number;
   badgeCount?: number;
 }) {
-  const scale = useRef(new Animated.Value(focused ? 1.06 : 1)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.spring(scale, { toValue: focused ? 1.06 : 1, useNativeDriver: true, speed: 24, bounciness: 3 }).start();
-  }, [focused, scale]);
+    if (!pressTrigger) return;
+
+    scale.stopAnimation();
+    translateY.stopAnimation();
+    scale.setValue(1);
+    translateY.setValue(0);
+
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(scale, {
+          toValue: 1.18,
+          duration: 90,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 100,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(translateY, {
+          toValue: -3,
+          duration: 90,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, [pressTrigger, scale, translateY]);
 
   return (
-    <Animated.View className="relative h-7 w-9 items-center justify-center" style={{ transform: [{ scale }] }}>
-      <Ionicons name={focused ? activeIcon : icon} color={color} size={23} />
+    <View className="relative h-7 w-9 items-center justify-center">
+      <Animated.View style={{ transform: [{ scale }, { translateY }] }}>
+        <Ionicons name={focused ? activeIcon : icon} color={color} size={23} />
+      </Animated.View>
       {badgeCount ? (
         <View
           className="absolute items-center justify-center rounded-full"
@@ -48,13 +89,21 @@ function TabIcon({
           <Text className="text-[10px] font-bold leading-[14px] text-white">{badgeCount}</Text>
         </View>
       ) : null}
-    </Animated.View>
+    </View>
   );
 }
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const bottomInset = Math.max(insets.bottom, 8);
+  const [pressTriggers, setPressTriggers] = useState<Record<string, number>>({});
+
+  const triggerTabAnimation = (tabName: string) => {
+    setPressTriggers((current) => ({
+      ...current,
+      [tabName]: (current[tabName] ?? 0) + 1,
+    }));
+  };
 
   return (
     <Tabs
@@ -112,6 +161,9 @@ export default function TabLayout() {
         <Tabs.Screen
           key={tab.name}
           name={tab.name}
+          listeners={{
+            tabPress: () => triggerTabAnimation(tab.name),
+          }}
           options={{
             title: tab.title,
             tabBarLabel: tab.title,
@@ -121,6 +173,7 @@ export default function TabLayout() {
                 color={color}
                 icon={tab.icon}
                 activeIcon={tab.activeIcon}
+                pressTrigger={pressTriggers[tab.name] ?? 0}
                 badgeCount={tab.name === 'chat' ? unreadChatCount : 0}
               />
             ),
