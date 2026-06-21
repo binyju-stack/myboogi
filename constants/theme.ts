@@ -1,10 +1,10 @@
 export const colors = {
-  ink: '#222222',
-  muted: '#666666',
-  subtle: '#A0A5AD',
+  ink: '#111827',
+  muted: '#6B7280',
+  subtle: '#9CA3AF',
   page: '#F6F7F9',
-  soft: '#F2F4F6',
-  blush: '#FFF5F8',
+  soft: '#F3F4F6',
+  blush: '#FFF1F6',
   petal: '#FFB6CD',
   berry: '#FF5C93',
   shell: '#FFE8F0',
@@ -12,7 +12,7 @@ export const colors = {
   mint: '#E9F7EF',
   cream: '#FFF7E8',
   white: '#FFFFFF',
-  line: '#ECECEC',
+  line: '#E5E7EB',
   blue: '#EAF5FF',
 };
 
@@ -26,10 +26,10 @@ export const typography = {
 };
 
 export const radii = {
-  sm: 14,
-  md: 18,
-  lg: 22,
-  xl: 26,
+  sm: 12,
+  md: 14,
+  lg: 14,
+  xl: 14,
   pill: 999,
 };
 
@@ -42,10 +42,10 @@ export const spacing = {
 export const shadows = {
   card: {
     shadowColor: '#191F28',
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   bar: {
     shadowColor: '#191F28',

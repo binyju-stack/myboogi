@@ -15,5 +15,5 @@ export function Page({ children }: { children: ReactNode }) {
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <View style={shadows.card} className={`rounded-[26px] border border-line bg-white p-5 ${className}`}>{children}</View>;
+  return <View style={shadows.card} className={`rounded-[14px] bg-white p-5 ${className}`}>{children}</View>;
 }

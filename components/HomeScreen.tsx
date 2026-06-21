@@ -2,20 +2,11 @@ import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import {
-  Award,
   Bell,
-  BookOpen,
   ChevronRight,
-  Egg,
-  Flame,
-  Gift,
   MessageCircle,
   Search,
-  Sparkles,
   Star,
-  TrendingUp,
-  Turtle,
-  type LucideIcon,
 } from 'lucide-react-native';
 
 import { homeBanners } from '@/data/homeScreenData';
@@ -25,20 +16,10 @@ import { getReviewSummary } from '@/data/reviewData';
 import { homeColumns } from '@/mockData/homeColumns';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Avatar } from './common';
+import { AnimatedSectionIcon, type AnimatedSectionIconType } from './ui/AnimatedSectionIcon';
 import { ListingGridCard } from './ListingGridCard';
 import { Page } from './screen';
 import { StarRating } from './StarRating';
-
-const shortcuts: { label: string; icon: LucideIcon; route: string }[] = [
-  { label: '분양', icon: Turtle, route: '/marketplace' },
-  { label: '브리더', icon: Award, route: '/marketplace' },
-  { label: '커뮤니티', icon: MessageCircle, route: '/community' },
-  { label: '산란관리', icon: Egg, route: '/my/turtles/breeding' },
-  { label: '성장기록', icon: TrendingUp, route: '/growth' },
-  { label: '후기', icon: Star, route: '/mypage/reviews' },
-  { label: '부기 칼럼', icon: BookOpen, route: '/community' },
-  { label: '이벤트', icon: Gift, route: '/notifications' },
-];
 
 function HomeHeader() {
   return (
@@ -52,7 +33,7 @@ function HomeHeader() {
         >
           <Bell size={21} strokeWidth={1.9} color="#111827" />
           {unreadNotificationCount ? (
-            <View className="absolute right-0 top-0 min-w-[17px] items-center justify-center rounded-full bg-[#FF5C93] px-1 py-0.5">
+            <View className="absolute right-0 top-0 min-w-[17px] items-center justify-center rounded-full bg-[#EF4444] px-1 py-0.5">
               <Text className="text-[9px] font-bold leading-3 text-white">{unreadNotificationCount}</Text>
             </View>
           ) : null}
@@ -70,34 +51,19 @@ function HomeHeader() {
   );
 }
 
-function ShortcutMenu() {
-  return (
-    <View className="mx-5 mt-5 rounded-2xl bg-white px-2 py-4">
-      <View className="flex-row flex-wrap">
-        {shortcuts.map(({ label, icon: Icon, route }) => (
-          <Pressable
-            key={label}
-            onPress={() => router.push(route as never)}
-            className="w-1/4 items-center py-2"
-          >
-            <View className="h-12 w-12 items-center justify-center rounded-full bg-[#FFF1F6]">
-              <Icon size={22} strokeWidth={1.9} color="#FF5C93" />
-            </View>
-            <Text className="mt-2 text-[12px] font-medium leading-4 text-[#4B5563]" numberOfLines={1}>
-              {label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-    </View>
-  );
-}
-
-function SectionHeader({ title, icon: Icon, onPress }: { title: string; icon: LucideIcon; onPress?: () => void }) {
+function SectionHeader({
+  title,
+  iconMotion,
+  onPress,
+}: {
+  title: string;
+  iconMotion: AnimatedSectionIconType;
+  onPress?: () => void;
+}) {
   return (
     <View className="mb-4 flex-row items-center justify-between px-5">
       <View className="flex-row items-center">
-        <Icon size={20} strokeWidth={2} color="#374151" />
+        <AnimatedSectionIcon type={iconMotion} />
         <Text className="ml-2 text-[20px] font-bold leading-7 text-[#111827]">{title}</Text>
       </View>
       {onPress ? (
@@ -112,18 +78,18 @@ function SectionHeader({ title, icon: Icon, onPress }: { title: string; icon: Lu
 
 function Section({
   title,
-  icon,
+  iconMotion,
   onPress,
   children,
 }: {
   title: string;
-  icon: LucideIcon;
+  iconMotion: AnimatedSectionIconType;
   onPress?: () => void;
   children: ReactNode;
 }) {
   return (
     <View className="mt-8">
-      <SectionHeader title={title} icon={icon} onPress={onPress} />
+      <SectionHeader title={title} iconMotion={iconMotion} onPress={onPress} />
       {children}
     </View>
   );
@@ -135,7 +101,7 @@ function MainBanner() {
   return (
     <AnimatedPressable
       onPress={() => router.push('/marketplace')}
-      className="mx-5 mt-5 h-[188px] overflow-hidden rounded-2xl bg-[#111827]"
+      className="mx-5 mt-5 h-[188px] overflow-hidden rounded-[14px] bg-[#111827]"
     >
       <Image source={{ uri: banner?.image }} className="absolute h-full w-full" resizeMode="cover" />
       <View className="absolute inset-0 bg-black/45" />
@@ -155,13 +121,13 @@ function HotListingsSection() {
   const hotListings = [...listings].sort((a, b) => b.views + b.likes - (a.views + a.likes)).slice(0, 5);
 
   return (
-    <Section title="오늘 핫한 분양" icon={Flame} onPress={() => router.push('/marketplace')}>
+    <Section title="오늘 핫한 분양" iconMotion="flame" onPress={() => router.push('/marketplace')}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-1">
         {hotListings.map((listing, index) => (
           <FadeInView key={listing.id} delay={index * 45}>
             <AnimatedPressable
               onPress={() => router.push(`/listing/${listing.id}` as never)}
-              className="mr-3 w-[214px] overflow-hidden rounded-2xl bg-white"
+              className="mr-3 w-[214px] overflow-hidden rounded-[14px] bg-white"
             >
               <Image source={{ uri: listing.image }} className="h-[138px] w-full" resizeMode="cover" />
               <View className="p-4">
@@ -185,8 +151,8 @@ function HotListingsSection() {
 
 function PopularBreedersSection() {
   return (
-    <Section title="오늘의 인기 브리더" icon={Award} onPress={() => router.push('/marketplace')}>
-      <View className="mx-5 rounded-2xl bg-white px-4">
+    <Section title="인기 브리더" iconMotion="award" onPress={() => router.push('/marketplace')}>
+      <View className="mx-5 rounded-[14px] bg-white px-4">
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
@@ -201,8 +167,8 @@ function PopularBreedersSection() {
                   <Text className="flex-shrink text-[16px] font-semibold leading-6 text-[#111827]" numberOfLines={1}>
                     {breeder.name}
                   </Text>
-                  <View className="ml-2 rounded-full bg-[#FFF1F6] px-2 py-0.5">
-                    <Text className="text-[10px] font-semibold text-[#FF5C93]">인증</Text>
+                  <View className="ml-2 rounded-full bg-[#EEF7FF] px-2 py-0.5">
+                    <Text className="text-[10px] font-semibold text-[#2F80ED]">인증</Text>
                   </View>
                 </View>
                 <Text className="mt-1 text-[13px] font-normal leading-[18px] text-[#9CA3AF]" numberOfLines={1}>
@@ -226,8 +192,8 @@ function PopularBreedersSection() {
 
 function CommunitySection() {
   return (
-    <Section title="오늘의 커뮤니티" icon={MessageCircle} onPress={() => router.push('/community')}>
-      <View className="mx-5 rounded-2xl bg-white px-4">
+    <Section title="오늘의 커뮤니티" iconMotion="community" onPress={() => router.push('/community')}>
+      <View className="mx-5 rounded-[14px] bg-white px-4">
         {posts.slice(0, 4).map((post, index) => (
           <AnimatedPressable
             key={post.id}
@@ -257,7 +223,7 @@ function CommunitySection() {
 
 function RecentReviewsSection() {
   return (
-    <Section title="최근 후기" icon={Star} onPress={() => router.push('/mypage/reviews')}>
+    <Section title="최근 후기" iconMotion="star" onPress={() => router.push('/mypage/reviews')}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-1">
         {breederReviews.slice(0, 4).map((review, index) => {
           const breeder = breeders.find((item) => item.id === review.breederId);
@@ -265,7 +231,7 @@ function RecentReviewsSection() {
             <FadeInView key={review.id} delay={index * 45}>
               <AnimatedPressable
                 onPress={() => router.push(`/breeder/${review.breederId}` as never)}
-                className="mr-3 w-[276px] rounded-2xl bg-white p-4"
+                className="mr-3 w-[276px] rounded-[14px] bg-white p-4"
               >
                 <View className="flex-row items-center">
                   <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={36} />
@@ -296,17 +262,17 @@ function RecentReviewsSection() {
 
 function BoogiColumnsSection() {
   return (
-    <Section title="부기 칼럼" icon={BookOpen} onPress={() => router.push('/community')}>
+    <Section title="부기 칼럼" iconMotion="book" onPress={() => router.push('/community')}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-1">
         {homeColumns.map((column, index) => (
           <FadeInView key={column.id} delay={index * 45}>
             <AnimatedPressable
               onPress={() => router.push(column.route as never)}
-              className="mr-3 w-[250px] overflow-hidden rounded-2xl bg-white"
+              className="mr-3 w-[250px] overflow-hidden rounded-[14px] bg-white"
             >
               <Image source={{ uri: column.thumbnail }} className="h-[116px] w-full" resizeMode="cover" />
               <View className="p-4">
-                <Text className="text-[11px] font-semibold text-[#FF5C93]">{column.category}</Text>
+                <Text className="text-[11px] font-semibold text-[#6B7280]">{column.category}</Text>
                 <Text className="mt-1.5 text-[15px] font-semibold leading-5 text-[#111827]" numberOfLines={2}>
                   {column.title}
                 </Text>
@@ -330,7 +296,7 @@ function NewListingsSection() {
     .slice(0, 4);
 
   return (
-    <Section title="신규 분양" icon={Sparkles} onPress={() => router.push('/marketplace')}>
+    <Section title="신규 분양" iconMotion="new" onPress={() => router.push('/marketplace')}>
       <View className="mx-5 flex-row flex-wrap justify-between">
         {recentListings.map((listing, index) => (
           <ListingGridCard key={listing.id} item={listing} index={index} width={cardWidth} />
@@ -350,7 +316,6 @@ export function HomeScreen() {
   return (
     <Page>
       <HomeHeader />
-      <ShortcutMenu />
       <MainBanner />
       <HotListingsSection />
       <PopularBreedersSection />

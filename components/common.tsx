@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
-import { colors, shadows } from '@/constants/theme';
+import { colors } from '@/constants/theme';
 import { unreadNotificationCount } from '@/data/notificationData';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -39,7 +39,7 @@ export function BrandHeader({ compact = false }: { compact?: boolean }) {
         </Pressable>
       </View>
       {!compact ? (
-        <Pressable onPress={() => router.push('/search')} className="mt-5 flex-row items-center rounded-[20px] bg-soft px-4 py-3.5">
+        <Pressable onPress={() => router.push('/search')} className="mt-5 h-[52px] flex-row items-center rounded-[14px] bg-soft px-4">
           <Ionicons name="search" color={colors.muted} size={18} />
           <Text className="ml-2 text-[13px] text-muted">거북이, 브리더, 게시글 검색</Text>
         </Pressable>
@@ -66,8 +66,8 @@ export function SectionHeader({ title, action = '전체보기', onPress }: { tit
   return (
     <View className="mb-4 mt-7 flex-row items-center justify-between px-5">
       <Text className="text-[20px] font-bold leading-7 text-ink">{title}</Text>
-      <Pressable onPress={onPress} style={shadows.card} className="rounded-full bg-white px-3.5 py-2.5">
-        <Text className="text-[10px] font-bold text-muted">{action}</Text>
+      <Pressable onPress={onPress} className="rounded-full px-3.5 py-2.5">
+        <Text className="text-[11px] font-medium text-subtle">{action}</Text>
       </Pressable>
     </View>
   );
@@ -75,7 +75,7 @@ export function SectionHeader({ title, action = '전체보기', onPress }: { tit
 
 export function Chip({ label, selected = false, icon }: { label: string; selected?: boolean; icon?: IconName }) {
   return (
-    <View className={`mr-2 flex-row items-center rounded-full px-3.5 py-2.5 ${selected ? 'bg-ink' : 'border border-line bg-white'}`}>
+    <View className={`mr-2 flex-row items-center rounded-full px-3.5 py-2.5 ${selected ? 'bg-berry' : 'border border-line bg-white'}`}>
       {icon ? <Ionicons name={icon} size={13} color={selected ? 'white' : colors.berry} /> : null}
       <Text className={`text-[12px] font-semibold ${icon ? 'ml-1' : ''} ${selected ? 'text-white' : 'text-muted'}`}>{label}</Text>
     </View>
@@ -87,11 +87,11 @@ export function HorizontalRow({ children }: { children: ReactNode }) {
 }
 
 export function VerifiedBadge({ label = '인증 브리더' }: { label?: string }) {
-  return <View className="self-start rounded-full bg-blush px-2.5 py-1"><Text className="text-[10px] font-semibold text-berry">✓ {label}</Text></View>;
+  return <View className="self-start rounded-full bg-[#EEF7FF] px-2.5 py-1"><Text className="text-[10px] font-semibold text-[#2F80ED]">✓ {label}</Text></View>;
 }
 
 export function EmptyImage({ icon = 'image-outline' }: { icon?: IconName }) {
-  return <View className="h-full w-full items-center justify-center bg-shell"><Ionicons name={icon} size={28} color={colors.berry} /></View>;
+  return <View className="h-full w-full items-center justify-center bg-soft"><Ionicons name={icon} size={28} color={colors.subtle} /></View>;
 }
 
 export function Stat({ icon, value }: { icon: IconName; value: number | string }) {
