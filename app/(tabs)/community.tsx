@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { communityCategories, posts } from '@/data/communityData';
+import { getWeeklyPopularPosts } from '@/utils/communityRanking';
 
 type Post = (typeof posts)[number];
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -129,6 +130,52 @@ function RelatedListingCard({ listing }: { listing: NonNullable<Post['relatedLis
   );
 }
 
+function WeeklyPopularSection({ items }: { items: Post[] }) {
+  return (
+    <View className="mx-5 mb-4 overflow-hidden rounded-[16px] bg-white p-4">
+      <View className="mb-2 flex-row items-center">
+        <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-[#FFF7D6]">
+          <Ionicons name="trophy" size={17} color="#E9A008" />
+        </View>
+        <Text className="text-[18px] font-bold leading-6 text-[#222222]">이번 주 인기글</Text>
+      </View>
+
+      {items.slice(0, 3).map((post, index) => {
+        const commentCount = post.commentsCount ?? post.comments;
+        return (
+          <AnimatedPressable
+            key={post.id}
+            onPress={() => router.push(`/community/${post.id}` as never)}
+            className={`flex-row items-center py-3 ${index ? 'border-t border-[#F1F3F5]' : ''}`}
+          >
+            <Text className="w-8 text-center text-[18px] font-bold leading-6 text-[#FF4F8B]">{index + 1}</Text>
+            <View className="ml-2 flex-1" style={{ minWidth: 0 }}>
+              <Text className="text-[14px] font-semibold leading-5 text-[#222222]" numberOfLines={1}>
+                {post.title}
+              </Text>
+              <View className="mt-1 flex-row items-center">
+                <Ionicons name="eye-outline" size={13} color="#9CA3AF" />
+                <Text className="ml-1 text-[11px] font-normal leading-4 text-[#9CA3AF]">{post.views.toLocaleString()}</Text>
+                <Ionicons name="chatbubble-outline" size={12} color="#9CA3AF" style={{ marginLeft: 10 }} />
+                <Text className="ml-1 text-[11px] font-normal leading-4 text-[#9CA3AF]">{commentCount.toLocaleString()}</Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#C4C8CF" />
+          </AnimatedPressable>
+        );
+      })}
+
+      <AnimatedPressable
+        onPress={() => router.push('/community/popular')}
+        className="mt-1 flex-row items-center justify-center border-t border-[#F1F3F5] pt-3"
+      >
+        <Text className="text-[13px] font-semibold leading-[18px] text-[#666666]">전체보기</Text>
+        <Ionicons name="chevron-forward" size={14} color="#666666" />
+      </AnimatedPressable>
+    </View>
+  );
+}
+
 function CommunityFeedCard({ post, index }: { post: Post; index: number }) {
   const commentCount = post.commentsCount ?? post.comments;
   const images = post.images?.length ? post.images : post.image ? [post.image] : [];
@@ -191,6 +238,7 @@ export default function CommunityScreen() {
     () => (selectedCategory === '전체' ? posts : posts.filter((post) => post.category === selectedCategory)),
     [selectedCategory],
   );
+  const weeklyPopularPosts = useMemo(() => getWeeklyPopularPosts(posts).slice(0, 3), []);
 
   return (
     <SafeAreaView className="flex-1 bg-[#F7F8FA]" edges={['top']}>
@@ -205,6 +253,8 @@ export default function CommunityScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}>
+        <WeeklyPopularSection items={weeklyPopularPosts} />
+
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 12, paddingTop: 14 }}>
           {communityCategories.map((category) => (
             <CategoryPill
