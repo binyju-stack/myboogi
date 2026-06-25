@@ -25,7 +25,7 @@ const emptyBanner: HomeBanner = {
 function Field({ label, value, placeholder, onChangeText }: { label: string; value: string; placeholder: string; onChangeText: (value: string) => void }) {
   return (
     <View className="mt-4">
-      <Text className="mb-2 text-[11px] font-black text-ink">{label}</Text>
+      <Text className="mb-2 text-[11px] font-bold text-ink">{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -44,7 +44,7 @@ function ToggleRow({ label, description, value, onPress }: { label: string; desc
         {value ? <Ionicons name="checkmark" size={15} color="white" /> : null}
       </View>
       <View className="ml-3 flex-1">
-        <Text className="text-[12px] font-black text-ink">{label}</Text>
+        <Text className="text-[12px] font-bold text-ink">{label}</Text>
         <Text className="mt-1 text-[9px] leading-4 text-muted">{description}</Text>
       </View>
     </AnimatedPressable>
@@ -60,21 +60,21 @@ export function AdminBannerForm({ mode, initialBanner }: { mode: 'create' | 'edi
     <Page>
       <TopBar title={mode === 'create' ? '배너 등록' : '배너 수정'} />
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">BANNER ADMIN</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">{mode === 'create' ? '새 배너를 등록해요' : '배너 정보를 수정해요'}</Text>
+        <Text className="text-[10px] font-bold text-berry">BANNER ADMIN</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">{mode === 'create' ? '새 배너를 등록해요' : '배너 정보를 수정해요'}</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">현재는 Mock UI이며 실제 저장과 이미지 업로드는 나중에 연결합니다.</Text>
       </View>
 
       <View className="px-5 pb-5 pt-6">
         <View className="rounded-[26px] bg-white p-5 shadow-sm">
-          <Text className="text-[10px] font-black text-berry">IMAGE</Text>
+          <Text className="text-[10px] font-bold text-berry">IMAGE</Text>
           <View className="mt-3 h-44 overflow-hidden rounded-[22px] bg-blush">
             {banner.image ? (
               <Image source={{ uri: banner.image }} className="h-full w-full" resizeMode="cover" />
             ) : (
               <View className="h-full w-full items-center justify-center">
                 <Ionicons name="image-outline" size={30} color={colors.berry} />
-                <Text className="mt-2 text-[11px] font-black text-berry">배너 이미지 추가</Text>
+                <Text className="mt-2 text-[11px] font-bold text-berry">배너 이미지 추가</Text>
               </View>
             )}
           </View>
@@ -92,7 +92,7 @@ export function AdminBannerForm({ mode, initialBanner }: { mode: 'create' | 'edi
           <ToggleRow label="광고 배너로 표시" description="체크 시 홈 화면 배너 우측 상단에 광고 표시가 노출됩니다." value={banner.isAd} onPress={() => update('isAd', !banner.isAd)} />
 
           <AnimatedPressable onPress={() => Alert.alert('안내', '배너 저장 기능은 준비중입니다.')} className="mt-6 items-center rounded-[20px] bg-berry py-4">
-            <Text className="text-[13px] font-black text-white">저장</Text>
+            <Text className="text-[13px] font-bold text-white">저장</Text>
           </AnimatedPressable>
         </View>
       </View>

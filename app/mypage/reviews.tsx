@@ -19,7 +19,7 @@ export default function MyReviewsScreen() {
             <AnimatedPressable onPress={() => router.push(`/breeder/${review.breederId}` as never)} className="mb-3 rounded-[22px] border border-line bg-white p-4 shadow-sm">
               <View className="flex-row items-start justify-between">
                 <View className="flex-1 pr-3">
-                  <Text className="text-[13px] font-black text-ink">{breeder?.name ?? '브리더'}</Text>
+                  <Text className="text-[13px] font-bold text-ink">{breeder?.name ?? '브리더'}</Text>
                   <Text className="mt-1 text-[9px] text-muted">{review.species} · {review.createdAt}</Text>
                 </View>
                 <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={15} />

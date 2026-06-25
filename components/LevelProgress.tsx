@@ -21,7 +21,7 @@ export function LevelPill({ label, icon = 'sparkles-outline' }: { label: string;
   return (
     <View className="flex-row items-center self-start rounded-full bg-blush px-3 py-2">
       <Ionicons name={icon} size={13} color={colors.berry} />
-      <Text className="ml-1 text-[10px] font-black text-berry">{label}</Text>
+      <Text className="ml-1 text-[10px] font-bold text-berry">{label}</Text>
     </View>
   );
 }
@@ -33,8 +33,8 @@ export function UserLevelCard({ user, compact = false }: { user: User; compact?:
     <View className={`${compact ? 'p-4' : 'p-5'} rounded-[24px] bg-white shadow-sm`}>
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[10px] font-black text-berry">MY LEVEL</Text>
-          <Text className={`${compact ? 'text-[18px]' : 'text-[24px]'} mt-1 font-black text-ink`}>
+          <Text className="text-[10px] font-bold text-berry">MY LEVEL</Text>
+          <Text className={`${compact ? 'text-[18px]' : 'text-[24px]'} mt-1 font-bold text-ink`}>
             {formatLevel(user.level, user.levelName)}
           </Text>
         </View>
@@ -46,7 +46,7 @@ export function UserLevelCard({ user, compact = false }: { user: User; compact?:
       <View className="mt-5">
         <View className="mb-2 flex-row items-center justify-between">
           <Text className="text-[10px] font-bold text-muted">{user.xp} / {user.nextLevelXp} XP</Text>
-          <Text className="text-[10px] font-black text-berry">{getXpProgress(user.xp, user.nextLevelXp)}%</Text>
+          <Text className="text-[10px] font-bold text-berry">{getXpProgress(user.xp, user.nextLevelXp)}%</Text>
         </View>
         <XpProgressBar xp={user.xp} nextLevelXp={user.nextLevelXp} />
       </View>

@@ -20,16 +20,16 @@ function getReplyCount(comment: PostComment) {
 
 function Header({ onMenuPress }: { onMenuPress: () => void }) {
   return (
-    <View className="flex-row items-center justify-between border-b border-[#ECECEC] bg-white px-4 py-3">
+    <View className="flex-row items-center justify-between border-b border-[#EEF2F6] bg-white px-4 py-3">
       <Pressable onPress={() => router.back()} className="h-10 w-10 items-center justify-center rounded-full">
-        <Ionicons name="chevron-back" size={24} color="#222222" />
+        <Ionicons name="chevron-back" size={24} color="#111827" />
       </Pressable>
       <View className="flex-row items-center">
         <Pressable className="h-10 w-10 items-center justify-center rounded-full">
-          <Ionicons name="bookmark-outline" size={21} color="#222222" />
+          <Ionicons name="bookmark-outline" size={21} color="#111827" />
         </Pressable>
         <Pressable onPress={onMenuPress} className="ml-1 h-10 w-10 items-center justify-center rounded-full">
-          <Ionicons name="ellipsis-horizontal" size={22} color="#222222" />
+          <Ionicons name="ellipsis-horizontal" size={22} color="#111827" />
         </Pressable>
       </View>
     </View>
@@ -49,8 +49,8 @@ function ActionButton({
 }) {
   return (
     <Pressable onPress={onPress} className="flex-1 flex-row items-center justify-center py-4">
-      <Ionicons name={icon} size={18} color={active ? colors.berry : '#8A8F98'} />
-      <Text className={`ml-2 text-[14px] font-semibold ${active ? 'text-berry' : 'text-[#8A8F98]'}`}>{label}</Text>
+      <Ionicons name={icon} size={18} color={active ? colors.berry : '#94A3B8'} />
+      <Text className={`ml-2 text-[14px] font-semibold ${active ? 'text-berry' : 'text-[#94A3B8]'}`}>{label}</Text>
     </Pressable>
   );
 }
@@ -69,7 +69,7 @@ function CommentItem({
   const replyCount = getReplyCount(comment);
 
   return (
-    <View className="border-b border-[#ECECEC] py-5">
+    <View className="border-b border-[#EEF2F6] py-5">
       {isBest ? (
         <View className="mb-3 self-start rounded-full bg-[#FFF1E6] px-2.5 py-1">
           <Text className="text-[12px] font-semibold text-[#FF9B4A]">{bestLabels[bestIndex]}</Text>
@@ -80,7 +80,7 @@ function CommentItem({
         <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
           <View className="flex-row items-start">
             <View className="flex-1">
-              <Text className="text-[14px] font-semibold leading-5 text-[#222222]" numberOfLines={1}>{comment.author}</Text>
+              <Text className="text-[14px] font-semibold leading-5 text-[#111827]" numberOfLines={1}>{comment.author}</Text>
               <Text className="mt-0.5 text-[12px] font-normal leading-[18px] text-[#A0A5AD]">{comment.createdAt}</Text>
             </View>
             <Pressable onPress={onBlock} className="h-8 w-8 items-center justify-center">
@@ -88,7 +88,7 @@ function CommentItem({
             </Pressable>
           </View>
 
-          <Text className="mt-3 text-[14px] font-medium leading-[22px] text-[#666666]">{comment.content}</Text>
+          <Text className="mt-3 text-[14px] font-medium leading-[22px] text-[#94A3B8]">{comment.content}</Text>
 
           <View className="mt-3 flex-row items-center">
             <Pressable className="mr-4 flex-row items-center">
@@ -128,18 +128,18 @@ export default function CommunityDetailScreen() {
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 104 + insets.bottom }}>
           <FadeInView>
             <View className="bg-white px-5 pb-7 pt-5">
-              <Text className="text-[22px] font-bold leading-[30px] text-[#222222]">{post.title}</Text>
+              <Text className="text-[22px] font-bold leading-[30px] text-[#111827]">{post.title}</Text>
 
               <View className="mt-5 flex-row items-center">
                 <Avatar uri={post.authorAvatar ?? post.avatar} size={42} />
                 <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-                  <Text className="text-[14px] font-semibold leading-5 text-[#222222]" numberOfLines={1}>{post.author}</Text>
+                  <Text className="text-[14px] font-semibold leading-5 text-[#111827]" numberOfLines={1}>{post.author}</Text>
                   <Text className="mt-1 text-[13px] font-normal leading-[18px] text-[#A0A5AD]">{post.createdAt} · 조회수 {post.views.toLocaleString()}</Text>
                 </View>
               </View>
 
-              <View className="mt-7 h-px bg-[#ECECEC]" />
-              <Text className="mt-7 text-[15px] font-medium leading-6 text-[#666666]">{post.content}</Text>
+              <View className="mt-7 h-px bg-[#EEF2F6]" />
+              <Text className="mt-7 text-[15px] font-medium leading-6 text-[#94A3B8]">{post.content}</Text>
 
               {images.length ? (
                 <View className="mt-6">
@@ -149,22 +149,22 @@ export default function CommunityDetailScreen() {
                 </View>
               ) : null}
 
-              <View className="mt-8 flex-row border-y border-[#ECECEC]">
+              <View className="mt-8 flex-row border-y border-[#EEF2F6]">
                 <ActionButton icon={liked ? 'heart' : 'heart-outline'} label={`좋아요 ${likeCount}`} active={liked} onPress={() => setLiked((current) => !current)} />
-                <View className="my-3 w-px bg-[#ECECEC]" />
+                <View className="my-3 w-px bg-[#EEF2F6]" />
                 <ActionButton icon="chatbubble-outline" label={`댓글 ${commentCount}`} />
               </View>
             </View>
           </FadeInView>
 
-          <View className="h-2 bg-[#F8F9FA]" />
+          <View className="h-px bg-[#EEF2F6]" />
 
           <View className="bg-white px-5">
-            <View className="flex-row items-center justify-between border-b border-[#ECECEC] py-4">
-              <Text className="text-[16px] font-bold text-[#222222]">댓글 {commentCount}</Text>
+            <View className="flex-row items-center justify-between border-b border-[#EEF2F6] py-4">
+              <Text className="text-[16px] font-bold text-[#111827]">댓글 {commentCount}</Text>
               <Pressable className="flex-row items-center">
-                <Text className="text-[13px] font-medium text-[#8A8F98]">등록순</Text>
-                <Ionicons name="chevron-down" size={15} color="#8A8F98" />
+                <Text className="text-[13px] font-medium text-[#94A3B8]">등록순</Text>
+                <Ionicons name="chevron-down" size={15} color="#94A3B8" />
               </Pressable>
             </View>
 
@@ -179,10 +179,10 @@ export default function CommunityDetailScreen() {
           </View>
         </ScrollView>
 
-        <View className="absolute bottom-0 left-0 right-0 flex-row items-center border-t border-[#ECECEC] bg-white px-4 pt-3" style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
-          <TextInput placeholder="댓글을 입력해주세요" placeholderTextColor="#A0A5AD" className="mr-2 flex-1 rounded-[14px] bg-[#F5F6F8] px-4 py-3 text-[14px] font-medium text-[#222222]" />
+        <View className="absolute bottom-0 left-0 right-0 flex-row items-center border-t border-[#EEF2F6] bg-white px-4 pt-3" style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
+          <TextInput placeholder="댓글을 입력해주세요" placeholderTextColor="#A0A5AD" className="mr-2 flex-1 rounded-[14px] bg-[#F5F6F8] px-4 py-3 text-[14px] font-medium text-[#111827]" />
           <AnimatedPressable onPress={showCommentReady} className="h-11 items-center justify-center rounded-[12px] bg-[#FFD85A] px-4">
-            <Text className="text-[13px] font-bold text-[#222222]">등록</Text>
+            <Text className="text-[13px] font-bold text-[#111827]">등록</Text>
           </AnimatedPressable>
         </View>
       </KeyboardAvoidingView>

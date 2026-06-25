@@ -36,14 +36,14 @@ export default function AdminDashboardScreen() {
     <Page>
       <TopBar title="관리자" />
       <View className="border-b border-line bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">MYBOOGI ADMIN</Text>
-        <Text className="mt-1 text-[25px] font-black text-ink">마이부기 운영 현황</Text>
+        <Text className="text-[10px] font-bold text-berry">MYBOOGI ADMIN</Text>
+        <Text className="mt-1 text-[25px] font-bold text-ink">마이부기 운영 현황</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">오늘 확인해야 할 서비스 지표와 관리 업무예요.</Text>
       </View>
 
       <View className="px-5 pt-6">
-        <Text className="text-[10px] font-black text-berry">OVERVIEW</Text>
-        <Text className="mt-1 text-[20px] font-black text-ink">운영 통계</Text>
+        <Text className="text-[10px] font-bold text-berry">OVERVIEW</Text>
+        <Text className="mt-1 text-[20px] font-bold text-ink">운영 통계</Text>
         <View className="mt-4 flex-row flex-wrap justify-between">
           {stats.map((item, index) => (
             <View key={item.label} className="mb-3 w-[48%]">
@@ -52,7 +52,7 @@ export default function AdminDashboardScreen() {
                   <View className="h-10 w-10 items-center justify-center rounded-[14px] bg-blush">
                     <Ionicons name={item.icon} size={18} color={colors.berry} />
                   </View>
-                  <Text className="mt-4 text-[21px] font-black text-ink">{item.value.toLocaleString()}</Text>
+                  <Text className="mt-4 text-[21px] font-bold text-ink">{item.value.toLocaleString()}</Text>
                   <Text className="mt-1 text-[10px] font-bold text-muted">{item.label}</Text>
                 </View>
               </FadeInView>
@@ -62,8 +62,8 @@ export default function AdminDashboardScreen() {
       </View>
 
       <View className="px-5 pb-5 pt-5">
-        <Text className="text-[10px] font-black text-berry">MANAGEMENT</Text>
-        <Text className="mt-1 text-[20px] font-black text-ink">관리 메뉴</Text>
+        <Text className="text-[10px] font-bold text-berry">MANAGEMENT</Text>
+        <Text className="mt-1 text-[20px] font-bold text-ink">관리 메뉴</Text>
         <View style={shadows.card} className="mt-4 rounded-[26px] bg-white px-5 py-2">
           {menus.map((item, index) => (
             <AnimatedPressable key={item.label} onPress={() => router.push(item.href as never)} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
@@ -71,7 +71,7 @@ export default function AdminDashboardScreen() {
                 <Ionicons name={item.icon} size={19} color={colors.berry} />
               </View>
               <View className="ml-3 flex-1">
-                <Text className="text-[13px] font-black text-ink">{item.label}</Text>
+                <Text className="text-[13px] font-bold text-ink">{item.label}</Text>
                 <Text className="mt-1 text-[9px] text-muted">{item.description}</Text>
               </View>
               <Ionicons name="chevron-forward" size={17} color={colors.subtle} />

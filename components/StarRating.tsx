@@ -81,7 +81,7 @@ export function StarRating({
           </View>
         );
       })}
-      {showValue ? <Text className="ml-1.5 text-[11px] font-black text-ink">{ratingText}</Text> : null}
+      {showValue ? <Text className="ml-1.5 text-[11px] font-bold text-ink">{ratingText}</Text> : null}
     </View>
   );
 }
@@ -95,7 +95,7 @@ export function ReviewTypeBadge({ type }: { type: 'general' | 'contact_based' | 
 
   return (
     <View className={`self-start rounded-full px-2.5 py-1.5 ${meta.className.split(' ')[0]}`}>
-      <Text className={`text-[9px] font-black ${meta.className.split(' ')[1]}`}>{meta.label}</Text>
+      <Text className={`text-[9px] font-bold ${meta.className.split(' ')[1]}`}>{meta.label}</Text>
     </View>
   );
 }
@@ -112,7 +112,7 @@ export function ReviewRatingSummary({
   return (
     <View>
       <StarRating rating={rating} size={size} showValue={false} />
-      <Text className="mt-1.5 text-[11px] font-black text-ink">
+      <Text className="mt-1.5 text-[11px] font-bold text-ink">
         평점 {rating.toFixed(1)}{typeof reviewCount === 'number' ? ` · 후기 ${reviewCount.toLocaleString()}개` : ''}
       </Text>
     </View>
@@ -122,7 +122,7 @@ export function ReviewRatingSummary({
 export function ReviewTrustNote() {
   return (
     <View className="rounded-[18px] bg-soft px-4 py-3">
-      <Text className="text-[10px] font-black text-ink">후기 신뢰도 안내</Text>
+      <Text className="text-[10px] font-bold text-ink">후기 신뢰도 안내</Text>
       <Text className="mt-1 text-[10px] leading-5 text-muted">
         현재 후기는 문의 이력을 기반으로 작성됩니다. 실거래 인증 후기는 추후 안전결제 연동 후 제공됩니다.
       </Text>

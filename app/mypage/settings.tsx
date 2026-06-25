@@ -29,7 +29,7 @@ const supportItems: SettingItem[] = [
 function SettingGroup({ title, items, onReady }: { title: string; items: SettingItem[]; onReady: (title: string) => void }) {
   return (
     <View className="mt-5 rounded-[26px] bg-white px-5 py-2 shadow-sm">
-      <Text className="pb-2 pt-4 text-[10px] font-black text-berry">{title}</Text>
+      <Text className="pb-2 pt-4 text-[10px] font-bold text-berry">{title}</Text>
       {items.map((item, index) => (
         <AnimatedPressable
           key={item.label}
@@ -40,7 +40,7 @@ function SettingGroup({ title, items, onReady }: { title: string; items: Setting
             <Ionicons name={item.icon} size={19} color={item.danger ? '#E45B5B' : colors.ink} />
           </View>
           <View className="ml-3 flex-1">
-            <Text className={`text-[13px] font-black ${item.danger ? 'text-[#E45B5B]' : 'text-ink'}`}>{item.label}</Text>
+            <Text className={`text-[13px] font-bold ${item.danger ? 'text-[#E45B5B]' : 'text-ink'}`}>{item.label}</Text>
             <Text className="mt-1 text-[9px] text-muted">{item.description}</Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={colors.subtle} />
@@ -57,8 +57,8 @@ export default function SettingsScreen() {
     <Page>
       <TopBar title="설정" />
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">MYBOOGI SETTINGS</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">내게 맞게 설정해요</Text>
+        <Text className="text-[10px] font-bold text-berry">MYBOOGI SETTINGS</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">내게 맞게 설정해요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">계정 정보와 서비스 이용 설정을 관리할 수 있어요.</Text>
       </View>
 

@@ -30,8 +30,8 @@ export default function NotificationSettingsScreen() {
       <TopBar title="알림 설정" />
 
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">NOTIFICATIONS</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">필요한 알림만 받아요</Text>
+        <Text className="text-[10px] font-bold text-berry">NOTIFICATIONS</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">필요한 알림만 받아요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">현재는 화면 안에서만 상태가 변경되는 Mock 설정입니다.</Text>
       </View>
 
@@ -41,7 +41,7 @@ export default function NotificationSettingsScreen() {
             {notificationRows.map((item, index) => (
               <View key={item.key} className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}>
                 <View className="flex-1 pr-4">
-                  <Text className="text-[13px] font-black text-ink">{item.label}</Text>
+                  <Text className="text-[13px] font-bold text-ink">{item.label}</Text>
                   <Text className="mt-1 text-[9px] leading-4 text-muted">{item.description}</Text>
                 </View>
                 <Switch

@@ -1,134 +1,134 @@
-import { useEffect } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import {
-  Award,
   BookOpen,
   Flame,
   MessageCircle,
+  MessageSquareMore,
   Sparkles,
-  Star,
+  Trophy,
   type LucideIcon,
 } from 'lucide-react-native';
-import Animated, {
-  Easing,
-  cancelAnimation,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
+import { Animated } from 'react-native';
 
-export type AnimatedSectionIconType = 'flame' | 'award' | 'community' | 'star' | 'book' | 'new';
+import { Colors, Motion } from '@/theme';
+
+export type AnimatedSectionIconType = 'flame' | 'award' | 'community' | 'review' | 'book' | 'new';
 
 type AnimatedSectionIconProps = {
   type: AnimatedSectionIconType;
+  animationType?: AnimatedSectionIconType;
   size?: number;
   color?: string;
 };
 
-const smooth = Easing.inOut(Easing.sin);
 const icons: Record<AnimatedSectionIconType, LucideIcon> = {
   flame: Flame,
-  award: Award,
+  award: Trophy,
   community: MessageCircle,
-  star: Star,
+  review: MessageSquareMore,
   book: BookOpen,
   new: Sparkles,
 };
 
-export function AnimatedSectionIcon({ type, size = 20, color = '#374151' }: AnimatedSectionIconProps) {
+const iconColors: Record<AnimatedSectionIconType, string> = {
+  flame: Colors.primary,
+  award: Colors.primary,
+  community: Colors.primary,
+  review: Colors.primary,
+  book: Colors.primary,
+  new: Colors.primary,
+};
+
+const timing = (value: Animated.Value, toValue: number, duration: number) =>
+  Animated.timing(value, {
+    toValue,
+    duration,
+    easing: Motion.easing.standard,
+    useNativeDriver: true,
+  });
+
+export function AnimatedSectionIcon({
+  type,
+  animationType = type,
+  size = 20,
+  color,
+}: AnimatedSectionIconProps) {
   const Icon = icons[type];
-  const scale = useSharedValue(1);
-  const rotate = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const opacity = useSharedValue(1);
+  const iconColor = iconColors[type];
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const rotate = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    scale.value = 1;
-    rotate.value = 0;
-    translateY.value = 0;
-    opacity.value = 1;
+    scale.setValue(1);
+    translateY.setValue(0);
+    rotate.setValue(0);
+    opacity.setValue(1);
 
-    switch (type) {
+    let animation: Animated.CompositeAnimation;
+
+    switch (animationType) {
       case 'flame':
-        scale.value = withRepeat(
-          withSequence(
-            withTiming(1.08, { duration: 1250, easing: smooth }),
-            withTiming(1, { duration: 1250, easing: smooth }),
-          ),
-          -1,
+        scale.setValue(0.94);
+        translateY.setValue(1);
+        rotate.setValue(-4);
+        opacity.setValue(0.85);
+        animation = Animated.loop(
+          Animated.parallel([
+            Animated.sequence([timing(scale, 1.08, 500), timing(scale, 0.94, 500)]),
+            Animated.sequence([timing(rotate, 4, 500), timing(rotate, -4, 500)]),
+            Animated.sequence([timing(translateY, -3, 500), timing(translateY, 1, 500)]),
+            Animated.sequence([timing(opacity, 1, 500), timing(opacity, 0.85, 500)]),
+          ]),
         );
         break;
       case 'award':
-        rotate.value = withRepeat(
-          withSequence(
-            withTiming(-5, { duration: 750, easing: smooth }),
-            withTiming(5, { duration: 1500, easing: smooth }),
-            withTiming(0, { duration: 750, easing: smooth }),
-          ),
-          -1,
-        );
+        animation = Animated.loop(Animated.sequence([timing(scale, 0.96, 400), timing(scale, 1.06, 600), timing(scale, 1, 400)]));
         break;
       case 'community':
-        translateY.value = withRepeat(
-          withSequence(
-            withTiming(-2, { duration: 1400, easing: smooth }),
-            withTiming(0, { duration: 1400, easing: smooth }),
-          ),
-          -1,
-        );
+        animation = Animated.loop(Animated.sequence([timing(translateY, -4, 600), timing(translateY, 0, 600)]));
         break;
-      case 'star':
-        opacity.value = 0.7;
-        opacity.value = withRepeat(
-          withSequence(
-            withTiming(1, { duration: 1250, easing: smooth }),
-            withTiming(0.7, { duration: 1250, easing: smooth }),
-          ),
-          -1,
+      case 'review':
+        opacity.setValue(0.65);
+        scale.setValue(0.94);
+        animation = Animated.loop(
+          Animated.parallel([
+            Animated.sequence([timing(opacity, 1, 700), timing(opacity, 0.65, 700)]),
+            Animated.sequence([timing(scale, 1.08, 700), timing(scale, 0.94, 700)]),
+          ]),
         );
         break;
       case 'book':
-        scale.value = withRepeat(
-          withSequence(
-            withTiming(1.05, { duration: 1500, easing: smooth }),
-            withTiming(1, { duration: 1500, easing: smooth }),
-          ),
-          -1,
-        );
+        animation = Animated.loop(Animated.sequence([timing(rotate, -4, 500), timing(rotate, 4, 700), timing(rotate, 0, 500)]));
         break;
       case 'new':
-        opacity.value = 0.7;
-        opacity.value = withRepeat(
-          withSequence(
-            withTiming(1, { duration: 1000, easing: smooth }),
-            withTiming(0.7, { duration: 1000, easing: smooth }),
-          ),
-          -1,
-        );
+        opacity.setValue(0.6);
+        animation = Animated.loop(Animated.sequence([timing(opacity, 1, 650), timing(opacity, 0.6, 650)]));
         break;
     }
 
-    return () => {
-      cancelAnimation(scale);
-      cancelAnimation(rotate);
-      cancelAnimation(translateY);
-      cancelAnimation(opacity);
-    };
-  }, [opacity, rotate, scale, translateY, type]);
+    animation.start();
+    return () => animation.stop();
+  }, [animationType, opacity, rotate, scale, translateY]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [
-      { scale: scale.value },
-      { rotate: `${rotate.value}deg` },
-      { translateY: translateY.value },
-    ],
-  }));
+  const rotateValue = rotate.interpolate({
+    inputRange: [-4, 4],
+    outputRange: ['-4deg', '4deg'],
+  });
 
   return (
-    <Animated.View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, animatedStyle]}>
-      <Icon size={size} strokeWidth={2} color={color} />
+    <Animated.View
+      style={{
+        width: size,
+        height: size,
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity,
+        transform: [{ translateY }, { scale }, { rotate: rotateValue }],
+      }}
+    >
+      <Icon size={size} strokeWidth={1.9} color={color ?? iconColor} />
     </Animated.View>
   );
 }

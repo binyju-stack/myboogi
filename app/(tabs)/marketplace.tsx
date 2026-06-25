@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BrandHeader } from '@/components/common';
+import { AppHeader } from '@/components/AppHeader';
 import { ListingGridCard } from '@/components/ListingGridCard';
 import { colors } from '@/constants/theme';
 import { listings } from '@/data/mockData';
@@ -18,11 +18,11 @@ function FilterPill({ label, selected, onPress }: { label: string; selected: boo
       onPress={onPress}
       className="mr-2 h-9 items-center justify-center rounded-full border px-3.5"
       style={{
-        borderColor: selected ? colors.berry : '#E5E7EB',
-        backgroundColor: selected ? '#FFF0F6' : '#FFFFFF',
+        borderColor: selected ? colors.berry : '#EEF2F6',
+        backgroundColor: selected ? '#FFF2F6' : '#FFFFFF',
       }}
     >
-      <Text className="text-[13px] font-medium leading-[18px]" style={{ color: selected ? colors.berry : '#4B5563' }}>
+      <Text className="text-[13px] font-medium leading-[18px]" style={{ color: selected ? colors.berry : '#94A3B8' }}>
         {label}
       </Text>
     </Pressable>
@@ -35,13 +35,13 @@ function CheckOption({ label, checked, onPress }: { label: string; checked: bool
       <View
         className="h-[18px] w-[18px] items-center justify-center rounded-[5px] border"
         style={{
-          borderColor: checked ? colors.berry : '#D1D5DB',
+          borderColor: checked ? colors.berry : '#EEF2F6',
           backgroundColor: checked ? colors.berry : '#FFFFFF',
         }}
       >
         {checked ? <Ionicons name="checkmark" size={13} color="#FFFFFF" /> : null}
       </View>
-      <Text className="ml-1.5 text-[13px] font-medium leading-[18px] text-[#4B5563]">{label}</Text>
+      <Text className="ml-1.5 text-[13px] font-medium leading-[18px] text-[#94A3B8]">{label}</Text>
     </Pressable>
   );
 }
@@ -62,21 +62,10 @@ export default function MarketplaceScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-[#FAFAFA]">
+    <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 118 }} showsVerticalScrollIndicator={false}>
         <View className="pb-4">
-          <BrandHeader compact />
-          <View className="px-5 pt-3">
-            <View className="flex-row items-center justify-between">
-              <View>
-                <Text className="text-[24px] font-bold leading-8 text-[#111827]">분양</Text>
-                <Text className="mt-1 text-[13px] font-medium leading-[18px] text-[#8A8F98]">믿을 수 있는 브리더의 새 개체를 만나보세요</Text>
-              </View>
-              <Pressable onPress={() => router.push('/search')} className="h-10 w-10 items-center justify-center rounded-full bg-white">
-                <Ionicons name="search" size={20} color="#111827" />
-              </Pressable>
-            </View>
-          </View>
+          <AppHeader title="분양" showSearch showBell />
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pt-5">
             {filterPills.map((label) => (
@@ -91,8 +80,8 @@ export default function MarketplaceScreen() {
               ))}
             </View>
             <Pressable className="flex-row items-center">
-              <Text className="text-[13px] font-semibold leading-[18px] text-[#4B5563]">최신순</Text>
-              <Ionicons name="chevron-down" size={15} color="#6B7280" />
+              <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">최신순</Text>
+              <Ionicons name="chevron-down" size={15} color="#94A3B8" />
             </Pressable>
           </View>
         </View>

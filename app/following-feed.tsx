@@ -27,7 +27,7 @@ function EmptyFeed() {
       <View className="h-14 w-14 items-center justify-center rounded-full bg-blush">
         <Ionicons name="people-outline" size={24} color={colors.berry} />
       </View>
-      <Text className="mt-4 text-[14px] font-black text-ink">관심있는 브리더를 팔로우해보세요</Text>
+      <Text className="mt-4 text-[14px] font-bold text-ink">관심있는 브리더를 팔로우해보세요</Text>
       <Text className="mt-2 text-center text-[10px] leading-5 text-muted">팔로우한 브리더의 신규 분양과 후기 소식이 이곳에 표시됩니다.</Text>
     </View>
   );
@@ -41,8 +41,8 @@ export default function FollowingFeedScreen() {
     <Page>
       <TopBar title="팔로우 피드" />
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">FOLLOWING FEED</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">브리더 소식</Text>
+        <Text className="text-[10px] font-bold text-berry">FOLLOWING FEED</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">브리더 소식</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">팔로우한 브리더의 신규 분양과 활동을 확인해요.</Text>
       </View>
 
@@ -60,15 +60,15 @@ export default function FollowingFeedScreen() {
                 <View className="flex-row items-center">
                   <Image source={{ uri: activity.breederLogo }} className="h-12 w-12 rounded-[16px] bg-shell" />
                   <View className="ml-3 flex-1">
-                    <Text className="text-[13px] font-black text-ink">{activity.breederName}</Text>
+                    <Text className="text-[13px] font-bold text-ink">{activity.breederName}</Text>
                     <Text className="mt-1 text-[9px] text-muted">{activity.createdAt}</Text>
                   </View>
                   <View className="rounded-full bg-blush px-2.5 py-1.5">
-                    <Text className="text-[9px] font-black text-berry">{activity.activityType === 'listing' ? '신규 분양' : activity.activityType === 'completed' ? '분양완료' : activity.activityType === 'review' ? '후기' : '대표 개체'}</Text>
+                    <Text className="text-[9px] font-bold text-berry">{activity.activityType === 'listing' ? '신규 분양' : activity.activityType === 'completed' ? '분양완료' : activity.activityType === 'review' ? '후기' : '대표 개체'}</Text>
                   </View>
                 </View>
                 <View className="mt-4 rounded-[18px] bg-soft p-4">
-                  <Text className="text-[15px] font-black text-ink">{activity.title}</Text>
+                  <Text className="text-[15px] font-bold text-ink">{activity.title}</Text>
                   {reviewMeta ? (
                     <View className="mt-2">
                       <ReviewRatingSummary rating={reviewMeta.rating} reviewCount={reviewMeta.reviewCount} size={20} />
@@ -77,10 +77,10 @@ export default function FollowingFeedScreen() {
                   ) : (
                     <Text className="mt-1 text-[11px] text-muted">{activity.description}</Text>
                   )}
-                  {activity.listingStatus ? <Text className="mt-3 self-start rounded-full bg-berry px-2.5 py-1.5 text-[9px] font-black text-white">{activity.listingStatus}</Text> : null}
+                  {activity.listingStatus ? <Text className="mt-3 self-start rounded-full bg-berry px-2.5 py-1.5 text-[9px] font-bold text-white">{activity.listingStatus}</Text> : null}
                 </View>
                 <View className="mt-4 flex-row items-center justify-center rounded-[16px] bg-blush py-3">
-                  <Text className="text-[11px] font-black text-berry">상세 이동</Text>
+                  <Text className="text-[11px] font-bold text-berry">상세 이동</Text>
                   <Ionicons name="chevron-forward" size={14} color={colors.berry} />
                 </View>
               </AnimatedPressable>

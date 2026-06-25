@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextInput } from 'react-native';
+import { StyleSheet, Text, TextInput } from 'react-native';
 
 const defaultTextStyle = {
   fontFamily: 'Pretendard',
@@ -24,7 +24,7 @@ function patchTextComponent(Component: unknown, defaultStyle: typeof defaultText
     const element = originalRender.apply(this, args);
     const props = element.props as { style?: unknown };
     return React.cloneElement(element as React.ReactElement<{ style?: unknown }>, {
-      style: [defaultStyle, props.style],
+      style: StyleSheet.flatten([defaultStyle, props.style]),
     });
   };
   target.__myboogiPretendardPatched = true;

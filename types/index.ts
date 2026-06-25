@@ -96,6 +96,7 @@ export interface Listing {
   images: string[];
   description: string;
   verified: boolean;
+  tradeMethods?: string[];
   listingStatus?: ListingStatus;
   reviewEligible?: boolean;
   status: '분양중' | '예약중' | '분양완료';

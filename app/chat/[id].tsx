@@ -15,11 +15,11 @@ function ListingMiniCard({ room }: { room: (typeof chatRooms)[number] }) {
     <AnimatedPressable onPress={() => room.listingId ? router.push(`/listing/${room.listingId}`) : undefined} className="mx-5 mt-3 flex-row items-center rounded-[22px] border border-line bg-white p-3 shadow-sm">
       {room.listingImage ? <Image source={{ uri: room.listingImage }} className="h-16 w-16 rounded-[16px] bg-shell" /> : null}
       <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-        <Text className="text-[14px] font-black text-[#111827]" numberOfLines={1}>{room.listingTitle ?? '일반 상담'}</Text>
-        <Text className="mt-1 text-[13px] font-black text-ink">{room.listingPrice ? `${room.listingPrice.toLocaleString()}원` : '상담중'}</Text>
+        <Text className="text-[14px] font-bold text-[#111827]" numberOfLines={1}>{room.listingTitle ?? '일반 상담'}</Text>
+        <Text className="mt-1 text-[13px] font-bold text-ink">{room.listingPrice ? `${room.listingPrice.toLocaleString()}원` : '상담중'}</Text>
         <Text className="mt-1 text-[10px] font-bold text-berry">{room.listingStatus ?? '문의중'}</Text>
       </View>
-      <Text className="text-[11px] font-black text-[#9CA3AF]">상세보기 &gt;</Text>
+      <Text className="text-[11px] font-bold text-[#94A3B8]">상세보기 &gt;</Text>
     </AnimatedPressable>
   );
 }
@@ -27,7 +27,7 @@ function ListingMiniCard({ room }: { room: (typeof chatRooms)[number] }) {
 function SafetyNotice() {
   return (
     <View className="mx-5 mt-4 rounded-[18px] bg-cream px-4 py-3">
-      <Text className="text-[11px] font-black leading-5 text-[#6B7280]">안전한 분양 문의를 위해 대화 내용은 마이부기 운영정책에 따라 보관될 수 있습니다.</Text>
+      <Text className="text-[11px] font-bold leading-5 text-[#94A3B8]">안전한 분양 문의를 위해 대화 내용은 마이부기 운영정책에 따라 보관될 수 있습니다.</Text>
       <Text className="mt-1 text-[10px] font-medium leading-5 text-[#8B95A1]">상처나 질병 상담은 정확한 진단이 아니며, 상태가 심각하면 파충류 진료 가능 병원 방문을 권장합니다.</Text>
     </View>
   );
@@ -56,7 +56,7 @@ function MessageBubble({ message }: { message: Message }) {
         <ImageGrid images={message.images ?? []} />
         {message.text ? <Text className={`text-[13px] font-medium leading-6 ${mine ? 'text-white' : 'text-[#111827]'}`}>{message.text}</Text> : null}
       </View>
-      <Text className="mt-1.5 text-[10px] font-medium text-[#9CA3AF]">{message.createdAt}{mine ? ` · ${message.isRead ? '읽음' : '전송됨'}` : ''}</Text>
+      <Text className="mt-1.5 text-[10px] font-medium text-[#94A3B8]">{message.createdAt}{mine ? ` · ${message.isRead ? '읽음' : '전송됨'}` : ''}</Text>
     </View>
   );
 }
@@ -97,10 +97,10 @@ export default function ChatRoomScreen() {
             <Image source={{ uri: room.participantAvatar }} className="ml-2 h-11 w-11 rounded-full bg-shell" />
             <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
               <View className="flex-row items-center">
-                <Text className="text-[15px] font-black text-[#111827]" numberOfLines={1}>{room.participantName}</Text>
-                {room.isVerified ? <Text className="ml-1.5 text-[11px] font-black text-berry">✓</Text> : null}
+                <Text className="text-[15px] font-bold text-[#111827]" numberOfLines={1}>{room.participantName}</Text>
+                {room.isVerified ? <Text className="ml-1.5 text-[11px] font-bold text-berry">✓</Text> : null}
               </View>
-              <Text className="mt-1 text-[10px] font-bold text-[#9CA3AF]" numberOfLines={1}>{room.listingTitle ?? '사육 상담'} 문의중</Text>
+              <Text className="mt-1 text-[10px] font-bold text-[#94A3B8]" numberOfLines={1}>{room.listingTitle ?? '사육 상담'} 문의중</Text>
             </View>
             <Pressable onPress={() => setReadyVisible(true)} className="h-10 w-10 items-center justify-center rounded-full bg-soft">
               <Ionicons name="ellipsis-horizontal" size={20} color={colors.ink} />

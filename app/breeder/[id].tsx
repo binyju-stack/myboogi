@@ -34,9 +34,9 @@ function SectionTitle({ eyebrow, title, action }: { eyebrow?: string; title: str
     <View className="mb-4 flex-row items-end justify-between">
       <View>
         {eyebrow ? <Text className="text-[10px] font-semibold text-berry">{eyebrow}</Text> : null}
-        <Text className="mt-1 text-[20px] font-bold leading-7 text-[#222222]">{title}</Text>
+        <Text className="mt-1 text-[20px] font-bold leading-7 text-[#111827]">{title}</Text>
       </View>
-      {action ? <Text className="text-[11px] font-bold text-[#9CA3AF]">{action}</Text> : null}
+      {action ? <Text className="text-[11px] font-bold text-[#94A3B8]">{action}</Text> : null}
     </View>
   );
 }
@@ -44,7 +44,7 @@ function SectionTitle({ eyebrow, title, action }: { eyebrow?: string; title: str
 function MiniMetric({ value, label }: { value: string | number; label: string }) {
   return (
     <View className="flex-1 items-center justify-center">
-      <Text className="text-[18px] font-bold text-[#222222]" numberOfLines={1}>{value}</Text>
+      <Text className="text-[18px] font-bold text-[#111827]" numberOfLines={1}>{value}</Text>
       <Text className="mt-1 text-[12px] font-medium text-[#A0A5AD]">{label}</Text>
     </View>
   );
@@ -106,7 +106,7 @@ function BrandHero({
           </View>
         </View>
 
-        <Text className="mt-4 text-[14px] font-medium leading-6 text-[#666666]">{breeder.shortBio ?? breeder.intro}</Text>
+        <Text className="mt-4 text-[14px] font-medium leading-6 text-[#94A3B8]">{breeder.shortBio ?? breeder.intro}</Text>
 
         <View className="mt-5 flex-row rounded-[24px] border border-line bg-white py-4 shadow-sm">
           <MiniMetric value={summary.averageRating.toFixed(1)} label="평점" />
@@ -124,7 +124,7 @@ function SnsButton({ icon, label, onPress }: { icon: IconName; label: string; on
   return (
     <AnimatedPressable onPress={onPress} className="mr-2 flex-1 items-center rounded-[18px] bg-soft px-2 py-3">
       <Ionicons name={icon} size={19} color={colors.berry} />
-      <Text className="mt-1.5 text-[11px] font-semibold text-[#666666]" numberOfLines={1}>{label}</Text>
+      <Text className="mt-1.5 text-[11px] font-semibold text-[#94A3B8]" numberOfLines={1}>{label}</Text>
     </AnimatedPressable>
   );
 }
@@ -142,7 +142,7 @@ function SnsSection({ breeder, onContact }: { breeder: Breeder; onContact: () =>
           <SnsButton icon="chatbubble-outline" label="오픈채팅" onPress={() => showReady('오픈채팅')} />
           <SnsButton icon="chatbubbles-outline" label="카카오 문의" onPress={onContact} />
         </View>
-        <Text className="mt-4 text-[11px] font-medium leading-5 text-[#9CA3AF]" numberOfLines={2}>
+        <Text className="mt-4 text-[11px] font-medium leading-5 text-[#94A3B8]" numberOfLines={2}>
           {breeder.kakaoChannelUrl ?? breeder.instagramUrl ?? 'SNS 링크는 실제 서비스 연결 시 활성화됩니다.'}
         </Text>
       </View>
@@ -161,7 +161,7 @@ function AboutSection({ breeder }: { breeder: Breeder }) {
     <FadeInView delay={80}>
       <View className="mx-5 mt-5 rounded-[26px] border border-line bg-white p-5 shadow-sm">
         <SectionTitle eyebrow="ABOUT" title="브리더 소개" />
-        <Text className="text-[15px] font-medium leading-7 text-[#666666]">{breeder.fullBio ?? breeder.intro}</Text>
+        <Text className="text-[15px] font-medium leading-7 text-[#94A3B8]">{breeder.fullBio ?? breeder.intro}</Text>
         <View className="mt-4 flex-row flex-wrap">
           {chips.map((chip) => (
             <View key={chip} className="mb-2 mr-2 rounded-full bg-blush px-3 py-2">
@@ -206,7 +206,7 @@ function ReviewCard({ review }: { review: BreederReview }) {
       <View className="flex-row items-center">
         <Avatar uri={review.avatar} size={40} />
         <View className="ml-3 flex-1">
-          <Text className="text-[13px] font-semibold text-[#222222]" numberOfLines={1}>{review.author}</Text>
+          <Text className="text-[13px] font-semibold text-[#111827]" numberOfLines={1}>{review.author}</Text>
           <Text className="mt-1 text-[12px] font-medium text-[#A0A5AD]">{review.species} · {review.createdAt}</Text>
         </View>
         <StarRating rating={review.rating} size={13} showValue={false} />
@@ -214,7 +214,7 @@ function ReviewCard({ review }: { review: BreederReview }) {
       <View className="mt-3">
         <ReviewTypeBadge type={review.reviewType} />
       </View>
-      <Text className="mt-3 text-[14px] font-medium leading-6 text-[#666666]">{review.content}</Text>
+      <Text className="mt-3 text-[14px] font-medium leading-6 text-[#94A3B8]">{review.content}</Text>
     </View>
   );
 }
@@ -225,7 +225,7 @@ function EmptyState({ title }: { title: string }) {
       <View className="h-12 w-12 items-center justify-center rounded-full bg-soft">
         <Ionicons name="leaf-outline" size={22} color={colors.muted} />
       </View>
-      <Text className="mt-4 text-[14px] font-semibold text-[#222222]">{title}</Text>
+      <Text className="mt-4 text-[14px] font-semibold text-[#111827]">{title}</Text>
       <Text className="mt-2 text-[12px] font-medium text-[#A0A5AD]">새로운 소식이 올라오면 알려드릴게요.</Text>
     </View>
   );
@@ -239,14 +239,14 @@ function GrowthCard({ turtle, index }: { turtle: RepresentativeTurtle; index: nu
         <View className="p-4">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-[15px] font-bold text-[#222222]">{turtle.name}</Text>
+              <Text className="text-[15px] font-bold text-[#111827]">{turtle.name}</Text>
               <Text className="mt-1 text-[12px] font-semibold text-berry">{turtle.species}</Text>
             </View>
             <View className="rounded-full bg-soft px-3 py-2">
-              <Text className="text-[11px] font-semibold text-[#666666]">{index + 1}세대 기록</Text>
+              <Text className="text-[11px] font-semibold text-[#94A3B8]">{index + 1}세대 기록</Text>
             </View>
           </View>
-          <Text className="mt-3 text-[13px] font-medium leading-5 text-[#8A8F98]">{turtle.feature}</Text>
+          <Text className="mt-3 text-[13px] font-medium leading-5 text-[#94A3B8]">{turtle.feature}</Text>
         </View>
       </View>
     </FadeInView>

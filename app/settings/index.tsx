@@ -37,14 +37,14 @@ export default function SettingsScreen() {
       <TopBar title="설정" />
 
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">MYBOOGI SETTINGS</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">앱 설정을 관리해요</Text>
+        <Text className="text-[10px] font-bold text-berry">MYBOOGI SETTINGS</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">앱 설정을 관리해요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">알림, 차단, 약관 등 출시 전 기본 설정 UI를 준비했어요.</Text>
       </View>
 
       <View className="px-5 pt-5">
         <FadeInView>
-          <View className="rounded-[26px] bg-white px-5 py-2 shadow-sm">
+          <View className="bg-white py-2">
             {menus.map((item, index) => (
               <AnimatedPressable
                 key={item.label}
@@ -58,10 +58,10 @@ export default function SettingsScreen() {
                   <Ionicons name={item.icon} size={19} color={item.danger ? '#E45B5B' : colors.berry} />
                 </View>
                 <View className="ml-3 flex-1">
-                  <Text className={`text-[13px] font-black ${item.danger ? 'text-[#E45B5B]' : 'text-ink'}`}>{item.label}</Text>
+                  <Text className={`text-[13px] font-bold ${item.danger ? 'text-[#E45B5B]' : 'text-ink'}`}>{item.label}</Text>
                   <Text className="mt-1 text-[9px] text-muted">{item.description}</Text>
                 </View>
-                {item.value ? <Text className="text-[11px] font-black text-muted">{item.value}</Text> : <Ionicons name="chevron-forward" size={16} color={colors.subtle} />}
+                {item.value ? <Text className="text-[11px] font-bold text-muted">{item.value}</Text> : <Ionicons name="chevron-forward" size={16} color={colors.subtle} />}
               </AnimatedPressable>
             ))}
           </View>

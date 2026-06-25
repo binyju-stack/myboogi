@@ -47,8 +47,8 @@ export const emptyListingDraft: ListingDraft = {
 function FormSection({ eyebrow, title, description, children }: { eyebrow: string; title: string; description?: string; children: ReactNode }) {
   return (
     <View className="mb-4 rounded-[26px] border border-line bg-white p-5 shadow-sm">
-      <Text className="text-[9px] font-black text-berry">{eyebrow}</Text>
-      <Text className="mt-1 text-[19px] font-black text-ink">{title}</Text>
+      <Text className="text-[9px] font-bold text-berry">{eyebrow}</Text>
+      <Text className="mt-1 text-[19px] font-bold text-ink">{title}</Text>
       {description ? <Text className="mt-2 text-[11px] leading-5 text-muted">{description}</Text> : null}
       <View className="mt-5">{children}</View>
     </View>
@@ -58,7 +58,7 @@ function FormSection({ eyebrow, title, description, children }: { eyebrow: strin
 function Field({ label, value, placeholder, onChangeText, multiline = false, keyboardType = 'default', suffix, icon }: { label: string; value: string; placeholder: string; onChangeText: (value: string) => void; multiline?: boolean; keyboardType?: 'default' | 'numeric' | 'phone-pad'; suffix?: string; icon?: IconName }) {
   return (
     <View className="mb-4">
-      <Text className="mb-2 text-[11px] font-black text-ink">{label}</Text>
+      <Text className="mb-2 text-[11px] font-bold text-ink">{label}</Text>
       <View className={`flex-row rounded-[18px] bg-soft px-4 ${multiline ? 'min-h-32 items-start py-4' : 'items-center py-1'}`}>
         {icon ? <Ionicons name={icon} size={17} color={colors.muted} /> : null}
         <TextInput
@@ -80,9 +80,9 @@ function Field({ label, value, placeholder, onChangeText, multiline = false, key
 function ChoiceField({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (value: string) => void }) {
   return (
     <View className="mb-4">
-      <Text className="mb-2 text-[11px] font-black text-ink">{label}</Text>
+      <Text className="mb-2 text-[11px] font-bold text-ink">{label}</Text>
       <View className="flex-row gap-2">
-        {options.map((option) => <Pressable key={option} onPress={() => onChange(option)} className={`flex-1 items-center rounded-[16px] border py-3.5 ${value === option ? 'border-berry bg-blush' : 'border-line bg-white'}`}><Text className={`text-[11px] font-black ${value === option ? 'text-berry' : 'text-muted'}`}>{option}</Text></Pressable>)}
+        {options.map((option) => <Pressable key={option} onPress={() => onChange(option)} className={`flex-1 items-center rounded-[16px] border py-3.5 ${value === option ? 'border-berry bg-blush' : 'border-line bg-white'}`}><Text className={`text-[11px] font-bold ${value === option ? 'text-berry' : 'text-muted'}`}>{option}</Text></Pressable>)}
       </View>
     </View>
   );
@@ -91,10 +91,10 @@ function ChoiceField({ label, options, value, onChange }: { label: string; optio
 function PhotoSection() {
   return (
     <View className="mb-4 rounded-[26px] border border-line bg-white p-5 shadow-sm">
-      <View className="flex-row items-end justify-between"><View><Text className="text-[9px] font-black text-berry">PHOTO</Text><Text className="mt-1 text-[19px] font-black text-ink">거북이를 보여주세요</Text></View><Text className="text-[10px] font-bold text-muted">0 / 10</Text></View>
+      <View className="flex-row items-end justify-between"><View><Text className="text-[9px] font-bold text-berry">PHOTO</Text><Text className="mt-1 text-[19px] font-bold text-ink">거북이를 보여주세요</Text></View><Text className="text-[10px] font-bold text-muted">0 / 10</Text></View>
       <Pressable className="mt-5 aspect-[4/3] items-center justify-center rounded-[22px] border border-dashed border-petal bg-blush">
         <View className="h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm"><Ionicons name="camera-outline" size={25} color={colors.berry} /></View>
-        <Text className="mt-4 text-[13px] font-black text-ink">대표 사진 추가</Text>
+        <Text className="mt-4 text-[13px] font-bold text-ink">대표 사진 추가</Text>
         <Text className="mt-1.5 text-[10px] text-muted">첫 번째 사진이 대표 이미지로 보여요</Text>
       </Pressable>
       <View className="mt-3 flex-row gap-2">

@@ -29,14 +29,14 @@ type MenuSection = {
 
 function getProfileBadge(profile: UserProfile) {
   if (profile.userType === 'business_breeder') {
-    return { label: profile.isVerified ? '사업자 인증' : '사업자 브리더', color: '#7C3AED', backgroundColor: '#F3E8FF' };
+    return { label: profile.isVerified ? '사업자 인증' : '사업자 브리더', color: '#FF2E6F', backgroundColor: '#FFF0F5' };
   }
 
   if (profile.userType === 'personal_breeder') {
-    return { label: profile.isVerified ? '인증 브리더' : '브리더', color: '#2F80ED', backgroundColor: '#EEF7FF' };
+    return { label: profile.isVerified ? '인증 브리더' : '브리더', color: '#FF2E6F', backgroundColor: '#FFF0F5' };
   }
 
-  return { label: '일반 회원', color: '#8A8F98', backgroundColor: '#F5F6F8' };
+  return { label: '일반 회원', color: '#94A3B8', backgroundColor: '#F5F6F8' };
 }
 
 const stats = [
@@ -102,29 +102,31 @@ function ProfileHeader({ profile }: { profile: UserProfile }) {
   return (
     <View className="bg-white px-5 pb-5 pt-4">
       <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center">
+        <View className="flex-1 flex-row items-center" style={{ minWidth: 0 }}>
           <Image source={{ uri: profile.profileImage }} className="h-[72px] w-[72px] rounded-full bg-shell" />
           <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
-            <View className="flex-row items-center">
+            <View className="flex-row items-center" style={{ minWidth: 0 }}>
               <Text className="text-[22px] font-bold leading-7 text-[#111827]" numberOfLines={1}>
                 {profile.nickname}
               </Text>
-              <View className="ml-2 rounded-full px-2 py-1" style={{ backgroundColor: badge.backgroundColor }}>
+              <View className="ml-2 rounded-full px-2 py-1" style={{ backgroundColor: badge.backgroundColor, flexShrink: 0 }}>
                 <Text className="text-[10px] font-bold leading-[14px]" style={{ color: badge.color }}>
                   {badge.label}
                 </Text>
               </View>
             </View>
-            <Text className="mt-1.5 text-[13px] font-medium leading-[19px] text-[#6B7280]" numberOfLines={1}>
+            <Text className="mt-1.5 text-[14px] font-medium leading-5 text-[#94A3B8]" numberOfLines={1} style={{ flexShrink: 1 }}>
               {profile.bio}
             </Text>
-            <View className="mt-1.5 flex-row items-center">
-              <Ionicons name="location-outline" size={13} color="#9CA3AF" />
-              <Text className="ml-1 text-[12px] font-medium leading-4 text-[#9CA3AF]">{profile.region}</Text>
+            <View className="mt-1.5 flex-row items-center" style={{ minWidth: 0 }}>
+              <Ionicons name="location-outline" size={13} color="#94A3B8" />
+              <Text className="ml-1 text-[12px] font-medium leading-4 text-[#94A3B8]" numberOfLines={1} style={{ flexShrink: 1 }}>
+                {profile.region}
+              </Text>
             </View>
           </View>
         </View>
-        <Pressable onPress={() => router.push('/mypage/edit')} className="h-9 w-9 items-center justify-center rounded-full bg-[#F5F6F8]">
+        <Pressable onPress={() => router.push('/mypage/edit')} className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-[#F5F6F8]">
           <Ionicons name="create-outline" size={17} color="#111827" />
         </Pressable>
       </View>
@@ -134,16 +136,16 @@ function ProfileHeader({ profile }: { profile: UserProfile }) {
 
 function StatBar() {
   return (
-    <View className="mx-5 mt-3 h-[66px] flex-row items-center border-y border-[#ECECEC] bg-white">
+    <View className="mx-5 mt-3 h-[66px] flex-row items-center border-y border-[#EEF2F6] bg-white">
       {stats.map((item) => (
         <Pressable
           key={item.label}
           onPress={() => (item.href ? router.push(item.href as never) : undefined)}
           className="flex-1 items-center justify-center"
         >
-          <Ionicons name={item.icon} size={17} color="#FF4F8B" />
+          <Ionicons name={item.icon} size={17} color="#FF2E6F" />
           <Text className="mt-0.5 text-[17px] font-bold leading-[21px] text-[#111827]">{item.value}</Text>
-          <Text className="text-[11px] font-medium leading-[15px] text-[#8A8F98]" numberOfLines={1}>
+          <Text className="text-[11px] font-medium leading-[15px] text-[#94A3B8]" numberOfLines={1}>
             {item.label}
           </Text>
         </Pressable>
@@ -156,17 +158,17 @@ function SectionList({ section, onReady }: { section: MenuSection; onReady: (mes
   return (
     <View className="mt-6">
       <Text className="mx-5 mb-2 text-[15px] font-bold leading-5 text-[#111827]">{section.title}</Text>
-      <View className="border-y border-[#ECECEC] bg-white">
+      <View className="border-y border-[#EEF2F6] bg-white">
         {section.items.map((item, index) => (
           <Pressable
             key={item.label}
             onPress={() => (item.href ? router.push(item.href as never) : onReady(item.readyMessage ?? `${item.label} 기능은 준비중입니다.`))}
-            className={`mx-5 h-[54px] flex-row items-center ${index ? 'border-t border-[#F1F3F5]' : ''}`}
+            className={`mx-5 h-[54px] flex-row items-center ${index ? 'border-t border-[#EEF2F6]' : ''}`}
           >
             <View className="h-8 w-8 items-center justify-center">
-              <Ionicons name={item.icon} size={19} color="#FF4F8B" />
+              <Ionicons name={item.icon} size={19} color="#FF2E6F" />
             </View>
-            <Text className="ml-3 flex-1 text-[15px] font-medium leading-5 text-[#222222]">{item.label}</Text>
+            <Text className="ml-3 flex-1 text-[15px] font-medium leading-5 text-[#111827]">{item.label}</Text>
             <Ionicons name="chevron-forward" size={17} color="#C4C8CF" />
           </Pressable>
         ))}
@@ -183,7 +185,7 @@ export default function MyPageScreen() {
 
   return (
     <Page>
-      <View className="bg-[#FAFAFA] pb-4">
+      <View className="bg-white pb-4">
         <ProfileHeader profile={profile} />
         <StatBar />
         {visibleSections.map((section) => (

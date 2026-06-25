@@ -15,8 +15,8 @@ export default function PrivacyScreen() {
     <Page>
       <TopBar title="개인정보처리방침" />
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">PRIVACY</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">개인정보처리방침</Text>
+        <Text className="text-[10px] font-bold text-berry">PRIVACY</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">개인정보처리방침</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">출시 전 검토를 위한 Mock 개인정보 안내입니다.</Text>
       </View>
       <View className="px-5 pt-5">

@@ -59,11 +59,11 @@ function Illustration({ slide, index }: { slide: (typeof slides)[number]; index:
       <View className="mt-7 flex-row">
         {slide.chips.map((chip) => (
           <View key={chip} className="mx-1 rounded-full bg-white px-3 py-2 shadow-sm">
-            <Text className="text-[10px] font-black text-berry">{chip}</Text>
+            <Text className="text-[10px] font-bold text-berry">{chip}</Text>
           </View>
         ))}
       </View>
-      <Text className="absolute left-6 top-6 text-[11px] font-black text-berry">0{index + 1}</Text>
+      <Text className="absolute left-6 top-6 text-[11px] font-bold text-berry">0{index + 1}</Text>
     </View>
   );
 }
@@ -96,9 +96,9 @@ export default function OnboardingScreen() {
     <SafeAreaView className="flex-1 bg-page" edges={['top', 'bottom']}>
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-5 pt-3">
-          <Text className="text-[22px] font-black text-ink">마이부기</Text>
+          <Text className="text-[22px] font-bold text-ink">마이부기</Text>
           <AnimatedPressable onPress={goHome} className="rounded-full bg-white px-4 py-2.5 shadow-sm">
-            <Text className="text-[11px] font-black text-muted">건너뛰기</Text>
+            <Text className="text-[11px] font-bold text-muted">건너뛰기</Text>
           </AnimatedPressable>
         </View>
 
@@ -111,7 +111,7 @@ export default function OnboardingScreen() {
               <View key={slide.title} style={{ width }} className="flex-1">
                 <Illustration slide={slide} index={slideIndex} />
                 <View className="px-7 pt-10">
-                  <Text className="text-[28px] font-black leading-9 text-ink">{slide.title}</Text>
+                  <Text className="text-[28px] font-bold leading-9 text-ink">{slide.title}</Text>
                   <Text className="mt-4 text-[14px] leading-7 text-muted">{slide.description}</Text>
                 </View>
               </View>
@@ -129,7 +129,7 @@ export default function OnboardingScreen() {
             ))}
           </View>
           <AnimatedPressable onPress={goNext} className="h-[60px] items-center justify-center rounded-[22px] bg-berry py-4 shadow-sm">
-            <Text className="text-[14px] font-black text-white">{isLast ? '마이부기 시작하기' : '다음'}</Text>
+            <Text className="text-[14px] font-bold text-white">{isLast ? '마이부기 시작하기' : '다음'}</Text>
           </AnimatedPressable>
         </View>
       </View>

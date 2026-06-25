@@ -12,7 +12,7 @@ function Field({ label, value, multiline = false }: { label: string; value: stri
   const [text, setText] = useState(value);
   return (
     <View className="mt-5">
-      <Text className="mb-2 text-[11px] font-black text-ink">{label}</Text>
+      <Text className="mb-2 text-[11px] font-bold text-ink">{label}</Text>
       <TextInput
         value={text}
         onChangeText={setText}
@@ -28,7 +28,7 @@ function Field({ label, value, multiline = false }: { label: string; value: stri
 function ImagePickerBox({ label, uri, icon }: { label: string; uri: string; icon: keyof typeof Ionicons.glyphMap }) {
   return (
     <View className="flex-1">
-      <Text className="mb-2 text-[11px] font-black text-ink">{label}</Text>
+      <Text className="mb-2 text-[11px] font-bold text-ink">{label}</Text>
       <AnimatedPressable className="overflow-hidden rounded-[22px] bg-blush">
         <Image source={{ uri }} className="aspect-[4/3] w-full bg-shell" resizeMode="cover" />
         <View className="absolute inset-0 items-center justify-center bg-black/20">
@@ -56,15 +56,15 @@ export default function BreederEditScreen() {
         >
           <FadeInView>
             <View className="mb-6">
-              <Text className="text-[25px] font-black leading-9 text-ink">브리더샵 정보를{'\n'}깔끔하게 정리해요</Text>
+              <Text className="text-[25px] font-bold leading-9 text-ink">브리더샵 정보를{'\n'}깔끔하게 정리해요</Text>
               <Text className="mt-3 text-[12px] leading-6 text-muted">실제 저장은 나중에 연결하고, 지금은 화면 구조만 준비합니다.</Text>
             </View>
           </FadeInView>
 
           <FadeInView delay={50}>
             <View className="rounded-[26px] bg-white p-5 shadow-sm">
-              <Text className="text-[10px] font-black text-berry">BRAND IMAGE</Text>
-              <Text className="mt-1 text-[18px] font-black text-ink">이미지 설정</Text>
+              <Text className="text-[10px] font-bold text-berry">BRAND IMAGE</Text>
+              <Text className="mt-1 text-[18px] font-bold text-ink">이미지 설정</Text>
               <View className="mt-5 flex-row gap-3">
                 <ImagePickerBox label="로고 변경" uri={breeder.logo ?? breeder.avatar} icon="image-outline" />
                 <ImagePickerBox label="배너 이미지 변경" uri={breeder.bannerImage ?? breeder.banner} icon="images-outline" />
@@ -74,8 +74,8 @@ export default function BreederEditScreen() {
 
           <FadeInView delay={100}>
             <View className="mt-4 rounded-[26px] bg-white p-5 shadow-sm">
-              <Text className="text-[10px] font-black text-berry">PROFILE</Text>
-              <Text className="mt-1 text-[18px] font-black text-ink">브리더 소개</Text>
+              <Text className="text-[10px] font-bold text-berry">PROFILE</Text>
+              <Text className="mt-1 text-[18px] font-bold text-ink">브리더 소개</Text>
               <Field label="브리더명" value={breeder.name} />
               <Field label="한줄 소개" value={breeder.shortBio ?? ''} />
               <Field label="상세 소개" value={breeder.fullBio ?? breeder.intro} multiline />
@@ -84,8 +84,8 @@ export default function BreederEditScreen() {
 
           <FadeInView delay={150}>
             <View className="mt-4 rounded-[26px] bg-white p-5 shadow-sm">
-              <Text className="text-[10px] font-black text-berry">EXTERNAL LINKS</Text>
-              <Text className="mt-1 text-[18px] font-black text-ink">외부 링크</Text>
+              <Text className="text-[10px] font-bold text-berry">EXTERNAL LINKS</Text>
+              <Text className="mt-1 text-[18px] font-bold text-ink">외부 링크</Text>
               <Field label="인스타그램 링크" value={breeder.instagramUrl ?? ''} />
               <Field label="블로그 링크" value={breeder.blogUrl ?? ''} />
               <Field label="유튜브 링크" value={breeder.youtubeUrl ?? ''} />
@@ -98,7 +98,7 @@ export default function BreederEditScreen() {
 
       <View className="absolute bottom-0 left-0 right-0 border-t border-line bg-white px-5 pt-3" style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
         <AnimatedPressable onPress={() => Alert.alert('브리더샵 수정 기능은 준비중입니다.')} className="items-center rounded-[18px] bg-berry py-4">
-          <Text className="text-[14px] font-black text-white">저장</Text>
+          <Text className="text-[14px] font-bold text-white">저장</Text>
         </AnimatedPressable>
       </View>
     </SafeAreaView>

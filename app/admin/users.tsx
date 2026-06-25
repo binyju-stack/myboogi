@@ -15,8 +15,8 @@ export default function AdminUsersScreen() {
         <FadeInView key={user.id} delay={index * 45}>
           <View className="mb-3 flex-row items-center rounded-[22px] bg-white p-4 shadow-sm">
             <View className="h-12 w-12 items-center justify-center rounded-full bg-blush"><Ionicons name="person-outline" size={20} color={colors.berry} /></View>
-            <View className="ml-3 flex-1"><Text className="text-[13px] font-black text-ink">{user.nickname}</Text><Text className="mt-1 text-[9px] text-muted">{user.memberType} · 가입 {user.joinedAt}</Text></View>
-            <Text className={`rounded-full px-2.5 py-1.5 text-[9px] font-black ${statusStyle[user.status]}`}>{user.status}</Text>
+            <View className="ml-3 flex-1"><Text className="text-[13px] font-bold text-ink">{user.nickname}</Text><Text className="mt-1 text-[9px] text-muted">{user.memberType} · 가입 {user.joinedAt}</Text></View>
+            <Text className={`rounded-full px-2.5 py-1.5 text-[9px] font-bold ${statusStyle[user.status]}`}>{user.status}</Text>
           </View>
         </FadeInView>
       ))}

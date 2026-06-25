@@ -15,21 +15,21 @@ export default function ReviewCreateScreen() {
       <TopBar title="후기 작성" />
 
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">REVIEW</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">브리더 후기를 남겨주세요</Text>
+        <Text className="text-[10px] font-bold text-berry">REVIEW</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">브리더 후기를 남겨주세요</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">문의 이력 기반 후기 신뢰도를 함께 표시합니다.</Text>
       </View>
 
       <View className="px-5 pt-6">
         <View className="rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <Text className="text-[13px] font-black text-ink">평점 선택</Text>
+          <Text className="text-[13px] font-bold text-ink">평점 선택</Text>
           <View className="mt-4">
             <StarRating rating={rating} size={32} selectable onChange={setRating} />
           </View>
         </View>
 
         <View className="mt-4 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-          <Text className="text-[13px] font-black text-ink">후기 입력</Text>
+          <Text className="text-[13px] font-bold text-ink">후기 입력</Text>
           <TextInput
             value={content}
             onChangeText={setContent}
@@ -46,7 +46,7 @@ export default function ReviewCreateScreen() {
         </View>
 
         <AnimatedPressable onPress={() => Alert.alert('후기 등록 기능은 준비중입니다.')} className="mt-5 items-center rounded-[18px] bg-berry py-4">
-          <Text className="text-[12px] font-black text-white">등록하기</Text>
+          <Text className="text-[12px] font-bold text-white">등록하기</Text>
         </AnimatedPressable>
       </View>
     </Page>

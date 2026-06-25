@@ -15,8 +15,8 @@ export default function TermsScreen() {
     <Page>
       <TopBar title="이용약관" />
       <View className="bg-white px-5 pb-6 pt-4">
-        <Text className="text-[10px] font-black text-berry">TERMS</Text>
-        <Text className="mt-1 text-[24px] font-black text-ink">이용약관</Text>
+        <Text className="text-[10px] font-bold text-berry">TERMS</Text>
+        <Text className="mt-1 text-[24px] font-bold text-ink">이용약관</Text>
         <Text className="mt-2 text-[11px] leading-5 text-muted">앱스토어 제출 전 검토용 Mock 약관입니다.</Text>
       </View>
       <View className="px-5 pt-5">

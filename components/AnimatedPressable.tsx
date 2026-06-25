@@ -1,6 +1,8 @@
-import type { ComponentProps, ReactNode } from 'react';
+﻿import type { ComponentProps, ReactNode } from 'react';
 import { Animated, Pressable } from 'react-native';
 import { useEffect, useRef } from 'react';
+
+import { Motion } from '@/theme';
 
 type PressableProps = ComponentProps<typeof Pressable>;
 
@@ -10,8 +12,8 @@ export function AnimatedPressable({ children, style, ...props }: PressableProps 
 
   const animate = (pressed: boolean) => {
     Animated.parallel([
-      Animated.spring(scale, { toValue: pressed ? 0.975 : 1, useNativeDriver: true, speed: 32, bounciness: 3 }),
-      Animated.timing(opacity, { toValue: pressed ? 0.86 : 1, duration: 110, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: pressed ? Motion.scale.pressed : 1, useNativeDriver: true, speed: 32, bounciness: 3 }),
+      Animated.timing(opacity, { toValue: pressed ? 0.86 : 1, duration: Motion.duration.fast, useNativeDriver: true }),
     ]).start();
   };
 
@@ -27,7 +29,7 @@ export function AnimatedPressable({ children, style, ...props }: PressableProps 
 export function FadeInView({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const progress = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    Animated.timing(progress, { toValue: 1, duration: 360, delay, useNativeDriver: true }).start();
+    Animated.timing(progress, { toValue: 1, duration: Motion.duration.slow, delay, useNativeDriver: true }).start();
   }, [delay, progress]);
   return <Animated.View style={{ opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }}>{children}</Animated.View>;
 }

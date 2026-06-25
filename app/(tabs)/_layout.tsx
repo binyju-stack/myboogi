@@ -7,7 +7,7 @@ import {
   type TabAnimationKind,
   type TabIconName,
 } from '@/components/navigation/AnimatedTabIcon';
-import { colors, shadows } from '@/constants/theme';
+import { colors } from '@/constants/theme';
 import { unreadChatCount } from '@/data/chat';
 
 const tabs: {
@@ -99,10 +99,9 @@ export default function TabLayout() {
           paddingBottom: bottomInset,
           paddingHorizontal: 0,
           borderTopWidth: 1,
-          borderTopColor: '#F1F3F5',
+          borderTopColor: '#EEF2F6',
           backgroundColor: colors.white,
           overflow: 'visible',
-          ...shadows.bar,
         },
       }}
     >

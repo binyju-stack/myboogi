@@ -10,7 +10,7 @@ import { adminNotices } from '@/data/adminData';
 
 export default function AdminNoticesScreen() {
   const [readyVisible, setReadyVisible] = useState(false);
-  const action = <AnimatedPressable onPress={() => setReadyVisible(true)} className="flex-row items-center rounded-full bg-berry px-3.5 py-2.5"><Ionicons name="add" size={14} color="white" /><Text className="ml-1 text-[10px] font-black text-white">글쓰기</Text></AnimatedPressable>;
+  const action = <AnimatedPressable onPress={() => setReadyVisible(true)} className="flex-row items-center rounded-full bg-berry px-3.5 py-2.5"><Ionicons name="add" size={14} color="white" /><Text className="ml-1 text-[10px] font-bold text-white">글쓰기</Text></AnimatedPressable>;
 
   return (
     <>
@@ -19,7 +19,7 @@ export default function AdminNoticesScreen() {
           <FadeInView key={item.id} delay={index * 45}>
             <View className="mb-3 flex-row items-center rounded-[22px] bg-white p-4 shadow-sm">
               <View className="h-11 w-11 items-center justify-center rounded-[15px] bg-blush"><Ionicons name="megaphone-outline" size={19} color={colors.berry} /></View>
-              <View className="ml-3 flex-1"><View className="flex-row items-center">{item.important ? <Text className="mr-2 rounded-full bg-blush px-2 py-1 text-[8px] font-black text-berry">중요</Text> : null}<Text className="flex-1 text-[12px] font-black text-ink" numberOfLines={1}>{item.title}</Text></View><Text className="mt-2 text-[9px] text-muted">{item.date}</Text></View>
+              <View className="ml-3 flex-1"><View className="flex-row items-center">{item.important ? <Text className="mr-2 rounded-full bg-blush px-2 py-1 text-[8px] font-bold text-berry">중요</Text> : null}<Text className="flex-1 text-[12px] font-bold text-ink" numberOfLines={1}>{item.title}</Text></View><Text className="mt-2 text-[9px] text-muted">{item.date}</Text></View>
             </View>
           </FadeInView>
         ))}

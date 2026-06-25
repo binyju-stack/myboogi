@@ -42,7 +42,7 @@ function getStatusStyle(status: BreedingStatus) {
   return {
     incubating: { bg: '#FFF1E6', text: '#FF9B4A' },
     hatched: { bg: '#EAF8EE', text: '#22A06B' },
-    failed: { bg: '#F5F6F8', text: '#8A8F98' },
+    failed: { bg: '#F5F6F8', text: '#94A3B8' },
   }[status];
 }
 
@@ -57,10 +57,10 @@ function SummaryCard() {
   ];
 
   return (
-    <View className="mx-5 mt-5 flex-row rounded-[22px] border border-[#ECECEC] bg-white px-2 py-4">
+    <View className="mx-5 mt-5 flex-row rounded-[22px] border border-[#EEF2F6] bg-white px-2 py-4">
       {items.map((item, index) => (
-        <View key={item.label} className={`flex-1 items-center justify-center ${index ? 'border-l border-[#ECECEC]' : ''}`}>
-          <Text className="text-center text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{item.label}</Text>
+        <View key={item.label} className={`flex-1 items-center justify-center ${index ? 'border-l border-[#EEF2F6]' : ''}`}>
+          <Text className="text-center text-[13px] font-medium leading-5 text-[#94A3B8]" numberOfLines={1}>{item.label}</Text>
           <Text className="mt-1 text-center text-[20px] font-bold leading-7 text-[#111827]" numberOfLines={1}>{item.value}</Text>
         </View>
       ))}
@@ -79,8 +79,8 @@ function TabBar({ activeTab, onChange }: { activeTab: TabKey; onChange: (tab: Ta
       {tabs.map((tab) => {
         const active = activeTab === tab.key;
         return (
-          <Pressable key={tab.key} onPress={() => onChange(tab.key)} className={`h-10 flex-1 items-center justify-center rounded-[13px] ${active ? 'bg-[#FFF0F6]' : ''}`}>
-            <Text className={`text-[14px] font-semibold ${active ? 'text-[#FF4F8B]' : 'text-[#8A8F98]'}`}>{tab.label}</Text>
+          <Pressable key={tab.key} onPress={() => onChange(tab.key)} className={`h-10 flex-1 items-center justify-center rounded-[13px] ${active ? 'bg-[#FFF2F6]' : ''}`}>
+            <Text className={`text-[14px] font-semibold ${active ? 'text-[#FF2E6F]' : 'text-[#94A3B8]'}`}>{tab.label}</Text>
           </Pressable>
         );
       })}
@@ -115,7 +115,7 @@ function CalendarTab({ selected, onSelect }: { selected?: CalendarItem; onSelect
 
   return (
     <FadeInView>
-      <View className="mx-5 mt-5 rounded-[22px] border border-[#ECECEC] bg-white p-4">
+      <View className="mx-5 mt-5 rounded-[22px] border border-[#EEF2F6] bg-white p-4">
         <View className="flex-row items-center justify-between">
           <Pressable onPress={() => setMonthOffset((value) => value - 1)} className="h-9 w-9 items-center justify-center rounded-full bg-[#F7F8FA]">
             <Ionicons name="chevron-back" size={18} color="#111827" />
@@ -127,21 +127,21 @@ function CalendarTab({ selected, onSelect }: { selected?: CalendarItem; onSelect
         </View>
 
         <View className="mt-4 flex-row flex-wrap gap-x-2 gap-y-1">
-          <Text className="text-[11px] font-medium text-[#8A8F98]">🥚 산란일</Text>
-          <Text className="text-[11px] font-medium text-[#8A8F98]">🔍 검란일</Text>
-          <Text className="text-[11px] font-medium text-[#8A8F98]">🐣 부화 예정일</Text>
-          <Text className="text-[11px] font-medium text-[#8A8F98]">🌡 온도 체크</Text>
+          <Text className="text-[11px] font-medium text-[#94A3B8]">🥚 산란일</Text>
+          <Text className="text-[11px] font-medium text-[#94A3B8]">🔍 검란일</Text>
+          <Text className="text-[11px] font-medium text-[#94A3B8]">🐣 부화 예정일</Text>
+          <Text className="text-[11px] font-medium text-[#94A3B8]">🌡 온도 체크</Text>
         </View>
 
         <View className="mt-4 flex-row">
           {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
             <View key={day} className="items-center py-2" style={{ width: '14.2857%' }}>
-              <Text className="text-[11px] font-medium text-[#9CA3AF]">{day}</Text>
+              <Text className="text-[11px] font-medium text-[#94A3B8]">{day}</Text>
             </View>
           ))}
         </View>
 
-        <View className="flex-row flex-wrap overflow-hidden rounded-[18px] border border-[#ECECEC]">
+        <View className="flex-row flex-wrap overflow-hidden rounded-[18px] border border-[#EEF2F6]">
           {paddedCells.map((day, index) => {
             const date = day ? `${year}.${`${month + 1}`.padStart(2, '0')}.${`${day}`.padStart(2, '0')}` : '';
             const events = date ? eventsByDate[date] ?? [] : [];
@@ -153,7 +153,7 @@ function CalendarTab({ selected, onSelect }: { selected?: CalendarItem; onSelect
                 key={`${date}-${index}`}
                 disabled={!events.length}
                 onPress={() => events[0] ? onSelect(events[0]) : undefined}
-                className={`h-[58px] items-center justify-start border-b border-r border-[#ECECEC] pt-1.5 ${isSelected ? 'bg-[#FFF0F6]' : events.length ? 'bg-[#FFF8FB]' : 'bg-white'}`}
+                className={`h-[58px] items-center justify-start border-b border-r border-[#EEF2F6] pt-1.5 ${isSelected ? 'bg-[#FFF2F6]' : events.length ? 'bg-[#FFF7F3]' : 'bg-white'}`}
                 style={{ width: '14.2857%' }}
               >
                 {day ? (
@@ -176,8 +176,8 @@ function CalendarTab({ selected, onSelect }: { selected?: CalendarItem; onSelect
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <View className="flex-row items-center justify-between border-b border-[#ECECEC] py-2.5">
-      <Text className="text-[13px] font-medium text-[#8A8F98]">{label}</Text>
+    <View className="flex-row items-center justify-between border-b border-[#EEF2F6] py-2.5">
+      <Text className="text-[13px] font-medium text-[#94A3B8]">{label}</Text>
       <Text className="ml-3 flex-1 text-right text-[14px] font-semibold text-[#111827]" numberOfLines={1}>{value}</Text>
     </View>
   );
@@ -188,12 +188,12 @@ function SelectedDateCard({ item }: { item: CalendarItem }) {
   const statusStyle = getStatusStyle(clutch.status);
 
   return (
-    <View className="mx-5 mt-4 rounded-[22px] border border-[#ECECEC] bg-white p-4">
+    <View className="mx-5 mt-4 rounded-[22px] border border-[#EEF2F6] bg-white p-4">
       <Text className="text-[18px] font-bold leading-6 text-[#111827]">{item.date}</Text>
       {getCalendarDayMeta(parseDate(item.date)).holidayName ? (
         <Text className="mt-1 text-[12px] font-semibold leading-4 text-[#EF4444]">{getCalendarDayMeta(parseDate(item.date)).holidayName}</Text>
       ) : null}
-      <Text className="mt-1 text-[14px] font-semibold leading-5 text-[#FF4F8B]">클러치 #{clutch.clutchNumber}</Text>
+      <Text className="mt-1 text-[14px] font-semibold leading-5 text-[#FF2E6F]">클러치 #{clutch.clutchNumber}</Text>
       <View className="mt-3">
         <InfoRow label="산란일" value={clutch.layDate} />
         <InfoRow label="알 개수" value={`${clutch.eggCount}개`} />
@@ -203,16 +203,16 @@ function SelectedDateCard({ item }: { item: CalendarItem }) {
         <InfoRow label="습도" value={`${clutch.humidity}%`} />
         <InfoRow label="목표 성별" value={breedingTargetSexLabels[clutch.targetSex]} />
         <InfoRow label="예상 부화 범위" value={`${clutch.expectedHatchStartDate} ~ ${clutch.expectedHatchEndDate}`} />
-        <View className="flex-row items-center justify-between border-b border-[#ECECEC] py-2.5">
-          <Text className="text-[13px] font-medium text-[#8A8F98]">상태</Text>
+        <View className="flex-row items-center justify-between border-b border-[#EEF2F6] py-2.5">
+          <Text className="text-[13px] font-medium text-[#94A3B8]">상태</Text>
           <View className="rounded-full px-3 py-1" style={{ backgroundColor: statusStyle.bg }}>
             <Text className="text-[12px] font-semibold" style={{ color: statusStyle.text }}>{breedingStatusLabels[clutch.status]}</Text>
           </View>
         </View>
       </View>
       <AnimatedPressable onPress={() => router.push(`/my/turtles/breeding/${clutch.id}` as never)} className="mt-3 flex-row items-center justify-end">
-        <Text className="text-[13px] font-semibold text-[#FF4F8B]">상세보기</Text>
-        <Ionicons name="chevron-forward" size={15} color="#FF4F8B" />
+        <Text className="text-[13px] font-semibold text-[#FF2E6F]">상세보기</Text>
+        <Ionicons name="chevron-forward" size={15} color="#FF2E6F" />
       </AnimatedPressable>
     </View>
   );
@@ -220,8 +220,8 @@ function SelectedDateCard({ item }: { item: CalendarItem }) {
 
 function FilterChip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} className={`mr-2 rounded-full px-3.5 py-2 ${active ? 'bg-[#FF4F8B]' : 'bg-[#F5F6F8]'}`}>
-      <Text className={`text-[12px] font-semibold ${active ? 'text-white' : 'text-[#8A8F98]'}`}>{label}</Text>
+    <Pressable onPress={onPress} className={`mr-2 rounded-full px-3.5 py-2 ${active ? 'bg-[#FF2E6F]' : 'bg-[#F5F6F8]'}`}>
+      <Text className={`text-[12px] font-semibold ${active ? 'text-white' : 'text-[#94A3B8]'}`}>{label}</Text>
     </Pressable>
   );
 }
@@ -230,12 +230,12 @@ function RecordCard({ clutch }: { clutch: BreedingClutch }) {
   const statusStyle = getStatusStyle(clutch.status);
 
   return (
-    <AnimatedPressable onPress={() => router.push(`/my/turtles/breeding/${clutch.id}` as never)} className="mb-3 rounded-[20px] border border-[#ECECEC] bg-white p-4">
+    <AnimatedPressable onPress={() => router.push(`/my/turtles/breeding/${clutch.id}` as never)} className="mb-3 rounded-[20px] border border-[#EEF2F6] bg-white p-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
           <Text className="text-[18px] font-bold leading-6 text-[#111827]">클러치 #{clutch.clutchNumber}</Text>
-          <Text className="mt-1 text-[13px] font-semibold leading-5 text-[#666666]">{clutch.turtleName}</Text>
-          <Text className="mt-1 text-[13px] font-medium leading-5 text-[#8A8F98]">{clutch.layDate} 산란</Text>
+          <Text className="mt-1 text-[13px] font-semibold leading-5 text-[#94A3B8]">{clutch.turtleName}</Text>
+          <Text className="mt-1 text-[13px] font-medium leading-5 text-[#94A3B8]">{clutch.layDate} 산란</Text>
         </View>
         <Ionicons name="chevron-forward" size={18} color={colors.subtle} />
       </View>
@@ -246,7 +246,7 @@ function RecordCard({ clutch }: { clutch: BreedingClutch }) {
         <View className="rounded-full px-3 py-1" style={{ backgroundColor: statusStyle.bg }}>
           <Text className="text-[12px] font-semibold" style={{ color: statusStyle.text }}>상태: {breedingStatusLabels[clutch.status]}</Text>
         </View>
-        <Text className="text-[12px] font-semibold text-[#FF4F8B]">부화 예상: {getDdayRange(clutch.expectedHatchStartDate, clutch.expectedHatchEndDate)}</Text>
+        <Text className="text-[12px] font-semibold text-[#FF2E6F]">부화 예상: {getDdayRange(clutch.expectedHatchStartDate, clutch.expectedHatchEndDate)}</Text>
       </View>
     </AnimatedPressable>
   );
@@ -267,8 +267,8 @@ function RecordsTab() {
   return (
     <FadeInView>
       <View className="mx-5 mt-5">
-        <View className="flex-row items-center rounded-[16px] border border-[#ECECEC] bg-white px-4 py-3">
-          <Ionicons name="search" size={18} color="#8A8F98" />
+        <View className="flex-row items-center rounded-[16px] border border-[#EEF2F6] bg-white px-4 py-3">
+          <Ionicons name="search" size={18} color="#94A3B8" />
           <TextInput
             value={query}
             onChangeText={setQuery}

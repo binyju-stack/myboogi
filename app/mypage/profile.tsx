@@ -12,7 +12,7 @@ import { turtles } from '@/data/mockData';
 function ProfileField({ label, value, onChangeText, placeholder, multiline = false }: { label: string; value: string; onChangeText: (value: string) => void; placeholder: string; multiline?: boolean }) {
   return (
     <View className="mt-5">
-      <Text className="mb-2 text-[11px] font-black text-ink">{label}</Text>
+      <Text className="mb-2 text-[11px] font-bold text-ink">{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -47,15 +47,15 @@ export default function ProfileEditScreen() {
                   <Ionicons name="camera" size={16} color="white" />
                 </View>
               </View>
-              <Text className="mt-4 text-[14px] font-black text-ink">프로필 이미지 변경</Text>
+              <Text className="mt-4 text-[14px] font-bold text-ink">프로필 이미지 변경</Text>
               <Text className="mt-1 text-[10px] text-muted">현재는 이미지 선택 UI만 제공해요.</Text>
             </View>
           </FadeInView>
 
           <FadeInView delay={60}>
             <View className="mx-5 mt-5 rounded-[26px] bg-white p-5 shadow-sm">
-              <Text className="text-[10px] font-black text-berry">PROFILE INFO</Text>
-              <Text className="mt-1 text-[19px] font-black text-ink">기본 정보</Text>
+              <Text className="text-[10px] font-bold text-berry">PROFILE INFO</Text>
+              <Text className="mt-1 text-[19px] font-bold text-ink">기본 정보</Text>
               <ProfileField label="닉네임" value={nickname} onChangeText={setNickname} placeholder="닉네임을 입력해 주세요" />
               <ProfileField label="한줄 소개" value={intro} onChangeText={setIntro} placeholder="나를 소개해 주세요" multiline />
               <ProfileField label="연락처" value={phone} onChangeText={setPhone} placeholder="연락처를 입력해 주세요" />
@@ -67,7 +67,7 @@ export default function ProfileEditScreen() {
 
       <View className="absolute bottom-0 left-0 right-0 border-t border-line bg-white px-5 pt-3" style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
         <AnimatedPressable onPress={() => setReadyVisible(true)} className="items-center rounded-[18px] bg-berry py-4">
-          <Text className="text-[14px] font-black text-white">저장하기</Text>
+          <Text className="text-[14px] font-bold text-white">저장하기</Text>
         </AnimatedPressable>
       </View>
       <ReadyModal visible={readyVisible} title="프로필 수정 기능은 준비중입니다." onClose={() => setReadyVisible(false)} />

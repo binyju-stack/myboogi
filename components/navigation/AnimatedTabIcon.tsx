@@ -122,7 +122,7 @@ export function AnimatedTabIcon({
       {badgeCount ? (
         <View
           className="absolute items-center justify-center rounded-full"
-          style={{ top: -4, right: -8, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: '#FF4F8B' }}
+          style={{ top: -4, right: -8, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: '#FF2E6F' }}
         >
           <Text className="text-[10px] font-bold leading-[14px] text-white">{badgeCount}</Text>
         </View>
@@ -130,3 +130,4 @@ export function AnimatedTabIcon({
     </View>
   );
 }
+

@@ -1,0 +1,24 @@
+export const Colors = {
+  background: '#FFFFFF',
+  surface: '#FAFAFB',
+  card: '#FFFFFF',
+  text: '#111827',
+  subText: '#94A3B8',
+  border: '#EEF2F6',
+  primary: '#FF2E6F',
+  verified: '#FF2E6F',
+  rating: '#F4B400',
+  success: '#16A34A',
+  warning: '#FF6B35',
+  error: '#EF4444',
+  like: '#FF2E6F',
+  comment: '#94A3B8',
+  badge: '#FFF0F5',
+  link: '#FF2E6F',
+  delivery: '#FF6B35',
+  tabActive: '#FF2E6F',
+  tabInactive: '#94A3B8',
+  notification: '#FF2E6F',
+} as const;
+
+export type ColorRole = keyof typeof Colors;

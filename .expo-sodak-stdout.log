@@ -1,0 +1,8 @@
+Starting project at C:\Users\User\Desktop\myboogi
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Waiting on http://localhost:8124
+An update for expo is available: 56.0.11 → ~56.0.12
+2 other packages may need updating. Run npx expo install --check for details.
+Logs for your project will appear below.

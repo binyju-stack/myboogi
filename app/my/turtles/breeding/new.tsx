@@ -52,7 +52,7 @@ function Field({
 }) {
   return (
     <View className="mt-4">
-      <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">{label}</Text>
+      <Text className="text-[13px] font-medium leading-5 text-[#94A3B8]">{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -60,7 +60,7 @@ function Field({
         placeholderTextColor="#A0A5AD"
         keyboardType={keyboardType}
         multiline={multiline}
-        className={`mt-2 rounded-[16px] border border-[#ECECEC] bg-white px-4 text-[15px] font-medium text-[#111827] ${multiline ? 'min-h-[92px] py-3' : 'h-12'}`}
+        className={`mt-2 rounded-[16px] border border-[#EEF2F6] bg-white px-4 text-[15px] font-medium text-[#111827] ${multiline ? 'min-h-[92px] py-3' : 'h-12'}`}
         textAlignVertical={multiline ? 'top' : 'center'}
       />
     </View>
@@ -74,10 +74,10 @@ function toNumber(value: string) {
 function DateField({ value, onPress }: { value: string; onPress: () => void }) {
   return (
     <View className="mt-4">
-      <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">산란일</Text>
-      <Pressable onPress={onPress} className="mt-2 h-12 flex-row items-center justify-between rounded-[16px] border border-[#ECECEC] bg-white px-4">
+      <Text className="text-[13px] font-medium leading-5 text-[#94A3B8]">산란일</Text>
+      <Pressable onPress={onPress} className="mt-2 h-12 flex-row items-center justify-between rounded-[16px] border border-[#EEF2F6] bg-white px-4">
         <Text className="text-[15px] font-medium text-[#111827]">{value}</Text>
-        <Ionicons name="calendar-outline" size={19} color="#FF4F8B" />
+        <Ionicons name="calendar-outline" size={19} color="#FF2E6F" />
       </Pressable>
     </View>
   );
@@ -113,7 +113,7 @@ function DatePickerModal({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
       <Pressable className="flex-1 justify-end bg-black/35" onPress={onCancel}>
         <Pressable className="rounded-t-[28px] bg-white px-5 pb-6 pt-4" onPress={(event) => event.stopPropagation()}>
-          <View className="self-center h-1 w-10 rounded-full bg-[#D1D5DB]" />
+          <View className="self-center h-1 w-10 rounded-full bg-[#EEF2F6]" />
           <View className="mt-5 flex-row items-center justify-between">
             <Pressable onPress={() => setViewDate(new Date(year, month - 1, 1))} className="h-10 w-10 items-center justify-center rounded-full bg-[#F5F6F8]">
               <Ionicons name="chevron-back" size={18} color="#111827" />
@@ -127,7 +127,7 @@ function DatePickerModal({
           <View className="mt-4 flex-row">
             {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
               <View key={day} className="items-center py-2" style={{ width: '14.2857%' }}>
-                <Text className="text-[11px] font-medium text-[#9CA3AF]">{day}</Text>
+                <Text className="text-[11px] font-medium text-[#94A3B8]">{day}</Text>
               </View>
             ))}
           </View>
@@ -148,8 +148,8 @@ function DatePickerModal({
                   style={{ width: '14.2857%' }}
                 >
                   {date ? (
-                    <View className={`h-9 w-9 items-center justify-center rounded-full ${selected ? 'bg-[#FF4F8B]' : isToday ? 'border border-[#FF4F8B] bg-white' : ''}`}>
-                      <Text className={`text-[13px] font-semibold ${selected ? 'text-white' : isRedDay ? 'text-[#EF4444]' : isToday ? 'text-[#FF4F8B]' : 'text-[#111827]'}`}>{day}</Text>
+                    <View className={`h-9 w-9 items-center justify-center rounded-full ${selected ? 'bg-[#FF2E6F]' : isToday ? 'border border-[#FF2E6F] bg-white' : ''}`}>
+                      <Text className={`text-[13px] font-semibold ${selected ? 'text-white' : isRedDay ? 'text-[#EF4444]' : isToday ? 'text-[#FF2E6F]' : 'text-[#111827]'}`}>{day}</Text>
                       {meta?.isHoliday ? <View className={`mt-0.5 h-1 w-1 rounded-full ${selected ? 'bg-white' : 'bg-[#EF4444]'}`} /> : null}
                     </View>
                   ) : null}
@@ -165,9 +165,9 @@ function DatePickerModal({
 
           <View className="mt-5 flex-row">
             <Pressable onPress={onCancel} className="mr-2 h-12 flex-1 items-center justify-center rounded-[16px] bg-[#F5F6F8]">
-              <Text className="text-[14px] font-semibold text-[#8A8F98]">취소</Text>
+              <Text className="text-[14px] font-semibold text-[#94A3B8]">취소</Text>
             </Pressable>
-            <Pressable onPress={() => onConfirm(formatDate(draftDate))} className="ml-2 h-12 flex-1 items-center justify-center rounded-[16px] bg-[#FF4F8B]">
+            <Pressable onPress={() => onConfirm(formatDate(draftDate))} className="ml-2 h-12 flex-1 items-center justify-center rounded-[16px] bg-[#FF2E6F]">
               <Text className="text-[14px] font-bold text-white">확인</Text>
             </Pressable>
           </View>
@@ -234,12 +234,12 @@ export default function BreedingCreateScreen() {
     <SafeAreaView className="flex-1 bg-page" edges={['top']}>
       <TopBar title="산란 기록 추가" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 112 + insets.bottom }}>
-        <View className="mx-5 mt-5 rounded-[22px] border border-[#ECECEC] bg-white p-5">
+        <View className="mx-5 mt-5 rounded-[22px] border border-[#EEF2F6] bg-white p-5">
           <Text className="text-[22px] font-bold leading-7 text-[#111827]">산란 정보</Text>
-          <Text className="mt-1 text-[13px] font-medium leading-5 text-[#8A8F98]">저장하면 검란, 부화, 온도 체크 일정이 자동 생성돼요.</Text>
+          <Text className="mt-1 text-[13px] font-medium leading-5 text-[#94A3B8]">저장하면 검란, 부화, 온도 체크 일정이 자동 생성돼요.</Text>
 
           <View className="mt-5">
-            <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">거북이 선택</Text>
+            <Text className="text-[13px] font-medium leading-5 text-[#94A3B8]">거북이 선택</Text>
             <View className="mt-2">
               {managedTurtles.map((turtle) => {
                 const active = selectedTurtleId === turtle.id;
@@ -247,14 +247,14 @@ export default function BreedingCreateScreen() {
                   <Pressable
                     key={turtle.id}
                     onPress={() => setSelectedTurtleId(turtle.id)}
-                    className={`mb-2 flex-row items-center rounded-[16px] border px-4 py-3 ${active ? 'border-[#FF4F8B] bg-[#FFF0F6]' : 'border-[#ECECEC] bg-white'}`}
+                    className={`mb-2 flex-row items-center rounded-[16px] border px-4 py-3 ${active ? 'border-[#FF2E6F] bg-[#FFF2F6]' : 'border-[#EEF2F6] bg-white'}`}
                   >
-                    <View className={`h-5 w-5 items-center justify-center rounded-full border ${active ? 'border-[#FF4F8B] bg-[#FF4F8B]' : 'border-[#D1D5DB]'}`}>
+                    <View className={`h-5 w-5 items-center justify-center rounded-full border ${active ? 'border-[#FF2E6F] bg-[#FF2E6F]' : 'border-[#EEF2F6]'}`}>
                       {active ? <Ionicons name="checkmark" size={13} color="#FFFFFF" /> : null}
                     </View>
                     <View className="ml-3 flex-1">
                       <Text className="text-[15px] font-semibold text-[#111827]">{turtle.name}</Text>
-                      <Text className="mt-0.5 text-[12px] font-medium text-[#8A8F98]">{turtle.species}</Text>
+                      <Text className="mt-0.5 text-[12px] font-medium text-[#94A3B8]">{turtle.species}</Text>
                     </View>
                   </Pressable>
                 );
@@ -263,12 +263,12 @@ export default function BreedingCreateScreen() {
           </View>
 
           <DateField value={form.layDate} onPress={() => setDatePickerVisible(true)} />
-          <View className="mt-3 rounded-[16px] bg-[#FFF8FB] px-4 py-3">
-            <Text className="text-[12px] font-medium leading-4 text-[#8A8F98]">자동 계산</Text>
+          <View className="mt-3 rounded-[16px] bg-[#FFF7F3] px-4 py-3">
+            <Text className="text-[12px] font-medium leading-4 text-[#94A3B8]">자동 계산</Text>
             <Text className="mt-1 text-[13px] font-semibold leading-5 text-[#111827]">검란 예정일 {schedule.candlingDate}</Text>
             <Text className="mt-0.5 text-[13px] font-semibold leading-5 text-[#111827]">예상 부화 범위 {schedule.expectedHatchStartDate} ~ {schedule.expectedHatchEndDate}</Text>
-            <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#8A8F98]">온도 체크 일정은 산란일 기준 주 1회 생성돼요.</Text>
-            <Text className="mt-1 text-[12px] font-medium leading-4 text-[#8A8F98]">목표 성별 기준 예상값입니다. 실제 부화일은 종, 습도, 온도 편차에 따라 달라질 수 있습니다.</Text>
+            <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#94A3B8]">온도 체크 일정은 산란일 기준 주 1회 생성돼요.</Text>
+            <Text className="mt-1 text-[12px] font-medium leading-4 text-[#94A3B8]">목표 성별 기준 예상값입니다. 실제 부화일은 종, 습도, 온도 편차에 따라 달라질 수 있습니다.</Text>
             {schedule.warningMessage ? (
               <View className="mt-2 rounded-[12px] bg-[#FFF1E6] px-3 py-2">
                 <Text className="text-[12px] font-semibold leading-4 text-[#FF9B4A]">{schedule.warningMessage}</Text>
@@ -282,7 +282,7 @@ export default function BreedingCreateScreen() {
           <Field label="습도" value={form.humidity} onChangeText={update('humidity')} placeholder="82" keyboardType="numeric" />
 
           <View className="mt-4">
-            <Text className="text-[13px] font-medium leading-5 text-[#8A8F98]">목표 성별</Text>
+            <Text className="text-[13px] font-medium leading-5 text-[#94A3B8]">목표 성별</Text>
             <View className="mt-2 flex-row">
               {targetSexOptions.map((option) => {
                 const active = targetSex === option.value;
@@ -290,9 +290,9 @@ export default function BreedingCreateScreen() {
                   <Pressable
                     key={option.value}
                     onPress={() => setTargetSex(option.value)}
-                    className={`mr-2 flex-1 items-center rounded-full px-3 py-3 ${active ? 'bg-[#FF4F8B]' : 'bg-[#F5F6F8]'}`}
+                    className={`mr-2 flex-1 items-center rounded-full px-3 py-3 ${active ? 'bg-[#FF2E6F]' : 'bg-[#F5F6F8]'}`}
                   >
-                    <Text className={`text-[13px] font-semibold ${active ? 'text-white' : 'text-[#8A8F98]'}`}>{option.label}</Text>
+                    <Text className={`text-[13px] font-semibold ${active ? 'text-white' : 'text-[#94A3B8]'}`}>{option.label}</Text>
                   </Pressable>
                 );
               })}
@@ -303,8 +303,8 @@ export default function BreedingCreateScreen() {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 border-t border-[#ECECEC] bg-white px-5 pt-3" style={{ paddingBottom: 12 + insets.bottom }}>
-        <Pressable onPress={handleSave} className="h-14 items-center justify-center rounded-[18px] bg-[#FF4F8B]">
+      <View className="absolute bottom-0 left-0 right-0 border-t border-[#EEF2F6] bg-white px-5 pt-3" style={{ paddingBottom: 12 + insets.bottom }}>
+        <Pressable onPress={handleSave} className="h-14 items-center justify-center rounded-[18px] bg-[#FF2E6F]">
           <Text className="text-[16px] font-bold text-white">산란 기록 저장</Text>
         </Pressable>
       </View>

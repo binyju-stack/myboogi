@@ -121,6 +121,14 @@ const baseListings: Listing[] = [
   { id: 'l5', breederId: 'b2', title: '귀여운 동헤르만 육지거북', species: '동헤르만 육지거북', price: 330000, location: '서울 송파구', sex: '미구분', stage: '유체', size: '등갑 5.8cm', hatchDate: '2026.04.03', views: 94, likes: 19, image: turtleImages[2], images: [turtleImages[2], turtleImages[3]], description: '초보 집사도 충분히 상담받고 데려갈 수 있습니다.', verified: false, status: '분양중' },
 ];
 
+const listingTradeMeta: Record<string, Pick<Listing, 'tradeMethods'>> = {
+  l1: { tradeMethods: ['직거래', '고속버스'] },
+  l2: { tradeMethods: ['직거래', '택배불가'] },
+  l3: { tradeMethods: ['도시새배송 무료'] },
+  l4: { tradeMethods: ['직거래'] },
+  l5: { tradeMethods: ['직거래', '고속버스'] },
+};
+
 export const listings: Listing[] = baseListings.map((listing) => {
   const statusById: Record<string, Listing['listingStatus']> = {
     l1: 'active',
@@ -187,7 +195,13 @@ export const listings: Listing[] = baseListings.map((listing) => {
       relatedListingIds: ['l2'],
     },
   };
-  return { ...listing, ...detailById[listing.id], listingStatus, reviewEligible: listingStatus === 'completed' };
+  return {
+    ...listing,
+    ...detailById[listing.id],
+    ...listingTradeMeta[listing.id],
+    listingStatus,
+    reviewEligible: listingStatus === 'completed',
+  };
 });
 
 export const listingDetails: Record<string, { parentInfo: string; foodResponse: string; healthStatus: string; notes: string }> = {
@@ -284,7 +298,7 @@ export const userProfile: UserProfile = {
   profileImage: turtleImages[2],
   coverImage: turtleImages[3],
   nickname: '느린숲',
-  bio: '레오파드 육지거북과 별거북을 전문으로 브리딩합니다.',
+  bio: '레오파드 육지거북 전문 브리더',
   region: '서울 송파구',
   isVerified: true,
   breederType: 'individual',

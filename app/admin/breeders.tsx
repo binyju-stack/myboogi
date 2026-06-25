@@ -24,14 +24,14 @@ export default function AdminBreedersScreen() {
                 <Ionicons name={item.breederType === 'business' ? 'business-outline' : 'person-outline'} size={20} color={colors.berry} />
               </View>
               <View className="ml-3 flex-1">
-                <Text className="text-[14px] font-black text-ink">{item.breederName}</Text>
+                <Text className="text-[14px] font-bold text-ink">{item.breederName}</Text>
                 <Text className="mt-1 text-[9px] text-muted">{breederTypeLabels[item.breederType]} · {item.region} · {item.specialties}</Text>
               </View>
-              <Text className={`rounded-full px-2.5 py-1.5 text-[9px] font-black ${statusStyle[item.status]}`}>{verificationStatusLabels[item.status]}</Text>
+              <Text className={`rounded-full px-2.5 py-1.5 text-[9px] font-bold ${statusStyle[item.status]}`}>{verificationStatusLabels[item.status]}</Text>
             </View>
             <View className="mt-4">
               <AnimatedPressable onPress={() => router.push(`/admin/breeder-verifications/${item.id}` as never)} className="items-center rounded-[16px] bg-ink py-3.5">
-                <Text className="text-[11px] font-black text-white">상세보기</Text>
+                <Text className="text-[11px] font-bold text-white">상세보기</Text>
               </AnimatedPressable>
             </View>
           </View>

@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <FadeInView delay={60}>
       <View className="mx-5 mt-5 rounded-[24px] border border-line bg-white p-5 shadow-sm">
-        <Text className={title === '성장 기록' ? 'text-[24px] font-bold leading-8 text-[#111827]' : 'text-[18px] font-black leading-6 text-[#111827]'}>{title}</Text>
+        <Text className={title === '성장 기록' ? 'text-[24px] font-bold leading-8 text-[#111827]' : 'text-[18px] font-bold leading-6 text-[#111827]'}>{title}</Text>
         <View className="mt-4">{children}</View>
       </View>
     </FadeInView>
@@ -31,9 +31,9 @@ function OwnedTurtleCard({ turtle }: { turtle: ManagedTurtle }) {
     <View className="flex-row items-center">
       <Image source={{ uri: turtle.profileImage }} className="h-20 w-20 rounded-[20px] bg-shell" resizeMode="cover" />
       <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
-        <Text className="text-[20px] font-black leading-7 text-[#111827]" numberOfLines={1}>{turtle.name}</Text>
-        <Text className="mt-1 text-[14px] font-semibold leading-5 text-[#666666]" numberOfLines={1}>{turtle.species}</Text>
-        <Text className="mt-1 text-[13px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{turtle.gender} · {turtle.age}</Text>
+        <Text className="text-[20px] font-bold leading-7 text-[#111827]" numberOfLines={1}>{turtle.name}</Text>
+        <Text className="mt-1 text-[14px] font-semibold leading-5 text-[#94A3B8]" numberOfLines={1}>{turtle.species}</Text>
+        <Text className="mt-1 text-[13px] font-medium leading-5 text-[#94A3B8]" numberOfLines={1}>{turtle.gender} · {turtle.age}</Text>
       </View>
       <View className="h-10 w-10 items-center justify-center rounded-full bg-blush">
         <Ionicons name="paw-outline" size={19} color={colors.berry} />
@@ -45,7 +45,7 @@ function OwnedTurtleCard({ turtle }: { turtle: ManagedTurtle }) {
 function GrowthMetric({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-1 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
-      <Text className="text-[14px] font-medium leading-5 text-[#8A8F98]" numberOfLines={1}>{label}</Text>
+      <Text className="text-[14px] font-medium leading-5 text-[#94A3B8]" numberOfLines={1}>{label}</Text>
       <Text className="mt-2 text-[18px] font-bold leading-6 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.78}>{value}</Text>
     </View>
   );
@@ -55,7 +55,7 @@ function BreedingMetric({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-1 rounded-[16px] bg-white px-3 py-3">
       <Text className="text-[20px] font-bold leading-7 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.72}>{value}</Text>
-      <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#8A8F98]" numberOfLines={1}>{label}</Text>
+      <Text className="mt-0.5 text-[12px] font-medium leading-4 text-[#94A3B8]" numberOfLines={1}>{label}</Text>
     </View>
   );
 }
@@ -98,10 +98,10 @@ function GrowthLineChart({ title, records, unit }: { title: string; records: { d
   const polylinePoints = points.map((point) => `${point.x},${point.y}`).join(' ');
 
   return (
-    <View className="mt-4 overflow-hidden rounded-[20px] bg-[#FFF8FB] px-4 py-4">
+    <View className="mt-4 overflow-hidden rounded-[20px] bg-[#FFF7F3] px-4 py-4">
       <View className="flex-row items-center justify-between">
         <Text className="text-[18px] font-bold leading-6 text-[#111827]">{title}</Text>
-        <Text className="text-[13px] font-semibold leading-5 text-[#FF4F8B]">단위 {unit}</Text>
+        <Text className="text-[13px] font-semibold leading-5 text-[#FF2E6F]">단위 {unit}</Text>
       </View>
       <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
         {gridValues.map((value) => {
@@ -124,22 +124,22 @@ function GrowthLineChart({ title, records, unit }: { title: string; records: { d
         {gridValues.map((value) => {
           const y = chartTop + (1 - (value - yMin) / yRange) * plotHeight;
           return (
-            <SvgText key={`${title}-axis-${value}`} x={8} y={y + 4} fill="#9CA3AF" fontSize={11} fontWeight="400">
+            <SvgText key={`${title}-axis-${value}`} x={8} y={y + 4} fill="#94A3B8" fontSize={11} fontWeight="400">
               {Math.round(value * 10) / 10}
             </SvgText>
           );
         })}
-        <Polyline points={polylinePoints} fill="none" stroke="#FF4F8B" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
+        <Polyline points={polylinePoints} fill="none" stroke="#FF2E6F" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
         {points.map((point) => (
-          <Circle key={`${title}-point-${point.date}`} cx={point.x} cy={point.y} r={5} fill="#FFFFFF" stroke="#FF4F8B" strokeWidth={3} />
+          <Circle key={`${title}-point-${point.date}`} cx={point.x} cy={point.y} r={5} fill="#FFFFFF" stroke="#FF2E6F" strokeWidth={3} />
         ))}
         {points.map((point) => (
-          <SvgText key={`${title}-value-${point.date}`} x={point.x} y={point.y - 14} fill="#4B5563" fontSize={12} fontWeight="500" textAnchor="middle">
+          <SvgText key={`${title}-value-${point.date}`} x={point.x} y={point.y - 14} fill="#94A3B8" fontSize={12} fontWeight="500" textAnchor="middle">
             {point.value}{unit}
           </SvgText>
         ))}
         {points.map((point) => (
-          <SvgText key={`${title}-date-${point.date}`} x={point.x} y={height - 14} fill="#9CA3AF" fontSize={11} fontWeight="500" textAnchor="middle">
+          <SvgText key={`${title}-date-${point.date}`} x={point.x} y={height - 14} fill="#94A3B8" fontSize={11} fontWeight="500" textAnchor="middle">
             {point.date}
           </SvgText>
         ))}
@@ -162,7 +162,7 @@ function AlbumStrip({ turtles }: { turtles: ManagedTurtle[] }) {
         <View key={turtle.id} className={`w-28 ${index ? 'ml-3' : ''}`}>
           <Image source={{ uri: turtle.profileImage }} className="h-28 w-28 rounded-[18px] bg-shell" resizeMode="cover" />
           <Text className="mt-2 text-[12px] font-bold leading-4 text-[#111827]" numberOfLines={1}>{turtle.name}</Text>
-          <Text className="mt-0.5 text-[10px] font-medium leading-4 text-[#8A8F98]" numberOfLines={1}>{turtle.lastRecordDate}</Text>
+          <Text className="mt-0.5 text-[10px] font-medium leading-4 text-[#94A3B8]" numberOfLines={1}>{turtle.lastRecordDate}</Text>
         </View>
       ))}
     </ScrollView>
@@ -176,11 +176,11 @@ function BreedingEntry() {
   const hatchDday = nextHatchDate ? `D-${daysUntil(nextHatchDate)}` : '-';
 
   return (
-    <AnimatedPressable onPress={() => router.push('/my/turtles/breeding' as never)} className="rounded-[20px] bg-[#FFF8FB] p-4">
+    <AnimatedPressable onPress={() => router.push('/my/turtles/breeding' as never)} className="rounded-[20px] bg-[#FFF7F3] p-4">
       <View className="flex-row items-center justify-between">
         <View className="flex-1 pr-3">
-          <Text className="text-[16px] font-black leading-6 text-[#111827]">산란 관리</Text>
-          <Text className="mt-1 text-[13px] font-medium leading-5 text-[#8A8F98]">캘린더와 통합 기록으로 클러치를 관리해요</Text>
+          <Text className="text-[16px] font-bold leading-6 text-[#111827]">산란 관리</Text>
+          <Text className="mt-1 text-[13px] font-medium leading-5 text-[#94A3B8]">캘린더와 통합 기록으로 클러치를 관리해요</Text>
         </View>
         <View className="h-11 w-11 items-center justify-center rounded-[15px] bg-white">
           <Ionicons name="egg-outline" size={22} color={colors.berry} />
@@ -201,9 +201,9 @@ function EmptyTurtles() {
       <View className="h-16 w-16 items-center justify-center rounded-[22px] bg-blush">
         <Ionicons name="paw-outline" size={28} color={colors.berry} />
       </View>
-      <Text className="mt-5 text-center text-[18px] font-black text-[#111827]">아직 등록한 거북이가 없어요.</Text>
-      <Text className="mt-2 text-center text-[13px] font-medium leading-5 text-[#9CA3AF]">내 거북이를 등록하고 성장기록을 남겨보세요.</Text>
-      <AnimatedPressable onPress={showRegisterReady} className="mt-6 rounded-full bg-[#FF4F8B] px-5 py-3">
+      <Text className="mt-5 text-center text-[18px] font-bold text-[#111827]">아직 등록한 거북이가 없어요.</Text>
+      <Text className="mt-2 text-center text-[13px] font-medium leading-5 text-[#94A3B8]">내 거북이를 등록하고 성장기록을 남겨보세요.</Text>
+      <AnimatedPressable onPress={showRegisterReady} className="mt-6 rounded-full bg-[#FF2E6F] px-5 py-3">
         <Text className="text-[13px] font-bold text-white">거북이 등록하기</Text>
       </AnimatedPressable>
     </View>
@@ -230,7 +230,7 @@ export default function MyTurtlesScreen() {
               <GrowthMetric label="최근 등갑 길이" value={`${mainTurtle.shellLength}cm`} />
             </View>
             <View className="mt-2 rounded-[18px] bg-[#F8F9FA] px-4 py-4">
-              <Text className="text-[14px] font-medium leading-5 text-[#8A8F98]">최근 측정일</Text>
+              <Text className="text-[14px] font-medium leading-5 text-[#94A3B8]">최근 측정일</Text>
               <Text className="mt-2 text-[16px] font-semibold leading-6 text-[#111827]" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.78}>{mainTurtle.lastRecordDate}</Text>
             </View>
             <GrowthLineChart title="몸무게 변화" records={weightRecords} unit="g" />

@@ -126,7 +126,7 @@ export function ListingCard({
             </View>
 
             <View className="mt-2.5" style={{ minWidth: 0 }}>
-              <Text className="text-[13px] font-medium leading-[18px] text-[#8A8F98]" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
+              <Text className="text-[13px] font-medium leading-[18px] text-[#94A3B8]" numberOfLines={1} ellipsizeMode="tail">✓ {breeder?.name ?? '브리더 정보 없음'}</Text>
             </View>
 
             <View className="mt-2 flex-row items-center" style={{ minWidth: 0 }}>

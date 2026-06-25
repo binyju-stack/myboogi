@@ -19,7 +19,7 @@ type FeedPost = {
 };
 
 export function PinkTurtle({ size = 100, dark = false }: { size?: number; dark?: boolean }) {
-  const shell = dark ? '#FF739F' : '#FFF1F6';
+  const shell = dark ? '#FF9A75' : '#FFF1F6';
   const line = dark ? '#FFFFFF' : colors.berry;
   return (
     <View style={{ width: size, height: size * 0.68 }} className="items-center justify-center">
@@ -56,11 +56,11 @@ export function HomeFeedCard({ post }: { post: FeedPost }) {
     <View className="border-b-8 border-[#F7F5F7] bg-white px-4 pb-5 pt-4">
       <View className="flex-row items-center">
         <View className="h-8 w-8 items-center justify-center rounded-full bg-shell"><PinkTurtle size={27} /></View>
-        <View className="ml-2 flex-1"><Text className="text-xs font-black text-ink">{post.author}</Text><Text className="mt-0.5 text-[9px] text-muted">{post.time}</Text></View>
+        <View className="ml-2 flex-1"><Text className="text-xs font-bold text-ink">{post.author}</Text><Text className="mt-0.5 text-[9px] text-muted">{post.time}</Text></View>
         <Ionicons name="ellipsis-horizontal" size={17} color={colors.muted} />
       </View>
-      <View style={{ backgroundColor: post.categoryColor }} className="mt-3 self-start rounded px-2 py-1"><Text className="text-[9px] font-black text-muted">{post.category}</Text></View>
-      <Text className="mt-2 text-[14px] font-black leading-5 text-ink">{post.title}</Text>
+      <View style={{ backgroundColor: post.categoryColor }} className="mt-3 self-start rounded px-2 py-1"><Text className="text-[9px] font-bold text-muted">{post.category}</Text></View>
+      <Text className="mt-2 text-[14px] font-bold leading-5 text-ink">{post.title}</Text>
       <Text className="mt-1 text-[11px] leading-[18px] text-muted">{post.content}</Text>
       {images.length === 1 ? (
         <View className="mt-3 h-48 overflow-hidden rounded-lg"><TurtleImagePlaceholder color={images[0]} /></View>
@@ -77,10 +77,10 @@ export function HomeFeedCard({ post }: { post: FeedPost }) {
 export function RankingList({ title, items }: { title: string; items: readonly (readonly [string, string, string])[] }) {
   return (
     <View className="border-b-8 border-[#F7F5F7] bg-white px-4 pb-5 pt-5">
-      <Text className="mb-3 text-[15px] font-black text-ink">{title} <Text className="text-berry">›</Text></Text>
+      <Text className="mb-3 text-[15px] font-bold text-ink">{title} <Text className="text-berry">›</Text></Text>
       {items.map(([postTitle, category, stat], index) => (
         <Pressable key={postTitle} className="flex-row items-center border-b border-line py-2.5">
-          <Text className="w-7 text-center text-sm font-black text-berry">{index + 1}</Text>
+          <Text className="w-7 text-center text-sm font-bold text-berry">{index + 1}</Text>
           <View className="ml-2 flex-1"><View className="flex-row items-center"><View className="mr-2 rounded bg-blue px-1.5 py-0.5"><Text className="text-[8px] font-bold text-muted">{category}</Text></View><Text className="text-[9px] text-muted">{stat}</Text></View><Text className="mt-1 text-[11px] font-bold text-ink" numberOfLines={1}>{postTitle}</Text></View>
         </Pressable>
       ))}

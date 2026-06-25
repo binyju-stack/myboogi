@@ -43,7 +43,7 @@ function EmptyState() {
       <View className="h-16 w-16 items-center justify-center rounded-full bg-blush">
         <Ionicons name="notifications-outline" size={28} color={colors.berry} />
       </View>
-      <Text className="mt-5 text-[15px] font-black text-ink">아직 도착한 알림이 없습니다.</Text>
+      <Text className="mt-5 text-[15px] font-bold text-ink">아직 도착한 알림이 없습니다.</Text>
       <Text className="mt-2 text-center text-[11px] leading-5 text-muted">댓글, 좋아요, 거래 소식이 생기면 이곳에서 모아볼 수 있어요.</Text>
     </View>
   );
@@ -73,12 +73,12 @@ export default function NotificationsScreen() {
       <View className="bg-white px-5 pb-6 pt-4">
         <View className="flex-row items-start justify-between">
           <View className="flex-1 pr-4">
-            <Text className="text-[10px] font-black text-berry">NOTIFICATION CENTER</Text>
-            <Text className="mt-1 text-[26px] font-black text-ink">알림</Text>
+            <Text className="text-[10px] font-bold text-berry">NOTIFICATION CENTER</Text>
+            <Text className="mt-1 text-[26px] font-bold text-ink">알림</Text>
             <Text className="mt-2 text-[11px] leading-5 text-muted">읽지 않은 알림 {unreadCount}개</Text>
           </View>
           <AnimatedPressable onPress={markAllAsRead} className="rounded-full bg-blush px-3.5 py-2.5">
-            <Text className="text-[10px] font-black text-berry">전체 읽음</Text>
+            <Text className="text-[10px] font-bold text-berry">전체 읽음</Text>
           </AnimatedPressable>
         </View>
       </View>
@@ -93,7 +93,7 @@ export default function NotificationsScreen() {
                 onPress={() => setActiveFilter(filter.key)}
                 className={`flex-1 rounded-full py-2.5 ${selected ? 'bg-white shadow-sm' : ''}`}
               >
-                <Text className={`text-center text-[11px] font-black ${selected ? 'text-berry' : 'text-muted'}`}>{filter.label}</Text>
+                <Text className={`text-center text-[11px] font-bold ${selected ? 'text-berry' : 'text-muted'}`}>{filter.label}</Text>
               </AnimatedPressable>
             );
           })}
@@ -116,7 +116,7 @@ export default function NotificationsScreen() {
                   </View>
                   <View className="ml-3 flex-1">
                     <View className="flex-row items-center">
-                      <Text className="flex-1 text-[13px] font-black text-ink">{item.title}</Text>
+                      <Text className="flex-1 text-[13px] font-bold text-ink">{item.title}</Text>
                       {unread ? <View className="ml-2 h-2.5 w-2.5 rounded-full bg-berry" /> : null}
                     </View>
                     <Text className="mt-2 text-[11px] leading-5 text-muted">{item.message}</Text>
