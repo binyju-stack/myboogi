@@ -120,7 +120,7 @@ function HotListingsSection() {
         {hotListings.map((listing, index) => (
           <FadeInView key={listing.id} delay={index * 45}>
             <View className="mr-3">
-              <ListingGridCard item={listing} index={index} width={214} bordered={false} compact />
+              <ListingGridCard item={listing} index={index} width={214} compact />
             </View>
           </FadeInView>
         ))}
@@ -291,10 +291,10 @@ function NewListingsSection() {
     .slice(0, 4);
 
   return (
-        <Section title="신규 분양" animationType="new" onPress={() => router.push('/marketplace')}>
+        <Section title="신규 분양" animationType="new" onPress={() => router.push('/marketplace')} topClassName="mt-6">
       <View className="mx-5 flex-row flex-wrap justify-between">
         {recentListings.map((listing, index) => (
-          <ListingGridCard key={listing.id} item={listing} index={index} width={cardWidth} bordered={false} />
+          <ListingGridCard key={listing.id} item={listing} index={index} width={cardWidth} />
         ))}
       </View>
       <Pressable

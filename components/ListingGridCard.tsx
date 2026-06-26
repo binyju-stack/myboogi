@@ -1,9 +1,9 @@
 ﻿import { router } from 'expo-router';
 import { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BadgeCheck, Heart, ShieldCheck, Store, type LucideIcon } from 'lucide-react-native';
 
-import { Colors, Radius, Spacing, Typography } from '@/theme';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import { breeders } from '@/data/mockData';
 import type { Breeder, Listing } from '@/types';
 
@@ -30,7 +30,7 @@ function getStageLabel(stage: Listing['stage']) {
 export function ListingGridCard({
   item,
   width,
-  imageRadius = Radius.sm,
+  imageRadius = Radius.lg,
   bordered = true,
   compact = false,
 }: {
@@ -47,80 +47,52 @@ export function ListingGridCard({
   const statusTone = getStatusTone(item);
   const verificationIcons = getVerificationIcons(item, breeder);
   const tradeMethods = item.tradeMethods?.length ? item.tradeMethods : ['직거래'];
+  const infoHeight = compact ? 208 : 214;
 
   return (
-    <View
-      style={width ? { width } : undefined}
-      className={`mb-5 bg-white ${bordered ? 'overflow-hidden rounded-[12px] border border-line' : ''}`}
-    >
-      <Pressable onPress={() => router.push(`/listing/${item.id}` as never)} className="w-full">
-        <View className="aspect-square overflow-hidden bg-shell" style={{ borderRadius: imageRadius }}>
-          <Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
-          <View
-            className="absolute left-2 top-2 rounded-full"
-            style={{ backgroundColor: statusTone.backgroundColor, paddingHorizontal: Spacing.sm - 1, paddingVertical: Spacing.xs - 1 }}
-          >
-            <Text style={{ color: statusTone.color, fontWeight: Typography.captionBold.fontWeight }} className="text-[10px] leading-4">
-              {item.status}
-            </Text>
+    <View style={[styles.card, compact ? styles.compactCard : null, bordered ? styles.cardBordered : null, width ? { width } : null]}>
+      <Pressable onPress={() => router.push(`/listing/${item.id}` as never)} style={styles.pressable}>
+        <View style={[styles.imageWrap, { borderRadius: imageRadius }]}>
+          <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+          <View style={[styles.statusBadge, { backgroundColor: statusTone.backgroundColor }]}>
+            <Text style={[styles.statusText, { color: statusTone.color }]}>{item.status}</Text>
           </View>
           <Pressable
             onPress={(event) => {
               event.stopPropagation();
               setFavorite((current) => !current);
             }}
-            className="absolute bottom-2 right-2 flex-row items-center rounded-full bg-black/35 px-2 py-1"
+            style={styles.likeBadge}
           >
             <Heart size={15} strokeWidth={2} color={Colors.card} fill={favorite ? Colors.card : 'transparent'} />
-            <Text className="ml-1 text-[11px] font-medium leading-4 text-white">{likes.toLocaleString()}</Text>
+            <Text style={styles.likeText}>{likes.toLocaleString()}</Text>
           </Pressable>
         </View>
 
-        <View className="px-2.5 pb-3" style={{ minWidth: 0, height: compact ? 202 : 230, marginTop: compact ? Spacing.sm : Spacing.md - 2 }}>
-          <Text className="text-[11px] font-normal leading-[15px] text-muted" numberOfLines={1}>
-            {item.species}
-          </Text>
+        <View style={[styles.info, { height: infoHeight }]}>
+          <Text style={styles.species} numberOfLines={1}>{item.species}</Text>
 
-          <Text className={`${compact ? 'mt-0.5' : 'mt-1'} text-[14px] font-bold leading-5 text-ink`} style={compact ? undefined : { height: 40 }} numberOfLines={2}>
-            {item.title}
-          </Text>
+          <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
 
-          <View className={`${compact ? 'mt-2' : 'mt-1.5'} h-5 flex-row items-center`}>
+          <View style={styles.stageRow}>
             {[item.sex, getStageLabel(item.stage)].map((label) => (
-              <View key={label} className="mr-1.5 rounded-full bg-line px-2 py-0.5">
-                <Text className="text-[10px] font-medium leading-4 text-muted">{label}</Text>
+              <View key={label} style={styles.stageBadge}>
+                <Text style={styles.stageText}>{label}</Text>
               </View>
             ))}
           </View>
 
-          <View className="mt-2 flex-row items-center">
-            <Text className="text-[18px] font-bold leading-6 text-ink" numberOfLines={1}>
-              {item.price.toLocaleString()}원
-            </Text>
-          </View>
+          <Text style={styles.price} numberOfLines={1}>{item.price.toLocaleString()}원</Text>
 
-          {compact ? (
-            <Text className="mt-1 text-[13px] font-medium leading-[18px] text-muted" numberOfLines={1}>
-              @{breeder?.name ?? 'Breeder'} · {item.location}
-            </Text>
-          ) : (
-            <View className="mt-2" style={{ minWidth: 0 }}>
-              <Text className="text-[12px] font-medium leading-4 text-berry" numberOfLines={1}>
-                {breeder?.name ?? '브리더'}
-              </Text>
-              <Text className="mt-0.5 text-[11px] font-normal leading-[15px] text-muted" numberOfLines={1}>
-                {item.location}
-              </Text>
-            </View>
-          )}
-
-          <Text className={`${compact ? 'mt-0.5' : 'mt-1.5'} text-[12px] font-semibold leading-4`} style={{ color: Colors.delivery }} numberOfLines={1}>
-            {tradeMethods.join(' · ')}
+          <Text style={styles.breederLine} numberOfLines={1}>
+            @{breeder?.name ?? '브리더'} · {item.location}
           </Text>
 
-          <View className={`${compact ? 'mt-1' : 'mt-2'} h-5 flex-row items-center`}>
+          <Text style={styles.tradeMethods} numberOfLines={1}>{tradeMethods.join(' · ')}</Text>
+
+          <View style={styles.verificationRow}>
             {verificationIcons.map(({ key, label, icon: VerificationIcon }) => (
-              <View key={key} accessibilityLabel={label} className="mr-1.5 h-5 w-5 items-center justify-center rounded-full bg-blush">
+              <View key={key} accessibilityLabel={label} style={styles.verificationBadge}>
                 <VerificationIcon size={13} strokeWidth={2} color={Colors.verified} />
               </View>
             ))}
@@ -130,3 +102,135 @@ export function ListingGridCard({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: Spacing.xl,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    ...Shadows.card,
+  },
+  compactCard: {
+    marginBottom: Spacing.sm,
+  },
+  cardBordered: {
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  pressable: {
+    padding: Spacing.lg,
+  },
+  imageWrap: {
+    aspectRatio: 1,
+    overflow: 'hidden',
+    backgroundColor: Colors.surface,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  statusBadge: {
+    position: 'absolute',
+    left: Spacing.sm,
+    top: Spacing.sm,
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+  },
+  statusText: {
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  likeBadge: {
+    position: 'absolute',
+    right: Spacing.sm,
+    bottom: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.overlay,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+  },
+  likeText: {
+    marginLeft: Spacing.xs,
+    color: Colors.card,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: Typography.small.fontWeight,
+  },
+  info: {
+    minWidth: 0,
+    marginTop: Spacing.md,
+  },
+  species: {
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: '400',
+  },
+  title: {
+    height: 40,
+    marginTop: Spacing.xs,
+    color: Colors.text,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '700',
+  },
+  stageRow: {
+    height: 20,
+    marginTop: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stageBadge: {
+    marginRight: Spacing.xs + 2,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xxs,
+  },
+  stageText: {
+    color: Colors.subText,
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: Typography.small.fontWeight,
+  },
+  price: {
+    marginTop: Spacing.sm + Spacing.xxs,
+    color: Colors.text,
+    fontSize: Typography.price.fontSize,
+    lineHeight: Typography.price.lineHeight,
+    fontWeight: Typography.price.fontWeight,
+  },
+  breederLine: {
+    marginTop: Spacing.sm - Spacing.xxs,
+    color: Colors.primary,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+  },
+  tradeMethods: {
+    marginTop: Spacing.sm - Spacing.xxs,
+    color: Colors.delivery,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: '600',
+  },
+  verificationRow: {
+    height: 22,
+    marginTop: Spacing.sm + Spacing.xxs,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  verificationBadge: {
+    width: 22,
+    height: 22,
+    marginRight: Spacing.xs + 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.badge,
+  },
+});

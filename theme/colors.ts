@@ -1,4 +1,4 @@
-export const Colors = {
+﻿export const Colors = {
   background: '#FFFFFF',
   surface: '#FAFAFB',
   card: '#FFFFFF',
@@ -19,6 +19,7 @@ export const Colors = {
   tabActive: '#FF2E6F',
   tabInactive: '#94A3B8',
   notification: '#FF2E6F',
+  overlay: 'rgba(17, 24, 39, 0.48)',
 } as const;
 
 export type ColorRole = keyof typeof Colors;
