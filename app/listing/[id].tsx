@@ -5,8 +5,10 @@ import { Alert, Image, ScrollView, Text, useWindowDimensions, View } from 'react
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
+import { BreederTrustCard } from '@/components/breeder/BreederTrustCard';
 import { Avatar, TopBar, VerifiedBadge } from '@/components/common';
 import { ListingCard } from '@/components/ListingCard';
+import { GrowthTimeline } from '@/components/listing/GrowthTimeline';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
 import { ReviewRatingSummary, ReviewTypeBadge, StarRating } from '@/components/StarRating';
@@ -15,6 +17,7 @@ import { getChatRoomIdForListing } from '@/data/chat';
 import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
+import { getBreederTrust, getGrowthTimeline } from '@/mockData/breederTrust';
 import { useMockUserState } from '@/components/MockUserState';
 import type { BreederReview, Listing, ParentTurtleInfo } from '@/types';
 
@@ -118,6 +121,8 @@ export default function ListingDetailScreen() {
   const { isFavorite, isFollowing, toggleFavorite } = useMockUserState();
   const item = listings.find((listing) => listing.id === id) ?? listings[0];
   const breeder = breeders.find((entry) => entry.id === item.breederId) ?? breeders[0];
+  const breederTrust = getBreederTrust(breeder.id);
+  const growthTimeline = getGrowthTimeline(item.id);
   const summary = getReviewSummary(breeder.id);
   const reviews = breederReviews.filter((review) => review.breederId === breeder.id && review.status !== 'hidden').slice(0, 2);
   const favorite = isFavorite(item.id);
@@ -221,6 +226,8 @@ export default function ListingDetailScreen() {
           </View>
         </SectionCard>
 
+        <GrowthTimeline items={growthTimeline} />
+
         <SectionCard eyebrow="BREEDER TRUST" title="브리더 신뢰 정보">
           <View className="mt-4 flex-row items-center">
             <Image source={{ uri: breeder.logo ?? breeder.avatar }} className="h-16 w-16 rounded-[20px] bg-shell" />
@@ -255,6 +262,8 @@ export default function ListingDetailScreen() {
             </View>
           </View>
         </SectionCard>
+
+        <BreederTrustCard trust={breederTrust} />
 
         <SectionCard eyebrow="REAL REVIEW" title="최근 후기 미리보기">
           <View className="mt-4">

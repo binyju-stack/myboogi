@@ -6,8 +6,10 @@ import { Alert, Image, ImageBackground, Pressable, ScrollView, Text, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
+import { BreederTrustCard } from '@/components/breeder/BreederTrustCard';
 import { Avatar } from '@/components/common';
 import { ListingCard } from '@/components/ListingCard';
+import { GrowthTimeline } from '@/components/listing/GrowthTimeline';
 import { useMockUserState } from '@/components/MockUserState';
 import { ReadyModal } from '@/components/ReadyModal';
 import { ReportActionMenu } from '@/components/ReportActionMenu';
@@ -17,6 +19,7 @@ import { getChatRoomIdForBreeder } from '@/data/chat';
 import { getListingStatus } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
+import { getBreederGrowthTimeline, getBreederTrust } from '@/mockData/breederTrust';
 import type { Breeder, BreederReview, Listing, RepresentativeTurtle } from '@/types';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -266,6 +269,8 @@ export default function BreederShopScreen() {
   const { isFollowing, toggleFollow } = useMockUserState();
 
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
+  const breederTrust = getBreederTrust(breeder.id);
+  const breederGrowthTimeline = getBreederGrowthTimeline(breeder.id);
   const selling = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) !== 'completed');
   const completed = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) === 'completed');
   const reviews = breederReviews.filter((review) => review.breederId === breeder.id && review.status !== 'hidden');
@@ -293,6 +298,8 @@ export default function BreederShopScreen() {
 
         <SnsSection breeder={breeder} onContact={openChatRoom} />
         <AboutSection breeder={breeder} />
+        <BreederTrustCard trust={breederTrust} />
+        <GrowthTimeline items={breederGrowthTimeline} />
 
         <TabBar activeTab={activeTab} onChange={setActiveTab} counts={counts} />
 

@@ -11,9 +11,9 @@ type BillboardTickerProps = {
   category: BillboardCategory;
 };
 
-const label = '\uC804\uAD11\uD310';
+const label = '전광판';
 const adLabel = 'AD';
-const separator = '\u2022';
+const separator = '•';
 
 function getTickerRoute(item: BillboardDisplayItem) {
   switch (item.type) {
@@ -42,25 +42,25 @@ function getRemainingLabel(expiresAt?: string) {
 
   const remainingMs = endTime - Date.now();
   if (remainingMs <= 0) {
-    return '\uC624\uB298 \uC885\uB8CC';
+    return '오늘 종료';
   }
 
   const remainingMinutes = Math.ceil(remainingMs / 60000);
   if (remainingMinutes < 60) {
-    return `${remainingMinutes}\uBD84 \uB0A8\uC74C`;
+    return `${remainingMinutes}분 남음`;
   }
 
   const remainingHours = Math.ceil(remainingMinutes / 60);
   if (remainingHours < 24) {
-    return `${remainingHours}\uC2DC\uAC04 \uB0A8\uC74C`;
+    return `${remainingHours}시간 남음`;
   }
 
-  return `${Math.ceil(remainingHours / 24)}\uC77C \uB0A8\uC74C`;
+  return `${Math.ceil(remainingHours / 24)}일 남음`;
 }
 
 function getTickerTitle(item: BillboardDisplayItem) {
   const remainingLabel = getRemainingLabel(item.expiresAt);
-  return remainingLabel ? `${item.title} \u00B7 ${remainingLabel}` : item.title;
+  return remainingLabel ? `${item.title} · ${remainingLabel}` : item.title;
 }
 
 function MarqueeGroup({ items }: { items: BillboardDisplayItem[] }) {

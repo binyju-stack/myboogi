@@ -33,7 +33,7 @@ export const hotListingMetrics: HotListingMetric[] = [
       viewsIncreaseRate: 182,
       likesIncreaseCount: 43,
       commentsIncreaseCount: 21,
-      recentLabel: '24\uC2DC\uAC04 \uB0B4 \uB4F1\uB85D',
+      recentLabel: '24시간 내 등록',
     },
   },
   {
@@ -46,7 +46,7 @@ export const hotListingMetrics: HotListingMetric[] = [
       viewsIncreaseRate: 128,
       likesIncreaseCount: 31,
       commentsIncreaseCount: 14,
-      recentLabel: '1\uC77C \uB0B4 \uB4F1\uB85D',
+      recentLabel: '1일 내 등록',
     },
   },
   {
@@ -59,7 +59,7 @@ export const hotListingMetrics: HotListingMetric[] = [
       viewsIncreaseRate: 96,
       likesIncreaseCount: 26,
       commentsIncreaseCount: 18,
-      recentLabel: '3\uC77C \uB0B4 \uB4F1\uB85D',
+      recentLabel: '3일 내 등록',
     },
   },
   {
@@ -72,7 +72,7 @@ export const hotListingMetrics: HotListingMetric[] = [
       viewsIncreaseRate: 84,
       likesIncreaseCount: 17,
       commentsIncreaseCount: 9,
-      recentLabel: '24\uC2DC\uAC04 \uB0B4 \uB4F1\uB85D',
+      recentLabel: '24시간 내 등록',
     },
   },
   {
@@ -85,7 +85,7 @@ export const hotListingMetrics: HotListingMetric[] = [
       viewsIncreaseRate: 62,
       likesIncreaseCount: 12,
       commentsIncreaseCount: 7,
-      recentLabel: '1\uC8FC \uB0B4 \uB4F1\uB85D',
+      recentLabel: '1주 내 등록',
     },
   },
 ];

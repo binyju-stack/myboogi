@@ -12,8 +12,8 @@ import { colors } from '@/constants/theme';
 import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import { listings } from '@/data/mockData';
 
-const filterPills = ['\uC804\uCCB4', '\uBAA8\uD504', '\uC131\uBCC4', '\uD06C\uAE30', '\uAC00\uACA9', '\uC9C0\uC5ED'];
-const checkOptions = ['\uB124\uACE0', '\uBD84\uC591\uC644\uB8CC', '\uC2E0\uADDC\uAC1C\uCCB4'];
+const filterPills = ['전체', '모프', '성별', '크기', '가격', '지역'];
+const checkOptions = ['네고', '분양완료', '신규개체'];
 
 function FilterPill({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
@@ -47,8 +47,8 @@ function CheckOption({ label, checked, onPress }: { label: string; checked: bool
 export default function MarketplaceScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const [selectedFilter, setSelectedFilter] = useState('\uC804\uCCB4');
-  const [checkedOptions, setCheckedOptions] = useState<string[]>(['\uC2E0\uADDC\uAC1C\uCCB4']);
+  const [selectedFilter, setSelectedFilter] = useState('전체');
+  const [checkedOptions, setCheckedOptions] = useState<string[]>(['신규개체']);
   const cardWidth = useMemo(() => Math.floor((width - 40 - 10) / 2), [width]);
   const sortedListings = useMemo(
     () => [...listings].sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? '')),

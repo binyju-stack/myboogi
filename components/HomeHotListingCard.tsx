@@ -8,12 +8,13 @@ import type { Breeder, Listing } from '@/types';
 import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import type { HotBadgeType, HotListing } from '@/mockData/hotListings';
 
-const currencyUnit = '\uC6D0';
-const fallbackBreederLabel = '\uBE0C\uB9AC\uB354';
-const popularReasonTitle = '\uC778\uAE30 \uC774\uC720';
-const viewCountLabel = '\uC870\uD68C\uC218';
-const likeLabel = '\uCC1C';
-const commentLabel = '\uB313\uAE00';
+const currencyUnit = String.fromCharCode(0xC6D0);
+const fallbackBreederLabel = '브리더';
+const popularReasonTitle = '인기 이유';
+const viewCountLabel = '조회수';
+const likeLabel = '찜';
+const commentLabel = '댓글';
+const separator = ' ' + String.fromCharCode(0x00B7) + ' ';
 
 function getStatusTone(item: Listing) {
   if (item.listingStatus === 'reserved') return { backgroundColor: Colors.warning, color: Colors.card };
@@ -25,15 +26,15 @@ type VerificationIcon = { key: string; label: string; icon: LucideIcon };
 
 function getVerificationIcons(item: Listing, breeder?: Breeder): VerificationIcon[] {
   const icons: VerificationIcon[] = [];
-  if (item.verified) icons.push({ key: 'identity', label: '\uC2E4\uBA85\uC778\uC99D', icon: BadgeCheck });
-  if (breeder?.breederType === 'business') icons.push({ key: 'business', label: '\uC0AC\uC5C5\uC790\uC778\uC99D', icon: Store });
-  else if (item.verified && breeder) icons.push({ key: 'breeder', label: '\uBE0C\uB9AC\uB354\uC778\uC99D', icon: ShieldCheck });
+  if (item.verified) icons.push({ key: 'identity', label: '실명인증', icon: BadgeCheck });
+  if (breeder?.breederType === 'business') icons.push({ key: 'business', label: '사업자인증', icon: Store });
+  else if (item.verified && breeder) icons.push({ key: 'breeder', label: '브리더인증', icon: ShieldCheck });
   return icons.slice(0, 3);
 }
 
 function getStageLabel(stage: Listing['stage']) {
   const label = String(stage);
-  return label === '\uC720\uCCB4' ? '\uBCA0\uC774\uBE44' : label;
+  return label === '유체' ? '베이비' : label;
 }
 
 function getBadgeLabel(type: HotBadgeType) {
@@ -41,10 +42,10 @@ function getBadgeLabel(type: HotBadgeType) {
     HOT: 'HOT',
     BEST: 'BEST',
     NEW: 'NEW',
-    views: '\uC870\uD68C\uC218 \uAE09\uC0C1\uC2B9',
-    comments: '\uB313\uAE00 HOT',
-    likes: '\uCC1C \uAE09\uC0C1\uC2B9',
-    recommended: '\uCD94\uCC9C',
+    views: '조회수 급상승',
+    comments: '댓글 HOT',
+    likes: '찜 급상승',
+    recommended: '추천',
   };
   return labels[type];
 }
@@ -62,7 +63,9 @@ export function HomeHotListingCard({ item, width }: { item: HotListing; width: n
   const breeder = breeders.find((entry) => entry.id === item.breederId);
   const statusTone = getStatusTone(item);
   const verificationIcons = getVerificationIcons(item, breeder);
-  const tradeMethods = item.tradeMethods?.length ? item.tradeMethods : ['\uC9C1\uAC70\uB798'];
+  const tradeMethods = item.tradeMethods?.length ? item.tradeMethods : ['직거래'];
+  const metaText = [`@${breeder?.name ?? fallbackBreederLabel}`, item.location].filter(Boolean).join(separator);
+  const deliveryText = tradeMethods.filter(Boolean).join(separator);
 
   return (
     <View style={[styles.card, { width }]}>
@@ -97,7 +100,7 @@ export function HomeHotListingCard({ item, width }: { item: HotListing; width: n
               <Text style={styles.reasonTitle}>{popularReasonTitle}</Text>
               <Text style={styles.reasonText}>{item.hotReasons.recentLabel}</Text>
               <Text style={styles.reasonText}>{viewCountLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.viewsIncreaseRate}%</Text></Text>
-              <Text style={styles.reasonText}>{likeLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.likesIncreaseCount}</Text> · {commentLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.commentsIncreaseCount}</Text></Text>
+              <Text style={styles.reasonText}>{likeLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.likesIncreaseCount}</Text>{separator}{commentLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.commentsIncreaseCount}</Text></Text>
             </View>
           ) : null}
         </View>
@@ -116,12 +119,17 @@ export function HomeHotListingCard({ item, width }: { item: HotListing; width: n
 
           <Text style={styles.price} numberOfLines={1}>{item.price.toLocaleString()}{currencyUnit}</Text>
 
-          <Text style={styles.metaLine} numberOfLines={1} ellipsizeMode="tail">
-            <Text style={styles.metaBreeder}>@{breeder?.name ?? fallbackBreederLabel}</Text>
-            <Text style={styles.metaText}> · {item.location}</Text>
-          </Text>
+          <Text style={styles.metaLine} numberOfLines={1} ellipsizeMode="tail">{metaText}</Text>
 
-          <Text style={styles.tradeMethods} numberOfLines={1}>{tradeMethods.join(' · ')}</Text>
+          <Text style={styles.tradeMethods} numberOfLines={1}>{deliveryText}</Text>
+
+          <View style={styles.verificationRow}>
+            {verificationIcons.map(({ key, label, icon: VerificationIcon }) => (
+              <View key={key} accessibilityLabel={label} style={styles.verificationBadge}>
+                <VerificationIcon size={13} strokeWidth={2} color={Colors.verified} />
+              </View>
+            ))}
+          </View>
 
           <View style={styles.hotMetaRow}>
             <View style={styles.hotMetaItem}>
@@ -136,14 +144,6 @@ export function HomeHotListingCard({ item, width }: { item: HotListing; width: n
               <MessageCircle size={Typography.small.fontSize + Spacing.xxs} strokeWidth={1.9} color={Colors.subText} />
               <Text style={styles.hotMetaText}>{item.comments.toLocaleString()}</Text>
             </View>
-          </View>
-
-          <View style={styles.verificationRow}>
-            {verificationIcons.map(({ key, label, icon: VerificationIcon }) => (
-              <View key={key} accessibilityLabel={label} style={styles.verificationBadge}>
-                <VerificationIcon size={13} strokeWidth={2} color={Colors.verified} />
-              </View>
-            ))}
           </View>
         </View>
       </Pressable>
@@ -275,8 +275,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.captionBold.fontWeight,
   },
   stageRow: {
-    height: Typography.caption.lineHeight + Spacing.xxs,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs + Spacing.xxs,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -301,7 +300,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.price.fontWeight,
   },
   metaLine: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs + Spacing.xxs,
     fontSize: Typography.caption.fontSize,
     lineHeight: Typography.caption.lineHeight,
     fontWeight: Typography.caption.fontWeight,
@@ -313,7 +312,7 @@ const styles = StyleSheet.create({
     color: Colors.subText,
   },
   tradeMethods: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
     color: Colors.delivery,
     fontSize: Typography.caption.fontSize,
     lineHeight: Typography.caption.lineHeight,
@@ -337,7 +336,6 @@ const styles = StyleSheet.create({
     fontWeight: Typography.small.fontWeight,
   },
   verificationRow: {
-    height: Spacing.xl - Spacing.xxs,
     marginTop: Spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',

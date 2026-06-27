@@ -7,9 +7,10 @@ import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import { breeders } from '@/data/mockData';
 import type { Breeder, Listing } from '@/types';
 
-const currencyUnit = '\uC6D0';
-const fallbackBreederLabel = '\uBE0C\uB9AC\uB354';
-const viewLabel = '\uC870\uD68C';
+const currencyUnit = String.fromCharCode(0xC6D0);
+const fallbackBreederLabel = '브리더';
+const viewLabel = '조회';
+const separator = ' ' + String.fromCharCode(0x00B7) + ' ';
 
 function getStatusTone(item: Listing) {
   if (item.listingStatus === 'reserved') return { backgroundColor: Colors.warning, color: Colors.card };
@@ -21,15 +22,15 @@ type VerificationIcon = { key: string; label: string; icon: LucideIcon };
 
 function getVerificationIcons(item: Listing, breeder?: Breeder): VerificationIcon[] {
   const icons: VerificationIcon[] = [];
-  if (item.verified) icons.push({ key: 'identity', label: '\uC2E4\uBA85\uC778\uC99D', icon: BadgeCheck });
-  if (breeder?.breederType === 'business') icons.push({ key: 'business', label: '\uC0AC\uC5C5\uC790\uC778\uC99D', icon: Store });
-  else if (item.verified && breeder) icons.push({ key: 'breeder', label: '\uBE0C\uB9AC\uB354\uC778\uC99D', icon: ShieldCheck });
+  if (item.verified) icons.push({ key: 'identity', label: '실명인증', icon: BadgeCheck });
+  if (breeder?.breederType === 'business') icons.push({ key: 'business', label: '사업자인증', icon: Store });
+  else if (item.verified && breeder) icons.push({ key: 'breeder', label: '브리더인증', icon: ShieldCheck });
   return icons.slice(0, 3);
 }
 
 function getStageLabel(stage: Listing['stage']) {
   const label = String(stage);
-  return label === '\uC720\uCCB4' ? '\uBCA0\uC774\uBE44' : label;
+  return label === '유체' ? '베이비' : label;
 }
 
 export function ListingGridCard({
@@ -51,8 +52,9 @@ export function ListingGridCard({
   const breeder = breeders.find((entry) => entry.id === item.breederId);
   const statusTone = getStatusTone(item);
   const verificationIcons = getVerificationIcons(item, breeder);
-  const tradeMethods = item.tradeMethods?.length ? item.tradeMethods : ['\uC9C1\uAC70\uB798'];
-  const infoHeight = compact ? 176 : 184;
+  const tradeMethods = item.tradeMethods?.length ? item.tradeMethods : ['직거래'];
+  const metaText = [`@${breeder?.name ?? fallbackBreederLabel}`, item.location, `${viewLabel} ${item.views.toLocaleString()}`].filter(Boolean).join(separator);
+  const deliveryText = tradeMethods.filter(Boolean).join(separator);
 
   return (
     <View style={[styles.card, compact ? styles.compactCard : null, bordered ? styles.cardBordered : null, width ? { width } : null]}>
@@ -74,7 +76,7 @@ export function ListingGridCard({
           </Pressable>
         </View>
 
-        <View style={[styles.info, { height: infoHeight }]}>
+        <View style={styles.info}>
           <Text style={styles.species} numberOfLines={1}>{item.species}</Text>
 
           <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
@@ -89,12 +91,9 @@ export function ListingGridCard({
 
           <Text style={styles.price} numberOfLines={1}>{item.price.toLocaleString()}{currencyUnit}</Text>
 
-          <Text style={styles.metaLine} numberOfLines={1} ellipsizeMode="tail">
-            <Text style={styles.metaBreeder}>@{breeder?.name ?? fallbackBreederLabel}</Text>
-            <Text style={styles.metaText}> · {item.location} · {viewLabel} {item.views.toLocaleString()}</Text>
-          </Text>
+          <Text style={styles.metaLine} numberOfLines={1} ellipsizeMode="tail">{metaText}</Text>
 
-          <Text style={styles.tradeMethods} numberOfLines={1}>{tradeMethods.join(' · ')}</Text>
+          <Text style={styles.tradeMethods} numberOfLines={1}>{deliveryText}</Text>
 
           <View style={styles.verificationRow}>
             {verificationIcons.map(({ key, label, icon: VerificationIcon }) => (
@@ -184,8 +183,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.captionBold.fontWeight,
   },
   stageRow: {
-    height: Typography.caption.lineHeight + Spacing.xxs,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs + Spacing.xxs,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -210,7 +208,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.price.fontWeight,
   },
   metaLine: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs + Spacing.xxs,
     fontSize: Typography.caption.fontSize,
     lineHeight: Typography.caption.lineHeight,
     fontWeight: Typography.caption.fontWeight,
@@ -222,14 +220,13 @@ const styles = StyleSheet.create({
     color: Colors.subText,
   },
   tradeMethods: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
     color: Colors.delivery,
     fontSize: Typography.caption.fontSize,
     lineHeight: Typography.caption.lineHeight,
     fontWeight: Typography.button.fontWeight,
   },
   verificationRow: {
-    height: Spacing.xl - Spacing.xxs,
     marginTop: Spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',

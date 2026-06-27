@@ -19,31 +19,31 @@ import { AppDivider } from './ui/AppDivider';
 import { Page } from './screen';
 import { AnimatedSectionIcon, type AnimatedSectionIconType } from './ui/AnimatedSectionIcon';
 
-const middleDot = '\u00B7';
+const middleDot = '·';
 
 const copy = {
-  appTitle: '\uB9C8\uC774\uBD80\uAE30',
-  more: '\uB354\uBCF4\uAE30',
-  bannerTitle: '\uBBFF\uC744 \uC218 \uC788\uB294 \uAC70\uBD81\uC774 \uBD84\uC591',
-  bannerSubtitle: '\uC778\uC99D \uBE0C\uB9AC\uB354\uC758 \uC0C8 \uBD84\uC591\uC744 \uD655\uC778\uD574\uBCF4\uC138\uC694.',
-  hotPrefix: '\uC9C0\uAE08 \uD56B\uD55C ',
-  hotHighlight: '\uBD80\uAE30\uB4E4',
-  popularBreeders: '\uC624\uB298\uC758 \uC778\uAE30 \uBE0C\uB9AC\uB354',
-  community: '\uC2E4\uC2DC\uAC04 \uCEE4\uBBA4\uB2C8\uD2F0',
-  comments: '\uB313\uAE00',
-  likes: '\uC88B\uC544\uC694',
-  rating: '\uD3C9\uC810',
-  reviewCount: '\uD6C4\uAE30',
-  reviews: '\uCD5C\uADFC \uD6C4\uAE30',
-  breeder: '\uBE0C\uB9AC\uB354',
-  verified: '\uC778\uC99D',
-  columns: '\uBD80\uAE30 \uCE7C\uB7FC',
-  newListings: '\uC2E0\uADDC \uBD84\uC591',
-  listingMore: '\uBD84\uC591\uAE00 \uB354\uBCF4\uAE30',
+  appTitle: '마이부기',
+  more: '더보기',
+  bannerTitle: '믿을 수 있는 거북이 분양',
+  bannerSubtitle: '인증 브리더의 새 분양을 확인해보세요.',
+  hotPrefix: '지금 핫한 ',
+  hotHighlight: '부기들',
+  popularBreeders: '오늘의 인기 브리더',
+  community: '실시간 커뮤니티',
+  comments: '댓글',
+  likes: '좋아요',
+  rating: '평점',
+  reviewCount: '후기',
+  reviews: '최근 후기',
+  breeder: '브리더',
+  verified: '인증',
+  columns: '부기 칼럼',
+  newListings: '신규 분양',
+  listingMore: '분양글 더보기',
 };
 
 function HomeHeader() {
-  return <AppHeader title={copy.appTitle} subtitle="오늘 신규분양 12건 · 인증브리더 4명" showSearch showHeart showBell />;
+  return <AppHeader title={copy.appTitle} showSearch showHeart showBell />;
 }
 
 function SectionHeader({

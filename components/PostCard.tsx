@@ -5,7 +5,7 @@ import type { Post } from '@/types';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { Avatar, Stat } from './common';
 
-const middleDot = '\u00B7';
+const middleDot = '·';
 
 export function PostCard({ item, compact = false, index = 0 }: { item: Post; compact?: boolean; index?: number }) {
   return (

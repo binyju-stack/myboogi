@@ -14,11 +14,11 @@ import { getWeeklyPopularPosts } from '@/utils/communityRanking';
 
 type Post = (typeof posts)[number];
 type IconName = keyof typeof Ionicons.glyphMap;
-const currencyUnit = '\uC6D0';
-const likeLabel = '\uC88B\uC544\uC694';
-const commentLabel = '\uB313\uAE00';
-const viewLabel = '\uC870\uD68C';
-const middleDot = '\u00B7';
+const currencyUnit = '원';
+const likeLabel = '좋아요';
+const commentLabel = '댓글';
+const viewLabel = '조회';
+const middleDot = '·';
 
 function CategoryPill({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
@@ -175,7 +175,7 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
         <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-[#FFF7D6]">
           <Ionicons name="trophy" size={17} color="#E9A008" />
         </View>
-        <Text className="text-[18px] font-bold leading-6 text-[#111827]">{'\uC774\uBC88 \uC8FC \uC778\uAE30\uAE00'}</Text>
+        <Text className="text-[18px] font-bold leading-6 text-[#111827]">{'이번 주 인기글'}</Text>
       </View>
 
       {items.slice(0, 3).map((post, index) => {
@@ -207,7 +207,7 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
         onPress={() => router.push('/community/popular')}
         className="mt-1 flex-row items-center justify-center border-t border-[#EEF2F6] pt-3"
       >
-        <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">{'\uC778\uAE30\uAE00 \uB354\uBCF4\uAE30'}</Text>
+        <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">{'인기글 더보기'}</Text>
         <Ionicons name="chevron-forward" size={14} color="#94A3B8" />
       </AnimatedPressable>
     </View>
@@ -420,9 +420,9 @@ function CommunityFabMenu({ visible, bottom, onClose }: { visible: boolean; bott
   };
 
   const actions: FabMenuAction[] = [
-    { label: '\uAE00\uC4F0\uAE30', icon: PenLine, onPress: () => router.push('/community/create') },
-    { label: '\uBD84\uC591\uB4F1\uB85D', icon: Store, onPress: () => router.push('/listing/create') },
-    { label: '\uC0B0\uB780\uAE30\uB85D', icon: Egg, onPress: () => router.push('/my/turtles/breeding' as never) },
+    { label: '글쓰기', icon: PenLine, onPress: () => router.push('/community/create') },
+    { label: '분양등록', icon: Store, onPress: () => router.push('/listing/create') },
+    { label: '산란기록', icon: Egg, onPress: () => router.push('/my/turtles/breeding' as never) },
   ];
 
   return (
@@ -443,9 +443,9 @@ function CommunityFabMenu({ visible, bottom, onClose }: { visible: boolean; bott
 }
 export default function CommunityScreen() {
   const insets = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState<(typeof communityCategories)[number]>('\uC804\uCCB4');
+  const [selectedCategory, setSelectedCategory] = useState<(typeof communityCategories)[number]>('전체');
   const filteredPosts = useMemo(
-    () => (selectedCategory === '\uC804\uCCB4' ? posts : posts.filter((post) => post.category === selectedCategory)),
+    () => (selectedCategory === '전체' ? posts : posts.filter((post) => post.category === selectedCategory)),
     [selectedCategory],
   );
   const weeklyPopularPosts = useMemo(() => getWeeklyPopularPosts(posts).slice(0, 3), []);
@@ -454,7 +454,7 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#FFFFFF]" edges={['top']}>
-      <AppHeader title="\uCEE4\uBBA4\uB2C8\uD2F0" subtitle="\uC624\uB298 \uC62C\uB77C\uC628 \uC0AC\uC721 \uC774\uC57C\uAE30\uC640 \uC9C8\uBB38" showSearch showBell />
+      <AppHeader title="커뮤니티" subtitle="오늘 올라온 사육 이야기와 질문" showSearch showBell />
       <BillboardTicker category="community" />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}>
