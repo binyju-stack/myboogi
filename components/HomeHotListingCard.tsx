@@ -1,15 +1,19 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { BadgeCheck, Heart, ShieldCheck, Store, type LucideIcon } from 'lucide-react-native';
+import { BadgeCheck, Eye, Heart, MessageCircle, ShieldCheck, Store, type LucideIcon } from 'lucide-react-native';
 
-import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import { breeders } from '@/data/mockData';
 import type { Breeder, Listing } from '@/types';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
+import type { HotBadgeType, HotListing } from '@/mockData/hotListings';
 
 const currencyUnit = '\uC6D0';
 const fallbackBreederLabel = '\uBE0C\uB9AC\uB354';
-const viewLabel = '\uC870\uD68C';
+const popularReasonTitle = '\uC778\uAE30 \uC774\uC720';
+const viewCountLabel = '\uC870\uD68C\uC218';
+const likeLabel = '\uCC1C';
+const commentLabel = '\uB313\uAE00';
 
 function getStatusTone(item: Listing) {
   if (item.listingStatus === 'reserved') return { backgroundColor: Colors.warning, color: Colors.card };
@@ -32,36 +36,52 @@ function getStageLabel(stage: Listing['stage']) {
   return label === '\uC720\uCCB4' ? '\uBCA0\uC774\uBE44' : label;
 }
 
-export function ListingGridCard({
-  item,
-  width,
-  imageRadius = Radius.lg,
-  bordered = true,
-  compact = false,
-}: {
-  item: Listing;
-  index?: number;
-  width?: number;
-  imageRadius?: number;
-  bordered?: boolean;
-  compact?: boolean;
-}) {
+function getBadgeLabel(type: HotBadgeType) {
+  const labels: Record<HotBadgeType, string> = {
+    HOT: 'HOT',
+    BEST: 'BEST',
+    NEW: 'NEW',
+    views: '\uC870\uD68C\uC218 \uAE09\uC0C1\uC2B9',
+    comments: '\uB313\uAE00 HOT',
+    likes: '\uCC1C \uAE09\uC0C1\uC2B9',
+    recommended: '\uCD94\uCC9C',
+  };
+  return labels[type];
+}
+
+function getBadgeStyle(type: HotBadgeType) {
+  if (type === 'HOT' || type === 'NEW' || type === 'views') return styles.hotBadgePrimary;
+  if (type === 'BEST') return styles.hotBadgeRating;
+  return styles.hotBadgeSoft;
+}
+
+export function HomeHotListingCard({ item, width }: { item: HotListing; width: number }) {
   const [favorite, setFavorite] = useState(false);
+  const [showReason, setShowReason] = useState(false);
   const likes = item.likes + (favorite ? 1 : 0);
   const breeder = breeders.find((entry) => entry.id === item.breederId);
   const statusTone = getStatusTone(item);
   const verificationIcons = getVerificationIcons(item, breeder);
   const tradeMethods = item.tradeMethods?.length ? item.tradeMethods : ['\uC9C1\uAC70\uB798'];
-  const infoHeight = compact ? 176 : 184;
 
   return (
-    <View style={[styles.card, compact ? styles.compactCard : null, bordered ? styles.cardBordered : null, width ? { width } : null]}>
+    <View style={[styles.card, { width }]}>
       <Pressable onPress={() => router.push(`/listing/${item.id}` as never)} style={styles.pressable}>
-        <View style={[styles.imageWrap, { borderRadius: imageRadius }]}>
+        <View style={styles.imageWrap}>
           <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
           <View style={[styles.statusBadge, { backgroundColor: statusTone.backgroundColor }]}>
             <Text style={[styles.statusText, { color: statusTone.color }]}>{item.status}</Text>
           </View>
+          <Pressable
+            onPress={(event) => {
+              event.stopPropagation();
+              setShowReason((current) => !current);
+            }}
+            style={[styles.hotBadge, getBadgeStyle(item.badgeType)]}
+            accessibilityRole="button"
+          >
+            <Text style={styles.hotBadgeText}>{getBadgeLabel(item.badgeType)}</Text>
+          </Pressable>
           <Pressable
             onPress={(event) => {
               event.stopPropagation();
@@ -72,11 +92,18 @@ export function ListingGridCard({
             <Heart size={15} strokeWidth={2} color={Colors.card} fill={favorite ? Colors.card : 'transparent'} />
             <Text style={styles.likeText}>{likes.toLocaleString()}</Text>
           </Pressable>
+          {showReason ? (
+            <View style={styles.reasonPopover}>
+              <Text style={styles.reasonTitle}>{popularReasonTitle}</Text>
+              <Text style={styles.reasonText}>{item.hotReasons.recentLabel}</Text>
+              <Text style={styles.reasonText}>{viewCountLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.viewsIncreaseRate}%</Text></Text>
+              <Text style={styles.reasonText}>{likeLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.likesIncreaseCount}</Text> · {commentLabel} <Text style={styles.reasonHighlight}>+{item.hotReasons.commentsIncreaseCount}</Text></Text>
+            </View>
+          ) : null}
         </View>
 
-        <View style={[styles.info, { height: infoHeight }]}>
+        <View style={styles.info}>
           <Text style={styles.species} numberOfLines={1}>{item.species}</Text>
-
           <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
 
           <View style={styles.stageRow}>
@@ -91,10 +118,25 @@ export function ListingGridCard({
 
           <Text style={styles.metaLine} numberOfLines={1} ellipsizeMode="tail">
             <Text style={styles.metaBreeder}>@{breeder?.name ?? fallbackBreederLabel}</Text>
-            <Text style={styles.metaText}> · {item.location} · {viewLabel} {item.views.toLocaleString()}</Text>
+            <Text style={styles.metaText}> · {item.location}</Text>
           </Text>
 
           <Text style={styles.tradeMethods} numberOfLines={1}>{tradeMethods.join(' · ')}</Text>
+
+          <View style={styles.hotMetaRow}>
+            <View style={styles.hotMetaItem}>
+              <Eye size={Typography.small.fontSize + Spacing.xxs} strokeWidth={1.9} color={Colors.subText} />
+              <Text style={styles.hotMetaText}>{item.views.toLocaleString()}</Text>
+            </View>
+            <View style={styles.hotMetaItem}>
+              <Heart size={Typography.small.fontSize + Spacing.xxs} strokeWidth={1.9} color={Colors.subText} />
+              <Text style={styles.hotMetaText}>{likes.toLocaleString()}</Text>
+            </View>
+            <View style={styles.hotMetaItem}>
+              <MessageCircle size={Typography.small.fontSize + Spacing.xxs} strokeWidth={1.9} color={Colors.subText} />
+              <Text style={styles.hotMetaText}>{item.comments.toLocaleString()}</Text>
+            </View>
+          </View>
 
           <View style={styles.verificationRow}>
             {verificationIcons.map(({ key, label, icon: VerificationIcon }) => (
@@ -111,29 +153,26 @@ export function ListingGridCard({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.sm,
     borderRadius: Radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: Colors.border,
     backgroundColor: Colors.card,
     ...Shadows.card,
-  },
-  compactCard: {
-    marginBottom: Spacing.sm,
-  },
-  cardBordered: {
-    borderWidth: 1,
-    borderColor: Colors.border,
   },
   pressable: {
     padding: Spacing.lg,
   },
   imageWrap: {
     aspectRatio: 1,
-    overflow: 'hidden',
+    overflow: 'visible',
+    borderRadius: Radius.lg,
     backgroundColor: Colors.surface,
   },
   image: {
     width: '100%',
     height: '100%',
+    borderRadius: Radius.lg,
   },
   statusBadge: {
     position: 'absolute',
@@ -144,8 +183,32 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
   },
   statusText: {
-    fontSize: 10,
-    lineHeight: 14,
+    color: Colors.card,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  hotBadge: {
+    position: 'absolute',
+    right: Spacing.sm,
+    top: Spacing.sm,
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+  },
+  hotBadgePrimary: {
+    backgroundColor: Colors.primary,
+  },
+  hotBadgeRating: {
+    backgroundColor: Colors.rating,
+  },
+  hotBadgeSoft: {
+    backgroundColor: Colors.text,
+  },
+  hotBadgeText: {
+    color: Colors.card,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
     fontWeight: Typography.captionBold.fontWeight,
   },
   likeBadge: {
@@ -162,9 +225,37 @@ const styles = StyleSheet.create({
   likeText: {
     marginLeft: Spacing.xs,
     color: Colors.card,
-    fontSize: 11,
-    lineHeight: 14,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
     fontWeight: Typography.small.fontWeight,
+  },
+  reasonPopover: {
+    position: 'absolute',
+    right: Spacing.sm,
+    top: Spacing.xxl,
+    zIndex: 20,
+    minWidth: Spacing.xxl * 5,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    padding: Spacing.md,
+    ...Shadows.floating,
+  },
+  reasonTitle: {
+    color: Colors.text,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  reasonText: {
+    marginTop: Spacing.xs,
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.small.fontWeight,
+  },
+  reasonHighlight: {
+    color: Colors.primary,
+    fontWeight: Typography.captionBold.fontWeight,
   },
   info: {
     minWidth: 0,
@@ -198,8 +289,8 @@ const styles = StyleSheet.create({
   },
   stageText: {
     color: Colors.subText,
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
     fontWeight: Typography.small.fontWeight,
   },
   price: {
@@ -227,6 +318,23 @@ const styles = StyleSheet.create({
     fontSize: Typography.caption.fontSize,
     lineHeight: Typography.caption.lineHeight,
     fontWeight: Typography.button.fontWeight,
+  },
+  hotMetaRow: {
+    marginTop: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  hotMetaItem: {
+    marginRight: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  hotMetaText: {
+    marginLeft: Spacing.xs,
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.small.fontWeight,
   },
   verificationRow: {
     height: Spacing.xl - Spacing.xxs,

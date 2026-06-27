@@ -1,176 +1,205 @@
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import type { ComponentProps } from 'react';
+﻿import { router } from 'expo-router';
 import { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  BadgeCheck,
+  Bell,
+  CalendarCheck,
+  ChevronRight,
+  ClipboardList,
+  Clock,
+  CreditCard,
+  Edit3,
+  Egg,
+  FileText,
+  Heart,
+  HelpCircle,
+  IdCard,
+  Megaphone,
+  MessageCircle,
+  MessageSquare,
+  PawPrint,
+  Send,
+  Star,
+  Store,
+  type LucideIcon,
+} from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
 import { ReadyModal } from '@/components/ReadyModal';
 import { Page } from '@/components/screen';
-import { colors } from '@/constants/theme';
 import { userProfile } from '@/data/mockData';
-import { unreadNotificationCount } from '@/data/notificationData';
 import { managedTurtles } from '@/mockData/turtles';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import type { UserProfile } from '@/types';
-
-type IconName = ComponentProps<typeof Ionicons>['name'];
 
 type MenuItem = {
   label: string;
-  icon: IconName;
+  icon: LucideIcon;
   href?: string;
   readyMessage?: string;
+  badge?: string;
 };
 
-type MenuSection = {
+type MenuGroup = {
   title: string;
   items: MenuItem[];
   breederOnly?: boolean;
 };
 
-function getProfileBadge(profile: UserProfile) {
-  if (profile.userType === 'business_breeder') {
-    return { label: profile.isVerified ? '사업자 인증' : '사업자 브리더', color: '#FF2E6F', backgroundColor: '#FFF0F5' };
-  }
+const copy = {
+  title: '\uB9C8\uC774\uBD80\uAE30',
+  editProfile: '\uD504\uB85C\uD544 \uC218\uC815',
+  normalMember: '\uC77C\uBC18 \uD68C\uC6D0',
+  breeder: '\uBE0C\uB9AC\uB354',
+  verifiedBreeder: '\uC778\uC99D \uBE0C\uB9AC\uB354',
+  businessVerified: '\uC0AC\uC5C5\uC790 \uC778\uC99D',
+  statusActive: '\uD65C\uB3D9\uC911',
+  commonlyUsed: '\uC790\uC8FC \uC0AC\uC6A9',
+  myActivity: '\uB098\uC758 \uD65C\uB3D9',
+  myTrade: '\uB098\uC758 \uAC70\uB798',
+  breederManage: '\uBE0C\uB9AC\uB354 \uAD00\uB9AC',
+  settings: '\uC124\uC815',
+  readySuffix: '\uAE30\uB2A5\uC740 \uC900\uBE44\uC911\uC785\uB2C8\uB2E4.',
+  turtleCount: '\uB4F1\uB85D \uAC70\uBD81\uC774',
+  postCount: '\uAC8C\uC2DC\uAE00',
+  commentCount: '\uB313\uAE00',
+};
 
-  if (profile.userType === 'personal_breeder') {
-    return { label: profile.isVerified ? '인증 브리더' : '브리더', color: '#FF2E6F', backgroundColor: '#FFF0F5' };
-  }
-
-  return { label: '일반 회원', color: '#94A3B8', backgroundColor: '#F5F6F8' };
-}
-
-const stats = [
-  { label: '내 거북이', value: `${managedTurtles.length}`, icon: 'paw-outline' as IconName, href: '/my/turtles' },
-  { label: '찜', value: '12', icon: 'heart-outline' as IconName, href: '/mypage/favorites' },
-  { label: '게시글', value: `${userProfile.postCount}`, icon: 'document-text-outline' as IconName, href: '/mypage/posts' },
-  { label: '댓글', value: `${userProfile.commentCount}`, icon: 'chatbubble-ellipses-outline' as IconName },
-];
-
-const sections: MenuSection[] = [
+const menuGroups: MenuGroup[] = [
   {
-    title: '내 거북이',
+    title: copy.commonlyUsed,
     items: [
-      { label: '내 거북이 관리', icon: 'paw-outline', href: '/my/turtles' },
-      { label: '성장 기록', icon: 'trending-up-outline', href: '/growth' },
-      { label: '산란 관리', icon: 'egg-outline', href: '/my/turtles/breeding' },
-      { label: '성장 앨범', icon: 'images-outline', readyMessage: '성장 앨범 기능은 준비중입니다.' },
+      { label: '\uB0B4 \uAC70\uBD81\uC774 \uAD00\uB9AC', icon: PawPrint, href: '/my/turtles' },
+      { label: '\uC0B0\uB780 \uAD00\uB9AC', icon: Egg, href: '/my/turtles/breeding' },
     ],
   },
   {
-    title: '내 활동',
+    title: copy.myActivity,
     items: [
-      { label: '찜한 분양', icon: 'heart-outline', href: '/mypage/favorites' },
-      { label: '최근 본 분양', icon: 'time-outline', readyMessage: '최근 본 분양 기능은 준비중입니다.' },
-      { label: '내가 작성한 글', icon: 'document-text-outline', href: '/mypage/posts' },
-      { label: '내가 작성한 댓글', icon: 'chatbubble-ellipses-outline', readyMessage: '내가 작성한 댓글 기능은 준비중입니다.' },
-      { label: '알림 관리', icon: 'notifications-outline', href: '/settings/notifications' },
+      { label: '\uCC1C\uD55C \uBD84\uC591', icon: Heart, href: '/mypage/favorites' },
+      { label: '\uB0B4\uAC00 \uC4F4 \uAE00', icon: FileText, href: '/mypage/posts' },
+      { label: '\uB313\uAE00 \uB2E8 \uAE00', icon: MessageCircle, readyMessage: '\uB313\uAE00 \uB2E8 \uAE00 \uAE30\uB2A5\uC740 \uC900\uBE44\uC911\uC785\uB2C8\uB2E4.' },
+      { label: '\uCD5C\uADFC \uBCF8 \uBD84\uC591', icon: Clock, readyMessage: '\uCD5C\uADFC \uBCF8 \uBD84\uC591 \uAE30\uB2A5\uC740 \uC900\uBE44\uC911\uC785\uB2C8\uB2E4.' },
     ],
   },
   {
-    title: '브리더',
+    title: copy.myTrade,
+    items: [
+      { label: '\uBD84\uC591 \uBB38\uC758', icon: Send, readyMessage: '\uBD84\uC591 \uBB38\uC758 \uAE30\uB2A5\uC740 \uC900\uBE44\uC911\uC785\uB2C8\uB2E4.' },
+      { label: '\uCC44\uD305', icon: MessageSquare, href: '/chat' },
+      { label: '\uC608\uC57D/\uAD6C\uB9E4 \uB0B4\uC5ED', icon: CalendarCheck, readyMessage: '\uC608\uC57D/\uAD6C\uB9E4 \uB0B4\uC5ED \uAE30\uB2A5\uC740 \uC900\uBE44\uC911\uC785\uB2C8\uB2E4.' },
+      { label: '\uC548\uC804\uACB0\uC81C \uB0B4\uC5ED', icon: CreditCard, readyMessage: '\uC548\uC804\uACB0\uC81C \uB0B4\uC5ED \uAE30\uB2A5\uC740 \uC900\uBE44\uC911\uC785\uB2C8\uB2E4.' },
+    ],
+  },
+  {
+    title: copy.breederManage,
     breederOnly: true,
     items: [
-      { label: '내 분양글', icon: 'albums-outline', href: '/mypage/listings' },
-      { label: '분양 등록', icon: 'add-circle-outline', href: '/listing/create' },
-      { label: '분양 통계', icon: 'bar-chart-outline', readyMessage: '분양 통계 기능은 준비중입니다.' },
-      { label: '문의 관리', icon: 'call-outline', readyMessage: '문의 관리 기능은 준비중입니다.' },
+      { label: '\uBD84\uC591\uAE00 \uAD00\uB9AC', icon: Store, href: '/mypage/listings' },
+      { label: '\uBE0C\uB9AC\uB354 \uD504\uB85C\uD544 \uAD00\uB9AC', icon: IdCard, href: '/breeder/edit' },
+      { label: '\uD6C4\uAE30 \uAD00\uB9AC', icon: Star, href: '/mypage/reviews' },
+      { label: '\uC804\uAD11\uD310 \uAD11\uACE0 \uAD00\uB9AC', icon: Megaphone, href: '/billboard/create', badge: 'AD' },
     ],
   },
   {
-    title: '쇼핑',
+    title: copy.settings,
     items: [
-      { label: '주문 내역', icon: 'receipt-outline', readyMessage: '주문 내역 기능은 준비중입니다.' },
-      { label: '배송 조회', icon: 'car-outline', readyMessage: '배송 조회 기능은 준비중입니다.' },
-      { label: '리뷰 관리', icon: 'star-outline', href: '/mypage/reviews' },
-      { label: '배송지 관리', icon: 'location-outline', readyMessage: '배송지 관리 기능은 준비중입니다.' },
-    ],
-  },
-  {
-    title: '도움말',
-    items: [
-      { label: '공지사항', icon: 'megaphone-outline', href: '/notices' },
-      { label: '1:1 문의', icon: 'help-circle-outline', href: '/settings/contact' },
-      { label: '자주 묻는 질문', icon: 'chatbox-ellipses-outline', readyMessage: '자주 묻는 질문 기능은 준비중입니다.' },
-      { label: '앱 설정', icon: 'settings-outline', href: '/settings' },
+      { label: '\uC54C\uB9BC \uC124\uC815', icon: Bell, href: '/settings/notifications' },
+      { label: '\uACE0\uAC1D\uC13C\uD130', icon: HelpCircle, href: '/settings/contact' },
+      { label: '\uACF5\uC9C0\uC0AC\uD56D', icon: Megaphone, href: '/notices' },
+      { label: '\uC57D\uAD00 \uBC0F \uC815\uCC45', icon: ClipboardList, href: '/settings/terms' },
     ],
   },
 ];
 
-function ProfileHeader({ profile }: { profile: UserProfile }) {
+function getProfileBadge(profile: UserProfile) {
+  if (profile.userType === 'business_breeder') {
+    return profile.isVerified ? copy.businessVerified : copy.breeder;
+  }
+  if (profile.userType === 'personal_breeder') {
+    return profile.isVerified ? copy.verifiedBreeder : copy.breeder;
+  }
+  return copy.normalMember;
+}
+
+function openItem(item: MenuItem, onReady: (message: string) => void) {
+  if (item.href) {
+    router.push(item.href as never);
+    return;
+  }
+  onReady(item.readyMessage ?? item.label + ' ' + copy.readySuffix);
+}
+
+function ProfileCard({ profile }: { profile: UserProfile }) {
   const badge = getProfileBadge(profile);
 
   return (
-    <View className="bg-white px-5 pb-5 pt-4">
-      <View className="flex-row items-center justify-between">
-        <View className="flex-1 flex-row items-center" style={{ minWidth: 0 }}>
-          <Image source={{ uri: profile.profileImage }} className="h-[72px] w-[72px] rounded-full bg-shell" />
-          <View className="ml-4 flex-1" style={{ minWidth: 0 }}>
-            <View className="flex-row items-center" style={{ minWidth: 0 }}>
-              <Text className="text-[22px] font-bold leading-7 text-[#111827]" numberOfLines={1}>
-                {profile.nickname}
-              </Text>
-              <View className="ml-2 rounded-full px-2 py-1" style={{ backgroundColor: badge.backgroundColor, flexShrink: 0 }}>
-                <Text className="text-[10px] font-bold leading-[14px]" style={{ color: badge.color }}>
-                  {badge.label}
-                </Text>
-              </View>
-            </View>
-            <Text className="mt-1.5 text-[14px] font-medium leading-5 text-[#94A3B8]" numberOfLines={1} style={{ flexShrink: 1 }}>
-              {profile.bio}
-            </Text>
-            <View className="mt-1.5 flex-row items-center" style={{ minWidth: 0 }}>
-              <Ionicons name="location-outline" size={13} color="#94A3B8" />
-              <Text className="ml-1 text-[12px] font-medium leading-4 text-[#94A3B8]" numberOfLines={1} style={{ flexShrink: 1 }}>
-                {profile.region}
-              </Text>
+    <View style={styles.profileCard}>
+      <View style={styles.profileTop}>
+        <Image source={{ uri: profile.profileImage }} style={styles.profileImage} />
+        <View style={styles.profileInfo}>
+          <View style={styles.nameRow}>
+            <Text style={styles.nickname} numberOfLines={1}>{profile.nickname}</Text>
+            <View style={styles.verifiedPill}>
+              <BadgeCheck size={13} strokeWidth={2} color={Colors.verified} />
+              <Text style={styles.verifiedText} numberOfLines={1}>{badge}</Text>
             </View>
           </View>
+          <Text style={styles.profileMeta} numberOfLines={1}>{copy.statusActive}</Text>
+          <Text style={styles.profileBio} numberOfLines={2}>{profile.bio}</Text>
         </View>
-        <Pressable onPress={() => router.push('/mypage/edit')} className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-[#F5F6F8]">
-          <Ionicons name="create-outline" size={17} color="#111827" />
-        </Pressable>
       </View>
+
+      <View style={styles.profileStats}>
+        <View style={styles.profileStatItem}>
+          <Text style={styles.profileStatValue}>{managedTurtles.length}</Text>
+          <Text style={styles.profileStatLabel}>{copy.turtleCount}</Text>
+        </View>
+        <View style={styles.profileStatItem}>
+          <Text style={styles.profileStatValue}>{profile.postCount}</Text>
+          <Text style={styles.profileStatLabel}>{copy.postCount}</Text>
+        </View>
+        <View style={styles.profileStatItem}>
+          <Text style={styles.profileStatValue}>{profile.commentCount}</Text>
+          <Text style={styles.profileStatLabel}>{copy.commentCount}</Text>
+        </View>
+      </View>
+
+      <Pressable onPress={() => router.push('/mypage/edit')} style={styles.editButton} accessibilityRole="button">
+        <Edit3 size={16} strokeWidth={2} color={Colors.text} />
+        <Text style={styles.editButtonText}>{copy.editProfile}</Text>
+      </Pressable>
     </View>
   );
 }
 
-function StatBar() {
+function MenuRow({ item, isLast, onReady }: { item: MenuItem; isLast: boolean; onReady: (message: string) => void }) {
+  const Icon = item.icon;
+
   return (
-    <View className="mx-5 mt-3 h-[66px] flex-row items-center border-y border-[#EEF2F6] bg-white">
-      {stats.map((item) => (
-        <Pressable
-          key={item.label}
-          onPress={() => (item.href ? router.push(item.href as never) : undefined)}
-          className="flex-1 items-center justify-center"
-        >
-          <Ionicons name={item.icon} size={17} color="#FF2E6F" />
-          <Text className="mt-0.5 text-[17px] font-bold leading-[21px] text-[#111827]">{item.value}</Text>
-          <Text className="text-[11px] font-medium leading-[15px] text-[#94A3B8]" numberOfLines={1}>
-            {item.label}
-          </Text>
-        </Pressable>
-      ))}
-    </View>
+    <Pressable onPress={() => openItem(item, onReady)} style={[styles.menuRow, isLast ? null : styles.menuDivider]} accessibilityRole="button">
+      <View style={styles.menuIconBox}>
+        <Icon size={20} strokeWidth={1.9} color={Colors.primary} />
+      </View>
+      <Text style={styles.menuLabel} numberOfLines={1}>{item.label}</Text>
+      {item.badge ? (
+        <View style={styles.menuBadge}>
+          <Text style={styles.menuBadgeText}>{item.badge}</Text>
+        </View>
+      ) : null}
+      <ChevronRight size={18} strokeWidth={1.9} color={Colors.subText} />
+    </Pressable>
   );
 }
 
-function SectionList({ section, onReady }: { section: MenuSection; onReady: (message: string) => void }) {
+function MenuGroupCard({ group, onReady }: { group: MenuGroup; onReady: (message: string) => void }) {
   return (
-    <View className="mt-6">
-      <Text className="mx-5 mb-2 text-[15px] font-bold leading-5 text-[#111827]">{section.title}</Text>
-      <View className="border-y border-[#EEF2F6] bg-white">
-        {section.items.map((item, index) => (
-          <Pressable
-            key={item.label}
-            onPress={() => (item.href ? router.push(item.href as never) : onReady(item.readyMessage ?? `${item.label} 기능은 준비중입니다.`))}
-            className={`mx-5 h-[54px] flex-row items-center ${index ? 'border-t border-[#EEF2F6]' : ''}`}
-          >
-            <View className="h-8 w-8 items-center justify-center">
-              <Ionicons name={item.icon} size={19} color="#FF2E6F" />
-            </View>
-            <Text className="ml-3 flex-1 text-[15px] font-medium leading-5 text-[#111827]">{item.label}</Text>
-            <Ionicons name="chevron-forward" size={17} color="#C4C8CF" />
-          </Pressable>
+    <View style={styles.groupCard}>
+      <Text style={styles.groupTitle}>{group.title}</Text>
+      <View style={styles.groupRows}>
+        {group.items.map((item, index) => (
+          <MenuRow key={item.label} item={item} isLast={index === group.items.length - 1} onReady={onReady} />
         ))}
       </View>
     </View>
@@ -181,15 +210,15 @@ export default function MyPageScreen() {
   const [readyTitle, setReadyTitle] = useState('');
   const profile = userProfile;
   const isBreeder = profile.userType !== 'normal';
-  const visibleSections = sections.filter((section) => !section.breederOnly || isBreeder);
+  const visibleGroups = menuGroups.filter((group) => !group.breederOnly || isBreeder);
 
   return (
-    <Page>
-      <View className="bg-white pb-4">
-        <ProfileHeader profile={profile} />
-        <StatBar />
-        {visibleSections.map((section) => (
-          <SectionList key={section.title} section={section} onReady={setReadyTitle} />
+    <Page backgroundColor={Colors.surface}>
+      <AppHeader title={copy.title} showSettings />
+      <View style={styles.content}>
+        <ProfileCard profile={profile} />
+        {visibleGroups.map((group) => (
+          <MenuGroupCard key={group.title} group={group} onReady={setReadyTitle} />
         ))}
       </View>
 
@@ -197,3 +226,167 @@ export default function MyPageScreen() {
     </Page>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xxl,
+  },
+  profileCard: {
+    borderRadius: Radius.xl,
+    backgroundColor: Colors.card,
+    padding: Spacing.lg,
+    ...Shadows.card,
+  },
+  profileTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: Spacing.xxl + Spacing.xxl,
+    height: Spacing.xxl + Spacing.xxl,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.surface,
+  },
+  profileInfo: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: Spacing.md,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  nickname: {
+    flexShrink: 1,
+    color: Colors.text,
+    fontSize: Typography.subtitle.fontSize,
+    lineHeight: Typography.subtitle.lineHeight,
+    fontWeight: Typography.subtitle.fontWeight,
+  },
+  verifiedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: Spacing.sm,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.badge,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xxs,
+  },
+  verifiedText: {
+    marginLeft: Spacing.xxs,
+    color: Colors.verified,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.small.fontWeight,
+  },
+  profileMeta: {
+    marginTop: Spacing.xs,
+    color: Colors.primary,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+  },
+  profileBio: {
+    marginTop: Spacing.xxs,
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+  },
+  profileStats: {
+    flexDirection: 'row',
+    marginTop: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    paddingTop: Spacing.md,
+  },
+  profileStatItem: {
+    flex: 1,
+  },
+  profileStatValue: {
+    color: Colors.text,
+    fontSize: Typography.subtitle.fontSize,
+    lineHeight: Typography.subtitle.lineHeight,
+    fontWeight: Typography.subtitle.fontWeight,
+  },
+  profileStatLabel: {
+    marginTop: Spacing.xxs,
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.small.fontWeight,
+  },
+  editButton: {
+    height: Spacing.xxl + Spacing.md,
+    marginTop: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
+  },
+  editButtonText: {
+    marginLeft: Spacing.xs,
+    color: Colors.text,
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+  },
+  groupCard: {
+    marginTop: Spacing.lg,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    paddingTop: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    ...Shadows.card,
+  },
+  groupTitle: {
+    color: Colors.text,
+    fontSize: Typography.bodyBold.fontSize,
+    lineHeight: Typography.bodyBold.lineHeight,
+    fontWeight: Typography.bodyBold.fontWeight,
+  },
+  groupRows: {
+    marginTop: Spacing.sm,
+  },
+  menuRow: {
+    minHeight: Spacing.xxl + Spacing.xxl,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  menuIconBox: {
+    width: Spacing.xxl,
+    height: Spacing.xxl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuLabel: {
+    flex: 1,
+    marginLeft: Spacing.sm,
+    color: Colors.text,
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
+  },
+  menuBadge: {
+    marginRight: Spacing.sm,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.badge,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xxs,
+  },
+  menuBadgeText: {
+    color: Colors.primary,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+});
+

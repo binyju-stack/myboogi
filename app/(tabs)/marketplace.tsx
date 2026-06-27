@@ -1,34 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AnimatedPressable } from '@/components/AnimatedPressable';
 import { AppHeader } from '@/components/AppHeader';
+import { BillboardTicker } from '@/components/BillboardTicker';
 import { ListingGridCard } from '@/components/ListingGridCard';
 import { colors } from '@/constants/theme';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/theme';
 import { listings } from '@/data/mockData';
 
-const filterPills = ['전체', '모프', '성별', '크기', '가격', '지역'];
-const checkOptions = ['네고', '분양완료', '신규개체'];
+const filterPills = ['\uC804\uCCB4', '\uBAA8\uD504', '\uC131\uBCC4', '\uD06C\uAE30', '\uAC00\uACA9', '\uC9C0\uC5ED'];
+const checkOptions = ['\uB124\uACE0', '\uBD84\uC591\uC644\uB8CC', '\uC2E0\uADDC\uAC1C\uCCB4'];
 
 function FilterPill({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
-    <Pressable
+    <AnimatedPressable
       onPress={onPress}
-      className="mr-2 h-9 items-center justify-center rounded-full border px-3.5"
-      style={{
-        borderColor: selected ? colors.berry : '#EEF2F6',
-        backgroundColor: selected ? '#FFF2F6' : '#FFFFFF',
-      }}
+      style={[styles.filterPill, selected ? styles.filterPillSelected : styles.filterPillDefault]}
     >
-      <Text className="text-[13px] font-medium leading-[18px]" style={{ color: selected ? colors.berry : '#94A3B8' }}>
+      <Text style={[styles.filterPillText, selected ? styles.filterPillTextSelected : styles.filterPillTextDefault]}>
         {label}
       </Text>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
-
 function CheckOption({ label, checked, onPress }: { label: string; checked: boolean; onPress: () => void }) {
   return (
     <Pressable onPress={onPress} className="mr-4 flex-row items-center">
@@ -49,8 +47,8 @@ function CheckOption({ label, checked, onPress }: { label: string; checked: bool
 export default function MarketplaceScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const [selectedFilter, setSelectedFilter] = useState('전체');
-  const [checkedOptions, setCheckedOptions] = useState<string[]>(['신규개체']);
+  const [selectedFilter, setSelectedFilter] = useState('\uC804\uCCB4');
+  const [checkedOptions, setCheckedOptions] = useState<string[]>(['\uC2E0\uADDC\uAC1C\uCCB4']);
   const cardWidth = useMemo(() => Math.floor((width - 40 - 10) / 2), [width]);
   const sortedListings = useMemo(
     () => [...listings].sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? '')),
@@ -65,7 +63,8 @@ export default function MarketplaceScreen() {
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 118 }} showsVerticalScrollIndicator={false}>
         <View className="pb-4">
-          <AppHeader title="분양" showSearch showBell />
+          <AppHeader title="분양" subtitle="인증 브리더의 새 분양을 확인해보세요" showSearch showBell />
+          <BillboardTicker category="listing" />
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pt-5">
             {filterPills.map((label) => (
@@ -80,8 +79,8 @@ export default function MarketplaceScreen() {
               ))}
             </View>
             <Pressable className="flex-row items-center">
-              <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">최신순</Text>
-              <Ionicons name="chevron-down" size={15} color="#94A3B8" />
+              <Text style={styles.sortText}>최신순</Text>
+              <Ionicons name="chevron-down" size={15} color={Colors.subText} />
             </Pressable>
           </View>
         </View>
@@ -103,3 +102,43 @@ export default function MarketplaceScreen() {
     </SafeAreaView>
   );
 }
+const styles = StyleSheet.create({
+  sortText: {
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize + 1,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+  },
+  filterPill: {
+    height: Spacing.xxl + Spacing.xs,
+    marginRight: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: Spacing.md,
+  },
+  filterPillSelected: {
+    borderColor: Colors.badge,
+    backgroundColor: Colors.badge,
+    ...Shadows.card,
+  },
+  filterPillDefault: {
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
+  },
+  filterPillText: {
+    fontSize: Typography.caption.fontSize + 1,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+  },
+  filterPillTextSelected: {
+    color: Colors.primary,
+  },
+  filterPillTextDefault: {
+    color: Colors.subText,
+  },
+});
+
+
+

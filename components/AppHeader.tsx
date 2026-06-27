@@ -1,27 +1,31 @@
 ﻿import { router } from 'expo-router';
-import { Bell, Heart, Search, type LucideIcon } from 'lucide-react-native';
+import { Bell, Heart, Search, Settings, type LucideIcon } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, Radius, Spacing, Typography } from '@/theme';
 import { unreadNotificationCount } from '@/data/notificationData';
 
-type HeaderIconName = 'search' | 'heart' | 'bell';
+type HeaderIconName = 'search' | 'heart' | 'bell' | 'settings';
 
 type AppHeaderProps = {
   title: string;
+  subtitle?: string;
   showSearch?: boolean;
   showHeart?: boolean;
   showBell?: boolean;
+  showSettings?: boolean;
   notificationCount?: number;
   onSearchPress?: () => void;
   onHeartPress?: () => void;
   onBellPress?: () => void;
+  onSettingsPress?: () => void;
 };
 
 const headerIcons: Record<HeaderIconName, LucideIcon> = {
   search: Search,
   heart: Heart,
   bell: Bell,
+  settings: Settings,
 };
 
 function HeaderIconButton({ icon, label, onPress, badgeCount }: { icon: HeaderIconName; label: string; onPress: () => void; badgeCount?: number }) {
@@ -41,20 +45,26 @@ function HeaderIconButton({ icon, label, onPress, badgeCount }: { icon: HeaderIc
 
 export function AppHeader({
   title,
+  subtitle,
   showSearch = false,
   showHeart = false,
   showBell = false,
+  showSettings = false,
   notificationCount,
   onSearchPress,
   onHeartPress,
   onBellPress,
+  onSettingsPress,
 }: AppHeaderProps) {
   const count = notificationCount ?? unreadNotificationCount;
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.title}>{title}</Text>
+        <View style={styles.titleBlock}>
+          <Text style={styles.title}>{title}</Text>
+          {subtitle ? <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text> : null}
+        </View>
         <View style={styles.actions}>
           {showSearch ? <HeaderIconButton icon="search" label="검색" onPress={onSearchPress ?? (() => router.push('/search'))} /> : null}
           {showHeart ? <HeaderIconButton icon="heart" label="찜 목록" onPress={onHeartPress ?? (() => router.push('/mypage/favorites' as never))} /> : null}
@@ -77,11 +87,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  titleBlock: {
+    flex: 1,
+    minWidth: 0,
+  },
   title: {
     color: Colors.text,
     fontSize: 24,
     fontWeight: Typography.title.fontWeight,
     lineHeight: 32,
+  },
+  subtitle: {
+    marginTop: Spacing.xxs,
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize,
+    fontWeight: Typography.caption.fontWeight,
+    lineHeight: Typography.caption.lineHeight,
   },
   actions: {
     flexDirection: 'row',
@@ -115,3 +136,4 @@ const styles = StyleSheet.create({
     lineHeight: 12,
   },
 });
+

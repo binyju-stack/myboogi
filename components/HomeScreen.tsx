@@ -1,23 +1,49 @@
-﻿import { router } from 'expo-router';
+import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import { ChevronRight, MessageCircle, Star, Zap } from 'lucide-react-native';
+import { ChevronRight, Star, Zap } from 'lucide-react-native';
 
 import { homeBanners } from '@/data/homeScreenData';
 import { breederReviews, breeders, listings, posts } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
 import { homeColumns } from '@/mockData/homeColumns';
+import { getHotListings } from '@/mockData/hotListings';
 import { Colors, Radius, Spacing, Typography } from '@/theme';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { AppHeader } from './AppHeader';
 import { Avatar } from './common';
 import { ListingGridCard } from './ListingGridCard';
-import { HomeNoticeTicker } from './HomeNoticeTicker';
+import { HomeHotListingCard } from './HomeHotListingCard';
+import { BillboardTicker } from './BillboardTicker';
+import { AppDivider } from './ui/AppDivider';
 import { Page } from './screen';
 import { AnimatedSectionIcon, type AnimatedSectionIconType } from './ui/AnimatedSectionIcon';
 
+const middleDot = '\u00B7';
+
+const copy = {
+  appTitle: '\uB9C8\uC774\uBD80\uAE30',
+  more: '\uB354\uBCF4\uAE30',
+  bannerTitle: '\uBBFF\uC744 \uC218 \uC788\uB294 \uAC70\uBD81\uC774 \uBD84\uC591',
+  bannerSubtitle: '\uC778\uC99D \uBE0C\uB9AC\uB354\uC758 \uC0C8 \uBD84\uC591\uC744 \uD655\uC778\uD574\uBCF4\uC138\uC694.',
+  hotPrefix: '\uC9C0\uAE08 \uD56B\uD55C ',
+  hotHighlight: '\uBD80\uAE30\uB4E4',
+  popularBreeders: '\uC624\uB298\uC758 \uC778\uAE30 \uBE0C\uB9AC\uB354',
+  community: '\uC2E4\uC2DC\uAC04 \uCEE4\uBBA4\uB2C8\uD2F0',
+  comments: '\uB313\uAE00',
+  likes: '\uC88B\uC544\uC694',
+  rating: '\uD3C9\uC810',
+  reviewCount: '\uD6C4\uAE30',
+  reviews: '\uCD5C\uADFC \uD6C4\uAE30',
+  breeder: '\uBE0C\uB9AC\uB354',
+  verified: '\uC778\uC99D',
+  columns: '\uBD80\uAE30 \uCE7C\uB7FC',
+  newListings: '\uC2E0\uADDC \uBD84\uC591',
+  listingMore: '\uBD84\uC591\uAE00 \uB354\uBCF4\uAE30',
+};
+
 function HomeHeader() {
-  return <AppHeader title="마이부기" showSearch showHeart showBell />;
+  return <AppHeader title={copy.appTitle} subtitle="오늘 신규분양 12건 · 인증브리더 4명" showSearch showHeart showBell />;
 }
 
 function SectionHeader({
@@ -30,14 +56,14 @@ function SectionHeader({
   onPress?: () => void;
 }) {
   return (
-    <View className="mb-4 flex-row items-center justify-between px-5">
-      <View className="flex-row items-center">
+    <View style={styles.sectionHeader}>
+      <View style={styles.sectionTitleRow}>
         <AnimatedSectionIcon type={animationType} animationType={animationType} />
-        <Text className="ml-2 text-[20px] font-bold leading-7 text-ink">{title}</Text>
+        <Text style={styles.sectionTitle}>{title}</Text>
       </View>
       {onPress ? (
-        <Pressable onPress={onPress} className="flex-row items-center py-2 pl-3">
-                    <Text className="text-[12px] font-medium text-muted">더보기</Text>
+        <Pressable onPress={onPress} style={styles.sectionMoreButton}>
+          <Text style={styles.sectionMoreText}>{copy.more}</Text>
           <ChevronRight size={14} strokeWidth={1.8} color={Colors.comment} />
         </Pressable>
       ) : null}
@@ -50,16 +76,16 @@ function Section({
   animationType,
   onPress,
   children,
-  topClassName = 'mt-8',
+  topSpacing = Spacing.xl,
 }: {
   title: string;
   animationType: AnimatedSectionIconType;
   onPress?: () => void;
   children: ReactNode;
-  topClassName?: string;
+  topSpacing?: number;
 }) {
   return (
-    <View className={topClassName}>
+    <View style={{ marginTop: topSpacing }}>
       <SectionHeader title={title} animationType={animationType} onPress={onPress} />
       {children}
     </View>
@@ -76,12 +102,8 @@ function MainBanner() {
       <Image source={{ uri: banner.image }} style={styles.mainBannerImage} resizeMode="cover" />
       <View style={styles.mainBannerOverlay} />
       <View style={styles.mainBannerText}>
-        <Text className="text-[22px] font-bold leading-[30px] text-white" numberOfLines={2}>
-          믿을 수 있는 거북이 분양
-        </Text>
-        <Text className="mt-2 text-[14px] font-semibold leading-5 text-white/90" numberOfLines={2}>
-          인증 브리더의 새 분양을 확인해보세요.
-        </Text>
+        <Text style={styles.mainBannerTitle} numberOfLines={2}>{copy.bannerTitle}</Text>
+        <Text style={styles.mainBannerSubtitle} numberOfLines={2}>{copy.bannerSubtitle}</Text>
       </View>
     </AnimatedPressable>
   );
@@ -89,38 +111,39 @@ function MainBanner() {
 
 function HotTitle() {
   return (
-    <View className="flex-row items-center">
-      <Text className="text-[21px] font-bold leading-7 text-ink">지금 핫한 </Text>
-      <Text className="text-[21px] font-bold leading-7 text-berry">부기들</Text>
-      <Zap size={18} strokeWidth={2.1} color={Colors.rating} style={{ marginLeft: Spacing.sm - 2 }} />
+    <View style={styles.hotTitleRow}>
+      <Text style={styles.hotTitle}>{copy.hotPrefix}</Text>
+      <Text style={styles.hotTitleHighlight}>{copy.hotHighlight}</Text>
+      <Zap size={18} strokeWidth={2.1} color={Colors.rating} style={styles.hotZap} />
     </View>
   );
 }
 
 function HotSectionHeader({ onPress }: { onPress?: () => void }) {
   return (
-    <View className="mb-4 flex-row items-center justify-between px-5">
+    <View style={styles.sectionHeader}>
       <HotTitle />
       {onPress ? (
-        <Pressable onPress={onPress} className="flex-row items-center py-2 pl-3">
-          <Text className="text-[12px] font-medium text-muted">더보기</Text>
+        <Pressable onPress={onPress} style={styles.sectionMoreButton}>
+          <Text style={styles.sectionMoreText}>{copy.more}</Text>
           <ChevronRight size={14} strokeWidth={1.8} color={Colors.comment} />
         </Pressable>
       ) : null}
     </View>
   );
 }
+
 function HotListingsSection() {
-  const hotListings = [...listings].sort((a, b) => b.views + b.likes - (a.views + a.likes)).slice(0, 5);
+  const hotListings = getHotListings(listings);
 
   return (
-    <View className="mt-8">
+    <View style={styles.hotSection}>
       <HotSectionHeader onPress={() => router.push('/marketplace')} />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-1">
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
         {hotListings.map((listing, index) => (
           <FadeInView key={listing.id} delay={index * 45}>
-            <View className="mr-3">
-              <ListingGridCard item={listing} index={index} width={214} compact />
+            <View style={styles.hotCardWrap}>
+              <HomeHotListingCard item={listing} width={214} />
             </View>
           </FadeInView>
         ))}
@@ -131,34 +154,32 @@ function HotListingsSection() {
 
 function PopularBreedersSection() {
   return (
-    <Section title="오늘의 인기 브리더" animationType="award" onPress={() => router.push('/marketplace')} topClassName="mt-6">
-      <View className="mx-5 bg-white">
+    <Section title={copy.popularBreeders} animationType="award" onPress={() => router.push('/marketplace')} topSpacing={0}>
+      <View style={styles.plainSectionBody}>
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
           return (
             <AnimatedPressable
               key={breeder.id}
               onPress={() => router.push(`/breeder/${breeder.id}` as never)}
-              className={`flex-row items-center py-4 ${index ? 'border-t border-line' : ''}`}
+              style={[styles.breederItem, index ? styles.lightTopBorder : null]}
             >
               <Avatar uri={breeder.logo ?? breeder.avatar} size={54} />
-              <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-                <View className="flex-row items-center">
-                  <Text className="flex-shrink text-[16px] font-semibold leading-6 text-ink" numberOfLines={1}>
-                    {breeder.name}
-                  </Text>
-                  <View className="ml-2 rounded-full bg-blush px-2 py-0.5">
-                                        <Text className="text-[10px] font-semibold text-berry">인증</Text>
+              <View style={styles.breederInfo}>
+                <View style={styles.breederNameRow}>
+                  <Text style={styles.breederName} numberOfLines={1}>{breeder.name}</Text>
+                  <View style={styles.verifiedBadge}>
+                    <Text style={styles.verifiedText}>{copy.verified}</Text>
                   </View>
                 </View>
-                <Text className="mt-1 text-[13px] font-normal leading-[18px] text-muted" numberOfLines={1}>
-                  {breeder.specialty ?? breeder.location}
-                </Text>
-                <Text className="mt-1.5 text-[12px] font-medium text-muted">
-                  평점 {summary.averageRating.toFixed(1)} · 후기 {summary.totalReviews.toLocaleString()}개
-                </Text>
+                <Text style={styles.breederMeta} numberOfLines={1}>{breeder.specialty ?? breeder.location}</Text>
+                <View style={styles.breederRatingRow}>
+                  <Star size={13} strokeWidth={1.9} color={Colors.rating} fill={Colors.rating} />
+                  <Text style={styles.breederRatingText}>{summary.averageRating.toFixed(1)}</Text>
+                  <Text style={styles.breederReviewText}>{middleDot} {copy.reviewCount} {summary.totalReviews.toLocaleString()}</Text>
+                </View>
               </View>
-              <ChevronRight size={17} color="#CBD5E1" />
+              <ChevronRight size={17} color={Colors.subText} />
             </AnimatedPressable>
           );
         })}
@@ -169,33 +190,25 @@ function PopularBreedersSection() {
 
 function CommunitySection() {
   return (
-    <Section title="실시간 커뮤니티" animationType="community" onPress={() => router.push('/community')} topClassName="mt-6">
-      <View className="mx-5 bg-white">
+    <Section title={copy.community} animationType="community" onPress={() => router.push('/community')} topSpacing={0}>
+      <View style={styles.plainSectionBody}>
         {posts.slice(0, 4).map((post, index) => (
           <AnimatedPressable
             key={post.id}
             onPress={() => router.push(`/community/${post.id}` as never)}
-            className={`${index ? 'border-t border-[#F3F4F6]' : ''} py-5`}
+            style={[styles.communityItem, index ? styles.communityDivider : null]}
           >
-            <View className="flex-row items-center">
-              <Text className="rounded-full bg-[#FFF5F7] px-3 py-1.5 text-[11px] font-medium text-[#FF6B35]">
-                {post.category}
-              </Text>
-              <Text className="ml-2 text-[12px] font-semibold text-berry" numberOfLines={1}>
-                @{post.author}
-              </Text>
+            <View style={styles.communityTopRow}>
+              <Text style={styles.categoryBadge}>{post.category}</Text>
+              <Text style={styles.communityAuthor} numberOfLines={1}>@{post.author}</Text>
             </View>
-
-            <Text className="mt-2 text-[17px] font-semibold leading-7 text-ink" numberOfLines={2}>
-              {post.title}
-            </Text>
-
-            <View className="mt-2.5 flex-row items-center">
-              <Text className="text-[12px] font-normal text-muted" numberOfLines={1}>{post.createdAt}</Text>
-              <Text className="ml-2 text-[12px] font-normal text-muted">·</Text>
-              <Text className="ml-2 text-[12px] font-normal text-muted">댓글 {post.comments.toLocaleString()}</Text>
-              <Text className="ml-2 text-[12px] font-normal text-muted">·</Text>
-              <Text className="ml-2 text-[12px] font-normal text-muted">좋아요 {post.likes.toLocaleString()}</Text>
+            <Text style={styles.communityTitle} numberOfLines={2}>{post.title}</Text>
+            <View style={styles.communityMetaRow}>
+              <Text style={styles.communityMeta} numberOfLines={1}>{post.createdAt}</Text>
+              <Text style={styles.communityMeta}>{middleDot}</Text>
+              <Text style={styles.communityMeta}>{copy.comments} {post.comments.toLocaleString()}</Text>
+              <Text style={styles.communityMeta}>{middleDot}</Text>
+              <Text style={styles.communityMeta}>{copy.likes} {post.likes.toLocaleString()}</Text>
             </View>
           </AnimatedPressable>
         ))}
@@ -206,33 +219,27 @@ function CommunitySection() {
 
 function RecentReviewsSection() {
   return (
-        <Section title="최근 후기" animationType="review" onPress={() => router.push('/mypage/reviews')}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-1">
+    <Section title={copy.reviews} animationType="review" onPress={() => router.push('/mypage/reviews')} topSpacing={0}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
         {breederReviews.slice(0, 4).map((review, index) => {
           const breeder = breeders.find((item) => item.id === review.breederId);
           return (
             <FadeInView key={review.id} delay={index * 45}>
               <AnimatedPressable
                 onPress={() => router.push(`/breeder/${review.breederId}` as never)}
-                className="mr-3 w-[276px] bg-white p-4"
+                style={styles.reviewCard}
               >
-                <View className="flex-row items-center">
+                <View style={styles.reviewHeader}>
                   <Avatar uri={breeder?.logo ?? breeder?.avatar ?? review.avatar} size={36} />
-                  <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
-                    <Text className="text-[15px] font-semibold text-berry" numberOfLines={1}>
-                                            {breeder?.name ?? '브리더'}
-                    </Text>
-                    <Text className="mt-0.5 text-[11px] font-normal text-muted" numberOfLines={1}>
-                      {review.species}
-                    </Text>
+                  <View style={styles.reviewBreederInfo}>
+                    <Text style={styles.reviewBreederName} numberOfLines={1}>{breeder?.name ?? copy.breeder}</Text>
+                    <Text style={styles.reviewSpecies} numberOfLines={1}>{review.species}</Text>
                   </View>
                 </View>
-                <Text className="mt-3 text-[13px] font-normal leading-5 text-ink" numberOfLines={2}>
-                  {review.content}
-                </Text>
-                <View className="mt-3 flex-row items-center justify-between">
-                  <View className="flex-row items-center">
-                    <View className="flex-row items-center">
+                <Text style={styles.reviewContent} numberOfLines={2}>{review.content}</Text>
+                <View style={styles.reviewFooter}>
+                  <View style={styles.ratingRow}>
+                    <View style={styles.starRow}>
                       {Array.from({ length: 5 }).map((_, starIndex) => (
                         <Star
                           key={starIndex}
@@ -243,11 +250,9 @@ function RecentReviewsSection() {
                         />
                       ))}
                     </View>
-                    <Text className="ml-1.5 text-[11px] font-bold" style={{ color: Colors.rating }}>
-                      {review.rating.toFixed(1)}
-                    </Text>
+                    <Text style={styles.ratingText}>{review.rating.toFixed(1)}</Text>
                   </View>
-                  <Text className="text-[11px] font-normal text-muted">{review.createdAt}</Text>
+                  <Text style={styles.reviewDate}>{review.createdAt}</Text>
                 </View>
               </AnimatedPressable>
             </FadeInView>
@@ -260,20 +265,16 @@ function RecentReviewsSection() {
 
 function BoogiColumnsSection() {
   return (
-        <Section title="부기 칼럼" animationType="book" onPress={() => router.push('/community')}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5 pb-1">
+    <Section title={copy.columns} animationType="book" onPress={() => router.push('/community')} topSpacing={0}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
         {homeColumns.map((column, index) => (
           <FadeInView key={column.id} delay={index * 45}>
-            <AnimatedPressable onPress={() => router.push(column.route as never)} className="mr-3 w-[250px] bg-white">
-              <Image source={{ uri: column.thumbnail }} className="h-[116px] w-full rounded-[12px]" resizeMode="cover" />
-              <View className="p-4">
-                <Text className="text-[11px] font-semibold text-muted">{column.category}</Text>
-                <Text className="mt-1.5 text-[15px] font-semibold leading-5 text-ink" numberOfLines={2}>
-                  {column.title}
-                </Text>
-                <Text className="mt-2 text-[12px] font-normal leading-[18px] text-muted" numberOfLines={2}>
-                  {column.description}
-                </Text>
+            <AnimatedPressable onPress={() => router.push(column.route as never)} style={styles.columnCard}>
+              <Image source={{ uri: column.thumbnail }} style={styles.columnImage} resizeMode="cover" />
+              <View style={styles.columnBody}>
+                <Text style={styles.columnCategory}>{column.category}</Text>
+                <Text style={styles.columnTitle} numberOfLines={2}>{column.title}</Text>
+                <Text style={styles.columnDescription} numberOfLines={2}>{column.description}</Text>
               </View>
             </AnimatedPressable>
           </FadeInView>
@@ -285,23 +286,20 @@ function BoogiColumnsSection() {
 
 function NewListingsSection() {
   const { width } = useWindowDimensions();
-  const cardWidth = Math.floor((width - 40 - 10) / 2);
+  const cardWidth = Math.floor((width - Spacing.lg * 2 - Spacing.md) / 2);
   const recentListings = [...listings]
     .sort((a, b) => (b.listedAt ?? '').localeCompare(a.listedAt ?? ''))
     .slice(0, 4);
 
   return (
-        <Section title="신규 분양" animationType="new" onPress={() => router.push('/marketplace')} topClassName="mt-6">
-      <View className="mx-5 flex-row flex-wrap justify-between">
+    <Section title={copy.newListings} animationType="new" onPress={() => router.push('/marketplace')} topSpacing={0}>
+      <View style={styles.newListingGrid}>
         {recentListings.map((listing, index) => (
           <ListingGridCard key={listing.id} item={listing} index={index} width={cardWidth} />
         ))}
       </View>
-      <Pressable
-        onPress={() => router.push('/marketplace')}
-        className="mx-5 h-12 items-center justify-center rounded-[14px] border border-line bg-white"
-      >
-                <Text className="text-[14px] font-semibold text-ink">분양글 더보기</Text>
+      <Pressable onPress={() => router.push('/marketplace')} style={styles.moreListingsButton}>
+        <Text style={styles.moreListingsText}>{copy.listingMore}</Text>
       </Pressable>
     </Section>
   );
@@ -309,24 +307,60 @@ function NewListingsSection() {
 
 export function HomeScreen() {
   return (
-    <Page backgroundColor="#FFFFFF">
+    <Page backgroundColor={Colors.background}>
       <HomeHeader />
-      <HomeNoticeTicker />
+      <BillboardTicker category="home" />
       <MainBanner />
       <HotListingsSection />
-      <NewListingsSection />
+      <AppDivider />
       <PopularBreedersSection />
+      <AppDivider />
       <CommunitySection />
+      <AppDivider />
       <RecentReviewsSection />
+      <AppDivider />
       <BoogiColumnsSection />
+      <AppDivider />
+      <NewListingsSection />
     </Page>
   );
 }
+
 const styles = StyleSheet.create({
+  sectionHeader: {
+    marginBottom: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    marginLeft: Spacing.sm,
+    color: Colors.text,
+    fontSize: Typography.title.fontSize,
+    lineHeight: Typography.title.lineHeight,
+    fontWeight: Typography.title.fontWeight,
+  },
+  sectionMoreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    paddingLeft: Spacing.md,
+  },
+  sectionMoreText: {
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+  },
   mainBanner: {
     height: 180,
-    marginHorizontal: 16,
-    marginTop: 8,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.sm,
     overflow: 'hidden',
     borderRadius: Radius.lg,
     backgroundColor: Colors.text,
@@ -344,7 +378,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: Colors.overlay,
   },
   mainBannerText: {
     position: 'absolute',
@@ -353,4 +387,280 @@ const styles = StyleSheet.create({
     top: '50%',
     transform: [{ translateY: -34 }],
   },
+  mainBannerTitle: {
+    color: Colors.card,
+    fontSize: 22,
+    lineHeight: 30,
+    fontWeight: Typography.title.fontWeight,
+  },
+  mainBannerSubtitle: {
+    marginTop: Spacing.sm,
+    color: Colors.card,
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+  },
+  hotSection: {
+    marginTop: Spacing.xl,
+  },
+  hotTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  hotTitle: {
+    color: Colors.text,
+    fontSize: Typography.title.fontSize + 1,
+    lineHeight: Typography.title.lineHeight,
+    fontWeight: Typography.title.fontWeight,
+  },
+  hotTitleHighlight: {
+    color: Colors.primary,
+    fontSize: Typography.title.fontSize + 1,
+    lineHeight: Typography.title.lineHeight,
+    fontWeight: Typography.title.fontWeight,
+  },
+  hotZap: {
+    marginLeft: Spacing.xs + Spacing.xxs,
+  },
+  horizontalList: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xs,
+  },
+  hotCardWrap: {
+    marginRight: Spacing.md,
+  },
+  plainSectionBody: {
+    marginHorizontal: Spacing.lg,
+    backgroundColor: Colors.card,
+  },
+  breederItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.lg,
+  },
+  lightTopBorder: {
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  breederInfo: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: Spacing.md,
+  },
+  breederNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  breederName: {
+    flexShrink: 1,
+    color: Colors.text,
+    fontSize: Typography.bodyBold.fontSize + 1,
+    lineHeight: Typography.bodyBold.lineHeight,
+    fontWeight: Typography.bodyBold.fontWeight,
+  },
+  verifiedBadge: {
+    marginLeft: Spacing.sm,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.badge,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xxs,
+  },
+  verifiedText: {
+    color: Colors.primary,
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  breederMeta: {
+    marginTop: Spacing.xs,
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize + 1,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: '400',
+  },
+  breederRatingRow: {
+    marginTop: Spacing.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  breederRatingText: {
+    marginLeft: Spacing.xs,
+    color: Colors.rating,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  breederReviewText: {
+    marginLeft: Spacing.xs,
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+  },
+  communityItem: {
+    paddingVertical: Spacing.lg + Spacing.xs,
+  },
+  communityDivider: {
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  communityTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  categoryBadge: {
+    overflow: 'hidden',
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.badge,
+    color: Colors.delivery,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs + Spacing.xxs,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.small.fontWeight,
+  },
+  communityAuthor: {
+    marginLeft: Spacing.sm,
+    color: Colors.primary,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  communityTitle: {
+    marginTop: Spacing.sm,
+    color: Colors.text,
+    fontSize: 17,
+    lineHeight: 28,
+    fontWeight: '600',
+  },
+  communityMetaRow: {
+    marginTop: Spacing.sm + Spacing.xxs,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  communityMeta: {
+    marginRight: Spacing.sm,
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: '400',
+  },
+  reviewCard: {
+    width: 276,
+    marginRight: Spacing.md,
+    backgroundColor: Colors.card,
+    padding: Spacing.lg,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  reviewBreederInfo: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: Spacing.md,
+  },
+  reviewBreederName: {
+    color: Colors.primary,
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: '600',
+  },
+  reviewSpecies: {
+    marginTop: Spacing.xxs,
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: '400',
+  },
+  reviewContent: {
+    marginTop: Spacing.md,
+    color: Colors.text,
+    fontSize: Typography.caption.fontSize + 1,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: '400',
+  },
+  reviewFooter: {
+    marginTop: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  starRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    marginLeft: Spacing.xs + Spacing.xxs,
+    color: Colors.rating,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  reviewDate: {
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: '400',
+  },
+  columnCard: {
+    width: 250,
+    marginRight: Spacing.md,
+    backgroundColor: Colors.card,
+  },
+  columnImage: {
+    width: '100%',
+    height: 116,
+    borderRadius: Radius.md,
+  },
+  columnBody: {
+    padding: Spacing.lg,
+  },
+  columnCategory: {
+    color: Colors.subText,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  columnTitle: {
+    marginTop: Spacing.xs + Spacing.xxs,
+    color: Colors.text,
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: '600',
+  },
+  columnDescription: {
+    marginTop: Spacing.sm,
+    color: Colors.subText,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: '400',
+  },
+  newListingGrid: {
+    marginHorizontal: Spacing.lg,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  moreListingsButton: {
+    height: Spacing.xxl + Spacing.lg,
+    marginHorizontal: Spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
+  },
+  moreListingsText: {
+    color: Colors.text,
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+  },
 });
+

@@ -1,24 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Crown, Egg, Medal, PenLine, Store, type LucideIcon } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
 import { AppHeader } from '@/components/AppHeader';
+import { BillboardTicker } from '@/components/BillboardTicker';
+import { Colors, Motion, Radius, Shadows, Spacing, Typography } from '@/theme';
 import { communityCategories, posts } from '@/data/communityData';
 import { getWeeklyPopularPosts } from '@/utils/communityRanking';
 
 type Post = (typeof posts)[number];
 type IconName = keyof typeof Ionicons.glyphMap;
+const currencyUnit = '\uC6D0';
+const likeLabel = '\uC88B\uC544\uC694';
+const commentLabel = '\uB313\uAE00';
+const viewLabel = '\uC870\uD68C';
+const middleDot = '\u00B7';
 
 function CategoryPill({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <AnimatedPressable
       onPress={onPress}
-      className={`mr-2 rounded-full px-3 py-1.5 ${selected ? 'bg-[#FFF5F7]' : 'bg-white'}`}
+      style={[styles.categoryPill, selected ? styles.categoryPillSelected : styles.categoryPillDefault]}
     >
-      <Text className={`text-[13px] font-semibold leading-[18px] ${selected ? 'text-[#FF2E6F]' : 'text-[#94A3B8]'}`}>{label}</Text>
+      <Text style={[styles.categoryPillText, selected ? styles.categoryPillTextSelected : styles.categoryPillTextDefault]}>{label}</Text>
     </AnimatedPressable>
   );
 }
@@ -42,6 +50,29 @@ function FeedMeta({ icon, label }: { icon: IconName; label: string }) {
     <View className="mr-4 flex-row items-center">
       <Ionicons name={icon} size={15} color={color} />
       <Text className="ml-1.5 text-[12px] font-normal leading-[18px]" style={{ color }}>{label}</Text>
+    </View>
+  );
+}
+
+function getPostInfoTags(post: Post) {
+  const petTags = post.petInfo ? post.petInfo.split(middleDot).map((tag) => tag.trim()).filter(Boolean) : [];
+  return [post.category, ...petTags].slice(0, 4);
+}
+
+function PostInfoTags({ post }: { post: Post }) {
+  const infoTags = getPostInfoTags(post);
+
+  if (!infoTags.length) {
+    return null;
+  }
+
+  return (
+    <View style={styles.postInfoTagRow}>
+      {infoTags.map((tag) => (
+        <View key={`${post.id}-${tag}`} style={styles.postInfoTag}>
+          <Text style={styles.postInfoTagText} numberOfLines={1}>{tag}</Text>
+        </View>
+      ))}
     </View>
   );
 }
@@ -117,7 +148,7 @@ function RelatedListingCard({ listing }: { listing: NonNullable<Post['relatedLis
       </View>
       <View className="ml-3 flex-1" style={{ minWidth: 0 }}>
         <Text className="text-[13px] font-bold leading-[18px] text-[#111827]" numberOfLines={1}>{listing.title}</Text>
-        <Text className="mt-0.5 text-[13px] font-semibold leading-[18px] text-[#FF2E6F]">{listing.price.toLocaleString()}원</Text>
+        <Text className="mt-0.5 text-[13px] font-semibold leading-[18px] text-[#FF2E6F]">{listing.price.toLocaleString()}{currencyUnit}</Text>
       </View>
       <Text className="text-[12px] font-semibold leading-[18px] text-[#94A3B8]">{listing.actionLabel}</Text>
       <Ionicons name="chevron-forward" size={15} color="#94A3B8" />
@@ -125,6 +156,18 @@ function RelatedListingCard({ listing }: { listing: NonNullable<Post['relatedLis
   );
 }
 
+function RankBadge({ rank }: { rank: number }) {
+  const isTop = rank === 1;
+  const Icon = isTop ? Crown : Medal;
+  const color = isTop ? Colors.rating : Colors.subText;
+
+  return (
+    <View style={[styles.rankBadge, isTop ? styles.rankBadgeTop : styles.rankBadgeSub]}>
+      <Icon size={17} strokeWidth={2} color={color} />
+      <Text style={[styles.rankBadgeText, isTop ? styles.rankBadgeTextTop : styles.rankBadgeTextSub]}>{rank}</Text>
+    </View>
+  );
+}
 function WeeklyPopularSection({ items }: { items: Post[] }) {
   return (
     <View className="mx-5 mb-4 overflow-hidden rounded-[16px] bg-white p-4">
@@ -132,7 +175,7 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
         <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-[#FFF7D6]">
           <Ionicons name="trophy" size={17} color="#E9A008" />
         </View>
-        <Text className="text-[18px] font-bold leading-6 text-[#111827]">이번 주 인기글</Text>
+        <Text className="text-[18px] font-bold leading-6 text-[#111827]">????????筌롫챶?쏁뼨瑗꼲</Text>
       </View>
 
       {items.slice(0, 3).map((post, index) => {
@@ -143,8 +186,8 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
             onPress={() => router.push(`/community/${post.id}` as never)}
             className={`flex-row items-center py-3 ${index ? 'border-t border-[#EEF2F6]' : ''}`}
           >
-            <Text className="w-8 text-center text-[18px] font-bold leading-6 text-[#FF2E6F]">{index + 1}</Text>
-            <View className="ml-2 flex-1" style={{ minWidth: 0 }}>
+            <RankBadge rank={index + 1} />
+            <View className="flex-1" style={{ minWidth: 0 }}>
               <Text className="text-[14px] font-semibold leading-5 text-[#111827]" numberOfLines={1}>
                 {post.title}
               </Text>
@@ -164,7 +207,7 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
         onPress={() => router.push('/community/popular')}
         className="mt-1 flex-row items-center justify-center border-t border-[#EEF2F6] pt-3"
       >
-        <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">전체보기</Text>
+        <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">?筌롫챶?쏁뼨瑗꼲 ??븐뼔沅뽫뼨?/Text>
         <Ionicons name="chevron-forward" size={14} color="#94A3B8" />
       </AnimatedPressable>
     </View>
@@ -199,7 +242,7 @@ function CommunityFeedCard({ post, index }: { post: Post; index: number }) {
 
         <Text className="mt-4 text-[18px] font-bold leading-[26px] text-[#111827]" numberOfLines={2}>{post.title}</Text>
         <Text className="mt-2 text-[14px] font-medium leading-[22px] text-[#94A3B8]" numberOfLines={3}>{post.content}</Text>
-        <Text className="mt-1 text-[13px] font-semibold leading-[18px] text-[#FF2E6F]">더보기</Text>
+        <PostInfoTags post={post} />
 
         <ImageGrid images={images} />
 
@@ -213,9 +256,9 @@ function CommunityFeedCard({ post, index }: { post: Post; index: number }) {
 
         <View className="mt-3 flex-row items-center justify-between border-t border-[#EEF2F6] pt-3">
           <View className="flex-1 flex-row flex-wrap items-center pr-2">
-            <FeedMeta icon="heart-outline" label={`좋아요 ${post.likes}`} />
-            <FeedMeta icon="chatbubble-outline" label={`댓글 ${commentCount}`} />
-            <FeedMeta icon="eye-outline" label={`조회수 ${post.views}`} />
+            <FeedMeta icon="heart-outline" label={`${likeLabel} ${post.likes}`} />
+            <FeedMeta icon="chatbubble-outline" label={`${commentLabel} ${commentCount}`} />
+            <FeedMeta icon="eye-outline" label={`${viewLabel} ${post.views}`} />
           </View>
           <AnimatedPressable className="h-9 w-9 items-center justify-center rounded-full bg-[#FFFFFF]">
             <Ionicons name="share-social-outline" size={18} color="#94A3B8" />
@@ -226,18 +269,193 @@ function CommunityFeedCard({ post, index }: { post: Post; index: number }) {
   );
 }
 
+const styles = StyleSheet.create({
+  categoryPill: {
+    marginRight: Spacing.sm,
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm - Spacing.xxs,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  categoryPillSelected: {
+    borderColor: Colors.badge,
+    backgroundColor: Colors.badge,
+    ...Shadows.card,
+  },
+  categoryPillDefault: {
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
+  },
+  categoryPillText: {
+    fontSize: Typography.caption.fontSize + 1,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  categoryPillTextSelected: {
+    color: Colors.primary,
+  },
+  categoryPillTextDefault: {
+    color: Colors.subText,
+  },
+  postInfoTagRow: {
+    marginTop: Spacing.sm,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  postInfoTag: {
+    maxWidth: 96,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.badge,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+  },
+  postInfoTagText: {
+    color: Colors.primary,
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.small.fontWeight,
+  },
+  fabBackdrop: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 9,
+  },
+  fabMenu: {
+    position: 'absolute',
+    right: Spacing.lg,
+    zIndex: 11,
+    minWidth: Spacing.xxl * 5,
+    overflow: 'hidden',
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    ...Shadows.floating,
+  },
+  fabMenuItem: {
+    minHeight: Spacing.xxl + Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.border,
+  },
+  fabMenuIcon: {
+    width: Spacing.xl,
+    alignItems: 'center',
+  },
+  fabMenuText: {
+    marginLeft: Spacing.sm,
+    color: Colors.text,
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+  },
+  rankBadge: {
+    width: Spacing.xxl + Spacing.md,
+    height: Spacing.xxl,
+    marginRight: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xxs,
+    borderRadius: Radius.pill,
+  },
+  rankBadgeTop: {
+    backgroundColor: Colors.badge,
+  },
+  rankBadgeSub: {
+    backgroundColor: Colors.surface,
+  },
+  rankBadgeText: {
+    fontSize: Typography.small.fontSize,
+    lineHeight: Typography.small.lineHeight,
+    fontWeight: Typography.captionBold.fontWeight,
+  },
+  rankBadgeTextTop: {
+    color: Colors.rating,
+  },
+  rankBadgeTextSub: {
+    color: Colors.subText,
+  },
+});
+
+type FabMenuAction = {
+  label: string;
+  icon: LucideIcon;
+  onPress: () => void;
+};
+
+function CommunityFabMenu({ visible, bottom, onClose }: { visible: boolean; bottom: number; onClose: () => void }) {
+  const scale = useRef(new Animated.Value(Motion.scale.modal)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(scale, {
+        toValue: visible ? 1 : Motion.scale.modal,
+        duration: Motion.duration.normal,
+        easing: Motion.easing.standard,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: visible ? 1 : 0,
+        duration: Motion.duration.normal,
+        easing: Motion.easing.standard,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [opacity, scale, visible]);
+
+  if (!visible) {
+    return null;
+  }
+
+  const runAction = (action: () => void) => {
+    onClose();
+    action();
+  };
+
+  const actions: FabMenuAction[] = [
+    { label: '?リ섣???⑤슢??, icon: PenLine, onPress: () => router.push('/community/create') },
+    { label: '?釉뚯뫒??繹먮굞夷?, icon: Store, onPress: () => router.push('/listing/create') },
+    { label: '????リ옇?▽빳?, icon: Egg, onPress: () => router.push('/my/turtles/breeding' as never) },
+  ];
+
+  return (
+    <>
+      <Pressable style={styles.fabBackdrop} onPress={onClose} />
+      <Animated.View style={[styles.fabMenu, { bottom }, { opacity, transform: [{ scale }] }]}>
+        {actions.map(({ label, icon: Icon, onPress }) => (
+          <Pressable key={label} style={styles.fabMenuItem} onPress={() => runAction(onPress)}>
+            <View style={styles.fabMenuIcon}>
+              <Icon size={17} strokeWidth={2} color={Colors.primary} />
+            </View>
+            <Text style={styles.fabMenuText}>{label}</Text>
+          </Pressable>
+        ))}
+      </Animated.View>
+    </>
+  );
+}
 export default function CommunityScreen() {
   const insets = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState<(typeof communityCategories)[number]>('전체');
+  const [selectedCategory, setSelectedCategory] = useState<(typeof communityCategories)[number]>('\uC804\uCCB4');
   const filteredPosts = useMemo(
-    () => (selectedCategory === '전체' ? posts : posts.filter((post) => post.category === selectedCategory)),
+    () => (selectedCategory === '\uC804\uCCB4' ? posts : posts.filter((post) => post.category === selectedCategory)),
     [selectedCategory],
   );
   const weeklyPopularPosts = useMemo(() => getWeeklyPopularPosts(posts).slice(0, 3), []);
+  const [fabMenuOpen, setFabMenuOpen] = useState(false);
+  const fabBottom = insets.bottom + Spacing.xxl * 3 - Spacing.xs;
 
   return (
     <SafeAreaView className="flex-1 bg-[#FFFFFF]" edges={['top']}>
-      <AppHeader title="커뮤니티" showSearch showBell />
+      <AppHeader title="??ｋ걞????낅폃" subtitle="???노츓 ???????????怨룻뒍?リ옇?? 嶺뚯쉶?꾣룇" showSearch showBell />
+      <BillboardTicker category="community" />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}>
         <WeeklyPopularSection items={weeklyPopularPosts} />
@@ -260,6 +478,40 @@ export default function CommunityScreen() {
         </View>
       </ScrollView>
 
+      <CommunityFabMenu
+        visible={fabMenuOpen}
+        bottom={fabBottom + Spacing.xxl + Spacing.xl + Spacing.md}
+        onClose={() => setFabMenuOpen(false)}
+      />
+
+      <AnimatedPressable
+        onPress={() => {
+          if (fabMenuOpen) {
+            setFabMenuOpen(false);
+            return;
+          }
+          router.push('/community/create');
+        }}
+        onLongPress={() => setFabMenuOpen(true)}
+        delayLongPress={Motion.duration.slow}
+        className="absolute right-5 h-[60px] w-[60px] items-center justify-center rounded-full shadow-lg"
+        style={{ bottom: fabBottom, backgroundColor: Colors.primary, zIndex: 12 }}
+      >
+        <Ionicons name="create-outline" size={27} color={Colors.card} />
+      </AnimatedPressable>
     </SafeAreaView>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
