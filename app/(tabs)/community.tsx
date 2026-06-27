@@ -175,7 +175,7 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
         <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-[#FFF7D6]">
           <Ionicons name="trophy" size={17} color="#E9A008" />
         </View>
-        <Text className="text-[18px] font-bold leading-6 text-[#111827]">????????筌롫챶?쏁뼨瑗꼲</Text>
+        <Text className="text-[18px] font-bold leading-6 text-[#111827]">{'\uC774\uBC88 \uC8FC \uC778\uAE30\uAE00'}</Text>
       </View>
 
       {items.slice(0, 3).map((post, index) => {
@@ -207,7 +207,7 @@ function WeeklyPopularSection({ items }: { items: Post[] }) {
         onPress={() => router.push('/community/popular')}
         className="mt-1 flex-row items-center justify-center border-t border-[#EEF2F6] pt-3"
       >
-        <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">?筌롫챶?쏁뼨瑗꼲 ??븐뼔沅뽫뼨?/Text>
+        <Text className="text-[13px] font-semibold leading-[18px] text-[#94A3B8]">{'\uC778\uAE30\uAE00 \uB354\uBCF4\uAE30'}</Text>
         <Ionicons name="chevron-forward" size={14} color="#94A3B8" />
       </AnimatedPressable>
     </View>
@@ -420,9 +420,9 @@ function CommunityFabMenu({ visible, bottom, onClose }: { visible: boolean; bott
   };
 
   const actions: FabMenuAction[] = [
-    { label: '?リ섣???⑤슢??, icon: PenLine, onPress: () => router.push('/community/create') },
-    { label: '?釉뚯뫒??繹먮굞夷?, icon: Store, onPress: () => router.push('/listing/create') },
-    { label: '????リ옇?▽빳?, icon: Egg, onPress: () => router.push('/my/turtles/breeding' as never) },
+    { label: '\uAE00\uC4F0\uAE30', icon: PenLine, onPress: () => router.push('/community/create') },
+    { label: '\uBD84\uC591\uB4F1\uB85D', icon: Store, onPress: () => router.push('/listing/create') },
+    { label: '\uC0B0\uB780\uAE30\uB85D', icon: Egg, onPress: () => router.push('/my/turtles/breeding' as never) },
   ];
 
   return (
@@ -454,7 +454,7 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#FFFFFF]" edges={['top']}>
-      <AppHeader title="??ｋ걞????낅폃" subtitle="???노츓 ???????????怨룻뒍?リ옇?? 嶺뚯쉶?꾣룇" showSearch showBell />
+      <AppHeader title="\uCEE4\uBBA4\uB2C8\uD2F0" subtitle="\uC624\uB298 \uC62C\uB77C\uC628 \uC0AC\uC721 \uC774\uC57C\uAE30\uC640 \uC9C8\uBB38" showSearch showBell />
       <BillboardTicker category="community" />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}>
