@@ -87,7 +87,11 @@ export function HorizontalRow({ children }: { children: ReactNode }) {
 }
 
 export function VerifiedBadge({ label = '인증 브리더' }: { label?: string }) {
-  return <View className="self-start rounded-full bg-[#FFF0F5] px-2.5 py-1"><Text className="text-[10px] font-semibold text-[#FF2E6F]">✓ {label}</Text></View>;
+  return (
+    <View className="self-start rounded-full bg-[#FFF0F5] px-2 py-1">
+      <Text className="text-[11px] font-semibold leading-4 text-[#FF2E6F]">{label}</Text>
+    </View>
+  );
 }
 
 export function EmptyImage({ icon = 'image-outline' }: { icon?: IconName }) {

@@ -1,4 +1,4 @@
-﻿import type { ImageSourcePropType } from 'react-native';
+import type { ImageSourcePropType } from 'react-native';
 
 export type TrustGrade = 'Diamond' | 'Platinum' | 'Gold';
 
@@ -53,7 +53,7 @@ export const breederTrustById: Record<string, BreederTrust> = {
     avgResponseMinutes: 12,
     completedDeals: 39,
     verified: true,
-    recentActiveText: '1시간 전 접속',
+    recentActiveText: '1시간 전',
     trustGrade: 'Gold',
   },
 };

@@ -6,16 +6,20 @@ import { ChevronRight, Star, Zap } from 'lucide-react-native';
 import { homeBanners } from '@/data/homeScreenData';
 import { breederReviews, breeders, listings, posts } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
+import { getBreederOnlineStatus } from '@/mockData/onlineStatus';
 import { homeColumns } from '@/mockData/homeColumns';
+import { getAIRecommendedListings } from '@/mockData/aiRecommendations';
 import { getHotListings } from '@/mockData/hotListings';
 import { Colors, Radius, Spacing, Typography } from '@/theme';
 import { AnimatedPressable, FadeInView } from './AnimatedPressable';
 import { AppHeader } from './AppHeader';
+import { AIRecommendedListingsSection } from './listing/AIRecommendedListingsSection';
 import { Avatar } from './common';
 import { ListingGridCard } from './ListingGridCard';
 import { HomeHotListingCard } from './HomeHotListingCard';
 import { BillboardTicker } from './BillboardTicker';
 import { AppDivider } from './ui/AppDivider';
+import { OnlineStatusBadge } from './ui/OnlineStatusBadge';
 import { Page } from './screen';
 import { AnimatedSectionIcon, type AnimatedSectionIconType } from './ui/AnimatedSectionIcon';
 
@@ -152,12 +156,17 @@ function HotListingsSection() {
   );
 }
 
+function AIRecommendationsSection() {
+  return <AIRecommendedListingsSection items={getAIRecommendedListings()} />;
+}
+
 function PopularBreedersSection() {
   return (
     <Section title={copy.popularBreeders} animationType="award" onPress={() => router.push('/marketplace')} topSpacing={0}>
       <View style={styles.plainSectionBody}>
         {breeders.slice(0, 3).map((breeder, index) => {
           const summary = getReviewSummary(breeder.id);
+          const onlineStatus = getBreederOnlineStatus(breeder.id);
           return (
             <AnimatedPressable
               key={breeder.id}
@@ -172,9 +181,10 @@ function PopularBreedersSection() {
                     <Text style={styles.verifiedText}>{copy.verified}</Text>
                   </View>
                 </View>
+                <OnlineStatusBadge status={onlineStatus.status} text={onlineStatus.lastActiveText} style={styles.breederOnlineStatus} />
                 <Text style={styles.breederMeta} numberOfLines={1}>{breeder.specialty ?? breeder.location}</Text>
                 <View style={styles.breederRatingRow}>
-                  <Star size={13} strokeWidth={1.9} color={Colors.rating} fill={Colors.rating} />
+                  <Star size={Spacing.lg} strokeWidth={1.9} color={Colors.rating} fill={Colors.rating} />
                   <Text style={styles.breederRatingText}>{summary.averageRating.toFixed(1)}</Text>
                   <Text style={styles.breederReviewText}>{middleDot} {copy.reviewCount} {summary.totalReviews.toLocaleString()}</Text>
                 </View>
@@ -243,7 +253,7 @@ function RecentReviewsSection() {
                       {Array.from({ length: 5 }).map((_, starIndex) => (
                         <Star
                           key={starIndex}
-                          size={11}
+                          size={Typography.tag.fontSize}
                           strokeWidth={1.8}
                           color={Colors.rating}
                           fill={starIndex < Math.round(review.rating) ? Colors.rating : 'transparent'}
@@ -312,6 +322,7 @@ export function HomeScreen() {
       <BillboardTicker category="home" />
       <MainBanner />
       <HotListingsSection />
+      <AIRecommendationsSection />
       <AppDivider />
       <PopularBreedersSection />
       <AppDivider />
@@ -341,9 +352,9 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginLeft: Spacing.sm,
     color: Colors.text,
-    fontSize: Typography.title.fontSize,
-    lineHeight: Typography.title.lineHeight,
-    fontWeight: Typography.title.fontWeight,
+    fontSize: Typography.sectionTitle.fontSize,
+    lineHeight: Typography.sectionTitle.lineHeight,
+    fontWeight: Typography.sectionTitle.fontWeight,
   },
   sectionMoreButton: {
     flexDirection: 'row',
@@ -454,7 +465,7 @@ const styles = StyleSheet.create({
   breederName: {
     flexShrink: 1,
     color: Colors.text,
-    fontSize: Typography.bodyBold.fontSize + 1,
+    fontSize: Typography.bodyBold.fontSize,
     lineHeight: Typography.bodyBold.lineHeight,
     fontWeight: Typography.bodyBold.fontWeight,
   },
@@ -467,14 +478,17 @@ const styles = StyleSheet.create({
   },
   verifiedText: {
     color: Colors.primary,
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: Typography.tag.fontSize,
+    lineHeight: Typography.tag.lineHeight,
     fontWeight: Typography.captionBold.fontWeight,
+  },
+  breederOnlineStatus: {
+    marginTop: Spacing.xs,
   },
   breederMeta: {
     marginTop: Spacing.xs,
     color: Colors.subText,
-    fontSize: Typography.caption.fontSize + 1,
+    fontSize: Typography.caption.fontSize,
     lineHeight: Typography.caption.lineHeight,
     fontWeight: '400',
   },
@@ -514,10 +528,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.badge,
     color: Colors.delivery,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs + Spacing.xxs,
-    fontSize: Typography.small.fontSize,
-    lineHeight: Typography.small.lineHeight,
-    fontWeight: Typography.small.fontWeight,
+    paddingVertical: Spacing.xs,
+    fontSize: Typography.tag.fontSize,
+    lineHeight: Typography.tag.lineHeight,
+    fontWeight: Typography.tag.fontWeight,
   },
   communityAuthor: {
     marginLeft: Spacing.sm,
@@ -529,12 +543,12 @@ const styles = StyleSheet.create({
   communityTitle: {
     marginTop: Spacing.sm,
     color: Colors.text,
-    fontSize: 17,
-    lineHeight: 28,
-    fontWeight: '600',
+    fontSize: Typography.bodyBold.fontSize,
+    lineHeight: Typography.bodyBold.lineHeight,
+    fontWeight: Typography.bodyBold.fontWeight,
   },
   communityMetaRow: {
-    marginTop: Spacing.sm + Spacing.xxs,
+    marginTop: Spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -546,7 +560,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   reviewCard: {
-    width: 276,
+    width: Spacing.xxl * 8 + Spacing.xl,
     marginRight: Spacing.md,
     backgroundColor: Colors.card,
     padding: Spacing.lg,
@@ -562,8 +576,8 @@ const styles = StyleSheet.create({
   },
   reviewBreederName: {
     color: Colors.primary,
-    fontSize: Typography.body.fontSize,
-    lineHeight: Typography.body.lineHeight,
+    fontSize: Typography.description.fontSize,
+    lineHeight: Typography.description.lineHeight,
     fontWeight: '600',
   },
   reviewSpecies: {
@@ -576,12 +590,12 @@ const styles = StyleSheet.create({
   reviewContent: {
     marginTop: Spacing.md,
     color: Colors.text,
-    fontSize: Typography.caption.fontSize + 1,
-    lineHeight: Typography.button.lineHeight,
+    fontSize: Typography.description.fontSize,
+    lineHeight: Typography.description.lineHeight,
     fontWeight: '400',
   },
   reviewFooter: {
-    marginTop: Spacing.md,
+    marginTop: Spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

@@ -1,14 +1,25 @@
-﻿export const Typography = {
+export const Typography = {
+  pageTitle: { fontSize: 32, lineHeight: 40, fontWeight: '700' as const },
   heading: { fontSize: 28, lineHeight: 38, fontWeight: '700' as const },
+  sectionTitle: { fontSize: 22, lineHeight: 30, fontWeight: '700' as const },
   title: { fontSize: 20, lineHeight: 28, fontWeight: '700' as const },
+  cardTitle: { fontSize: 18, lineHeight: 24, fontWeight: '700' as const },
   subtitle: { fontSize: 17, lineHeight: 24, fontWeight: '600' as const },
-  body: { fontSize: 15, lineHeight: 24, fontWeight: '500' as const },
-  bodyBold: { fontSize: 15, lineHeight: 24, fontWeight: '700' as const },
+  body: { fontSize: 16, lineHeight: 26, fontWeight: '500' as const },
+  bodyBold: { fontSize: 16, lineHeight: 26, fontWeight: '700' as const },
+  description: { fontSize: 14, lineHeight: 22, fontWeight: '500' as const },
   caption: { fontSize: 12, lineHeight: 18, fontWeight: '500' as const },
   captionBold: { fontSize: 12, lineHeight: 18, fontWeight: '700' as const },
   small: { fontSize: 11, lineHeight: 16, fontWeight: '500' as const },
+  tag: { fontSize: 11, lineHeight: 16, fontWeight: '500' as const },
+  statLabel: { fontSize: 11, lineHeight: 14, fontWeight: '500' as const },
+  statValue: { fontSize: 16, lineHeight: 20, fontWeight: '700' as const },
+  ratingValue: { fontSize: 16, lineHeight: 22, fontWeight: '700' as const },
+  trustTitle: { fontSize: 20, lineHeight: 26, fontWeight: '700' as const },
+  badge: { fontSize: 11, lineHeight: 14, fontWeight: '600' as const },
   button: { fontSize: 14, lineHeight: 20, fontWeight: '600' as const },
   price: { fontSize: 18, lineHeight: 24, fontWeight: '700' as const },
+  priceLarge: { fontSize: 30, lineHeight: 38, fontWeight: '700' as const },
 } as const;
 
 export type TypographyRole = keyof typeof Typography;

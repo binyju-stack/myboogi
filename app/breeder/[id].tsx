@@ -6,7 +6,9 @@ import { Alert, Image, ImageBackground, Pressable, ScrollView, Text, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
+import { BreederNoticeCard } from '@/components/breeder/BreederNoticeCard';
 import { BreederTrustCard } from '@/components/breeder/BreederTrustCard';
+import { OnlineStatusBadge } from '@/components/ui/OnlineStatusBadge';
 import { Avatar } from '@/components/common';
 import { ListingCard } from '@/components/ListingCard';
 import { GrowthTimeline } from '@/components/listing/GrowthTimeline';
@@ -19,6 +21,8 @@ import { getChatRoomIdForBreeder } from '@/data/chat';
 import { getListingStatus } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
+import { getBreederNotice } from '@/mockData/breederNotice';
+import { getBreederOnlineStatus } from '@/mockData/onlineStatus';
 import { getBreederGrowthTimeline, getBreederTrust } from '@/mockData/breederTrust';
 import type { Breeder, BreederReview, Listing, RepresentativeTurtle } from '@/types';
 
@@ -70,6 +74,7 @@ function BrandHero({
   const coverImage = breeder.bannerImage ?? breeder.banner;
   const profileImage = breeder.logo ?? breeder.avatar;
   const badgeLabel = breeder.verificationBadgeLabel ?? breeder.badge;
+  const onlineStatus = getBreederOnlineStatus(breeder.id);
 
   return (
     <View className="bg-white pb-6 shadow-sm">
@@ -102,6 +107,9 @@ function BrandHero({
           <View className="ml-3 flex-1 pb-1">
             <View className="self-start rounded-full bg-blush px-3 py-1.5">
               <Text className="text-[10px] font-semibold text-berry">✓ {badgeLabel}</Text>
+            </View>
+            <View className="mt-2">
+              <OnlineStatusBadge status={onlineStatus.status} text={onlineStatus.lastActiveText} />
             </View>
             <View className="mt-2">
               <StarRating rating={summary.averageRating} size={15} />
@@ -270,6 +278,7 @@ export default function BreederShopScreen() {
 
   const breeder = breeders.find((entry) => entry.id === id) ?? breeders[0];
   const breederTrust = getBreederTrust(breeder.id);
+  const breederNotice = getBreederNotice(breeder.id);
   const breederGrowthTimeline = getBreederGrowthTimeline(breeder.id);
   const selling = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) !== 'completed');
   const completed = listings.filter((item) => item.breederId === breeder.id && getListingStatus(item) === 'completed');
@@ -296,6 +305,7 @@ export default function BreederShopScreen() {
           onMenu={() => setActionVisible(true)}
         />
 
+        <BreederNoticeCard notice={breederNotice} />
         <SnsSection breeder={breeder} onContact={openChatRoom} />
         <AboutSection breeder={breeder} />
         <BreederTrustCard trust={breederTrust} />

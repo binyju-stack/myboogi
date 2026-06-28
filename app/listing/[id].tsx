@@ -5,7 +5,11 @@ import { Alert, Image, ScrollView, Text, useWindowDimensions, View } from 'react
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AnimatedPressable, FadeInView } from '@/components/AnimatedPressable';
+import { BreederNoticeCard } from '@/components/breeder/BreederNoticeCard';
+import { AIRecommendedListingsSection } from '@/components/listing/AIRecommendedListingsSection';
+import { MarketPriceCard } from '@/components/listing/MarketPriceCard';
 import { BreederTrustCard } from '@/components/breeder/BreederTrustCard';
+import { OnlineStatusBadge } from '@/components/ui/OnlineStatusBadge';
 import { Avatar, TopBar, VerifiedBadge } from '@/components/common';
 import { ListingCard } from '@/components/ListingCard';
 import { GrowthTimeline } from '@/components/listing/GrowthTimeline';
@@ -17,6 +21,10 @@ import { getChatRoomIdForListing } from '@/data/chat';
 import { getListingStatus, listingStatusMeta } from '@/data/listingStatusData';
 import { breederReviews, breeders, listings } from '@/data/mockData';
 import { getReviewSummary } from '@/data/reviewData';
+import { getAIRecommendedListings } from '@/mockData/aiRecommendations';
+import { getMarketPriceReference } from '@/mockData/marketPrice';
+import { getBreederNotice } from '@/mockData/breederNotice';
+import { getBreederOnlineStatus } from '@/mockData/onlineStatus';
 import { getBreederTrust, getGrowthTimeline } from '@/mockData/breederTrust';
 import { useMockUserState } from '@/components/MockUserState';
 import type { BreederReview, Listing, ParentTurtleInfo } from '@/types';
@@ -57,8 +65,8 @@ function CurrentViewersPill({ listingId, views, currentViewers }: { listingId: s
   const viewerCount = getStableCurrentViewers(listingId, views, currentViewers);
 
   return (
-    <View className="self-start rounded-full bg-[#FFF1E6] px-3 py-2">
-      <Text className="text-[13px] font-semibold text-[#FF9B4A]">👀 현재 {viewerCount}명이 보고 있어요</Text>
+    <View className="self-start rounded-full bg-[#FFF1E6] px-2 py-1">
+      <Text className="text-[12px] font-semibold leading-4 text-[#FF9B4A]">현재 {viewerCount}명이 보고 있어요</Text>
     </View>
   );
 }
@@ -90,7 +98,7 @@ function ListingReviewPreview({ review, divider = false }: { review: BreederRevi
         </View>
         <ReviewRatingSummary rating={review.rating} reviewCount={summary.totalReviews} size={13} />
       </View>
-      <View className="mt-3">
+      <View className="mt-2">
         <ReviewTypeBadge type={review.reviewType} />
       </View>
       <Text className="mt-2 text-[11px] leading-5 text-muted" numberOfLines={2}>{review.content}</Text>
@@ -122,6 +130,8 @@ export default function ListingDetailScreen() {
   const item = listings.find((listing) => listing.id === id) ?? listings[0];
   const breeder = breeders.find((entry) => entry.id === item.breederId) ?? breeders[0];
   const breederTrust = getBreederTrust(breeder.id);
+  const breederNotice = getBreederNotice(breeder.id);
+  const onlineStatus = getBreederOnlineStatus(breeder.id);
   const growthTimeline = getGrowthTimeline(item.id);
   const summary = getReviewSummary(breeder.id);
   const reviews = breederReviews.filter((review) => review.breederId === breeder.id && review.status !== 'hidden').slice(0, 2);
@@ -131,6 +141,8 @@ export default function ListingDetailScreen() {
   const listingStatus = getListingStatus(item);
   const statusMeta = listingStatusMeta[listingStatus];
   const completed = listingStatus === 'completed';
+  const aiRecommendations = getAIRecommendedListings(item.id);
+  const marketPrice = getMarketPriceReference(item.id);
   const relatedListings = useMemo(() => {
     const explicitIds = item.relatedListingIds ?? [];
     const explicit = explicitIds.map((listingId) => listings.find((listing) => listing.id === listingId)).filter(Boolean) as Listing[];
@@ -180,11 +192,11 @@ export default function ListingDetailScreen() {
         <View className="bg-white px-5 pb-6 pt-5">
           <View className="flex-row items-center">
             <VerifiedBadge />
-            <View className={`ml-2 rounded-full px-3 py-1.5 ${statusMeta.softClass}`}>
-              <Text className="text-[10px] font-semibold text-ink">{statusMeta.label}</Text>
+            <View className={`ml-2 rounded-full px-2 py-1 ${statusMeta.softClass}`}>
+              <Text className="text-[11px] font-semibold leading-4 text-ink">{statusMeta.label}</Text>
             </View>
           </View>
-          <Text className="mt-4 text-[22px] font-bold leading-8 text-ink">{item.species}</Text>
+          <Text className="mt-3 text-[22px] font-bold leading-7 text-ink">{item.species}</Text>
           <View className="mt-3">
             <CurrentViewersPill listingId={item.id} views={item.views} currentViewers={item.currentViewers} />
           </View>
@@ -234,6 +246,9 @@ export default function ListingDetailScreen() {
             <View className="ml-3 flex-1">
               <VerifiedBadge label={breeder.badge} />
               <Text className="mt-2 text-[17px] font-bold text-ink">{breeder.name}</Text>
+              <View className="mt-1">
+                <OnlineStatusBadge status={onlineStatus.status} text={onlineStatus.lastActiveText} />
+              </View>
               <Text className="mt-1 text-[10px] font-bold text-muted">{breeder.breederType === 'business' ? '사업자 브리더' : '개인 브리더'} · {breeder.location}</Text>
             </View>
           </View>
@@ -263,6 +278,7 @@ export default function ListingDetailScreen() {
           </View>
         </SectionCard>
 
+        <BreederNoticeCard notice={breederNotice} />
         <BreederTrustCard trust={breederTrust} />
 
         <SectionCard eyebrow="REAL REVIEW" title="최근 후기 미리보기">
@@ -274,12 +290,16 @@ export default function ListingDetailScreen() {
           </AnimatedPressable>
         </SectionCard>
 
+        <MarketPriceCard marketPrice={marketPrice} />
+
         <SectionCard eyebrow="ABOUT TURTLE" title="분양 설명">
           <Text className="mt-4 text-[13px] leading-7 text-muted">{item.description}</Text>
           <View className="mt-4 rounded-[18px] bg-cream px-4 py-3">
             <Text className="text-[10px] font-bold leading-5 text-ink">{item.specialNotes}</Text>
           </View>
         </SectionCard>
+
+        <AIRecommendedListingsSection items={aiRecommendations} compact />
 
         {relatedListings.length ? (
           <View className="mt-4">

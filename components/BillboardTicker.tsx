@@ -30,45 +30,13 @@ function getTickerRoute(item: BillboardDisplayItem) {
   }
 }
 
-function getRemainingLabel(expiresAt?: string) {
-  if (!expiresAt) {
-    return null;
-  }
-
-  const endTime = new Date(expiresAt).getTime();
-  if (Number.isNaN(endTime)) {
-    return null;
-  }
-
-  const remainingMs = endTime - Date.now();
-  if (remainingMs <= 0) {
-    return '오늘 종료';
-  }
-
-  const remainingMinutes = Math.ceil(remainingMs / 60000);
-  if (remainingMinutes < 60) {
-    return `${remainingMinutes}분 남음`;
-  }
-
-  const remainingHours = Math.ceil(remainingMinutes / 60);
-  if (remainingHours < 24) {
-    return `${remainingHours}시간 남음`;
-  }
-
-  return `${Math.ceil(remainingHours / 24)}일 남음`;
-}
-
-function getTickerTitle(item: BillboardDisplayItem) {
-  const remainingLabel = getRemainingLabel(item.expiresAt);
-  return remainingLabel ? `${item.title} · ${remainingLabel}` : item.title;
-}
 
 function MarqueeGroup({ items }: { items: BillboardDisplayItem[] }) {
   return (
     <View style={styles.marqueeGroup}>
       {items.map((item) => (
         <View key={item.id} style={styles.marqueeItem}>
-          <Text style={styles.title} numberOfLines={1}>{getTickerTitle(item)}</Text>
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
           <Text style={styles.separator}>{separator}</Text>
         </View>
       ))}
